@@ -1,4 +1,5 @@
 import 'package:proxy/proxy.dart';
+import 'package:invoker/invoker.dart';
 
 part 'classes.g.dart';
 
@@ -18,7 +19,7 @@ class HasOptionalNameZeroArgConstrClass {
 }
 
 @Proxy()
-class TestClass {
+class TestClass implements Invocable {
   void simpleMethod() {}
   void methodWithArg(num numArg) {}
   void methodWithArgs(num numArg, String second) {}
@@ -26,6 +27,8 @@ class TestClass {
   void methodWithNamedArgs({num namedArg, String namedArg2}) {}
   void methodWithPosArg([num arg]) {}
   void methodWithPosArgs([num arg1, String arg2]) {}
+  void methodWithMixedPositional(num required, [num positional]) {}
+  void methodWithMixedRequired(num required, {num named}) {}
 
   num methodWithReturn() {}
 
@@ -38,4 +41,8 @@ class TestClass {
 
   factory TestClass.proxy(ProxyHandler handler) =>
       new _$TestClassProxy(handler);
+
+  @override
+  Object invoke(Invocation invocation) =>
+      _$TestClassInvoker.invoke(invocation, this);
 }

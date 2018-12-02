@@ -7,5 +7,11 @@ part of 'classes.dart';
 // **************************************************************************
 
 class _$InvokerTestClassInvoker {
-  static invoke(Invocation invocation, InvokerTestClass target) {}
+  static invoke(Invocation invocation, InvokerTestClass target) {
+    if ( // check if invocation is applicable
+        'simpleMethod' == invocation.memberName.toString()) {
+      //method call
+      return target.simpleMethod();
+    }
+  }
 }

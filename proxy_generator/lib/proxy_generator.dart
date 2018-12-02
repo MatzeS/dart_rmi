@@ -46,17 +46,37 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
 
   @override
   void visitMethodElement(MethodElement element) {
-    if (element.isFactory) return;
+    if (element.isGenerator) return;
 
     bool hasNamedArgs = element.parameters.any((p) => p.isNamed);
-    bool hasPositional = element.parameters.any((p) => p.isPositional);
-    assert(!(hasNamedArgs && hasPositional));
+    bool hasPositionalArgs =
+        element.parameters.any((p) => p.isPositional && p.isOptional);
+    if (hasNamedArgs && hasPositionalArgs) {
+      log.severe('named and positional arguments $element');
+    }
+
+    String argumentEncoder(Iterable<ParameterElement> elements) =>
+        elements.map((p) => '${p.type.name} ${p.name}').join(', ');
+    String declarationRequiredArguments =
+        argumentEncoder(element.parameters.where((p) => p.isNotOptional));
+    String declarationPositionalArguments = argumentEncoder(
+        element.parameters.where((p) => p.isPositional && p.isOptional));
+    String declarationNamedArguments =
+        argumentEncoder(element.parameters.where((p) => p.isNamed));
+    String declarationArguments = declarationRequiredArguments;
+    if ((hasNamedArgs || hasPositionalArgs) &&
+        declarationRequiredArguments.isNotEmpty) declarationArguments += ', ';
+    if (hasPositionalArgs) {
+      declarationArguments += '[' + declarationPositionalArguments + ']';
+    }
+    if (hasNamedArgs) {
+      declarationArguments += '{' + declarationNamedArguments + '}';
+    }
 
     String argumentAdds = element.parameters
         .where((p) => p.isPositional)
         .map((p) => 'arguments.add(${p.name});')
         .join('');
-
     String namedArgumentAdds = '';
     if (hasNamedArgs) {
       namedArgumentAdds += element.parameters
@@ -66,17 +86,16 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
           .join('\n');
     }
 
-    String declaration = element.computeNode().toSource();
     output.write('''
-      ${declaration.substring(0, declaration.length - 1)}
+      ${element.returnType.name} ${element.displayName}($declarationArguments){
         List<Object> arguments =  [];
         ${argumentAdds}
         Map<Symbol, Object> namedArguments = {};
         ${namedArgumentAdds}
-        Invocation invocation = Invocation
+        Invocation _\$invocation = Invocation
           .method(#${element.name}, arguments, namedArguments);
 
-        ${!element.returnType.isVoid ? 'return' : ''} _handler.handle(invocation);
+        ${!element.returnType.isVoid ? 'return' : ''} _handler.handle(_\$invocation);
       }
     ''');
   }

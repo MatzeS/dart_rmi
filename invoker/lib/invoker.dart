@@ -6,3 +6,5 @@ library invoker;
 abstract class Invocable {
   Object invoke(Invocation invocation);
 }
+
+const String notInvocable = 'notInvocable';

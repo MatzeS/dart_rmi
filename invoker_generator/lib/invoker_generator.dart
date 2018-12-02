@@ -16,6 +16,10 @@ class InvokerGenerator extends Generator {
       if (!classElement.allSupertypes.map((t) => t.name).contains('Invocable'))
         return;
 
+      if (classElement.metadata
+          .map((e) => e.computeConstantValue().toStringValue())
+          .contains(notInvocable)) return;
+
       InvocableClassVisitor visitor = new InvocableClassVisitor(classElement);
       classElement.visitChildren(visitor);
       output.write('''
@@ -43,12 +47,47 @@ class InvocableClassVisitor extends ThrowingElementVisitor {
   }
   @override
   visitMethodElement(MethodElement element) {
-    if (!(element.displayName == 'invoke' &&
-        element.parameters.length == 2 &&
-        element.parameters[0].type.displayName == 'Invocation' &&
-        element.parameters[1].type.displayName == classElement.displayName))
-      return;
+    if (element.name == 'invoke' &&
+        element.parameters.length == 1 &&
+        element.parameters[0].type.name == 'Invocation') return;
 
+    List<String> posArgList = [];
+    element.parameters
+        .where((p) => p.isPositional)
+        .toList()
+        .asMap()
+        .forEach((i, p) {
+      posArgList.add('invocation.positionalArguments[$i]');
+    });
+
+    List<String> namedArgList = [];
+    element.parameters.where((p) => p.isNamed)
+      ..forEach((p) {
+        namedArgList.add('${p.name}: invocation.namedArguments[#${p.name}]');
+      });
+
+    String args = posArgList.join(', ');
+    if (args.isNotEmpty) args += ', ';
+    args += namedArgList.join(', ');
+
+    output.write('''
+      
+      if( // check if invocation is applicable
+        '${element.displayName}' == invocation.memberName.toString()
+      ){ //method call
+        return target.${element.displayName}($args);
+      }
+
+    ''');
+  }
+
+  @override
+  visitPropertyAccessorElement(PropertyAccessorElement element) {
+    print(element);
+  }
+
+  @override
+  visitFieldElement(FieldElement element) {
     print(element);
   }
 }
