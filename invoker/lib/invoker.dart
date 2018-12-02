@@ -4,5 +4,5 @@ library invoker;
 ///
 /// TODO write example here
 abstract class Invocable {
-  invoke(Invocation invocation);
+  Object invoke(Invocation invocation);
 }

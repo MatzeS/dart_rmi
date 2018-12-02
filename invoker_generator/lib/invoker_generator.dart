@@ -16,11 +16,13 @@ class InvokerGenerator extends Generator {
       if (!classElement.allSupertypes.map((t) => t.name).contains('Invocable'))
         return;
 
-      InvocableClassVisitor visitor = new InvocableClassVisitor();
+      InvocableClassVisitor visitor = new InvocableClassVisitor(classElement);
       classElement.visitChildren(visitor);
       output.write('''
-        class _\$${classElement.name}Invoker implements ${classElement.name}{
-          ${visitor.outputString}
+        class _\$${classElement.name}Invoker {
+          static invoke(Invocation invocation, ${classElement.name} target){
+            ${visitor.outputString}
+          }
         }
       ''');
     });
@@ -31,4 +33,22 @@ class InvokerGenerator extends Generator {
 class InvocableClassVisitor extends ThrowingElementVisitor {
   String get outputString => output.toString();
   StringBuffer output = new StringBuffer();
+
+  final ClassElement classElement;
+  InvocableClassVisitor(this.classElement);
+
+  @override
+  visitConstructorElement(ConstructorElement element) {
+    // constructors cannot be called by invocations
+  }
+  @override
+  visitMethodElement(MethodElement element) {
+    if (!(element.displayName == 'invoke' &&
+        element.parameters.length == 2 &&
+        element.parameters[0].type.displayName == 'Invocation' &&
+        element.parameters[1].type.displayName == classElement.displayName))
+      return;
+
+    print(element);
+  }
 }

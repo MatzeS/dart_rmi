@@ -2,4 +2,8 @@ import 'package:invoker/invoker.dart';
 
 part 'classes.g.dart';
 
-abstract class InvokerTestClass implements Invocable {}
+class InvokerTestClass implements Invocable {
+  @override
+  invoke(Invocation invocation) =>
+      _$InvokerTestClassInvoker.invoke(invocation, this);
+}
