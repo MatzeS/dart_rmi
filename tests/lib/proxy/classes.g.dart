@@ -6,10 +6,46 @@ part of 'classes.dart';
 // ProxyGenerator
 // **************************************************************************
 
+class _$HasOptionalPosZeroArgConstrClassProxy
+    implements HasOptionalPosZeroArgConstrClass {
+  ProxyHandler _handler;
+
+  _$HasOptionalPosZeroArgConstrClassProxy(this._handler) : super();
+
+  HasOptionalZeroArgConstrClass([num arg]) {
+    List<Object> arguments = [];
+    arguments.add(arg);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation invocation = Invocation.method(
+        #HasOptionalZeroArgConstrClass, arguments, namedArguments);
+
+    _handler.handle(invocation);
+  }
+}
+
+class _$HasOptionalNameZeroArgConstrClassProxy
+    implements HasOptionalNameZeroArgConstrClass {
+  ProxyHandler _handler;
+
+  _$HasOptionalNameZeroArgConstrClassProxy(this._handler) : super();
+
+  HasOptionalZeroArgConstrClass({num arg}) {
+    List<Object> arguments = [];
+
+    Map<Symbol, Object> namedArguments = {};
+    namedArguments.putIfAbsent(#arg, () => arg);
+    Invocation invocation = Invocation.method(
+        #HasOptionalZeroArgConstrClass, arguments, namedArguments);
+
+    _handler.handle(invocation);
+  }
+}
+
 class _$TestClassProxy implements TestClass {
   ProxyHandler _handler;
 
-  _$TestClassProxy(this._handler) : super(); //TODO super calls
+  _$TestClassProxy(this._handler) : super();
 
   void simpleMethod() {
     List<Object> arguments = [];

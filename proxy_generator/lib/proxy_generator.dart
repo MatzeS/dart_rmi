@@ -20,11 +20,15 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
     ProxyClassVisitor classvisitor = new ProxyClassVisitor();
     classElement.visitChildren(classvisitor);
 
+    if (!classvisitor.foundNoArgConstructor) {
+      log.severe('${classElement} must have a no argument constructor');
+    }
+
     String classOutput = '''
     class _\$${classElement.name}Proxy implements ${classElement.name}{
       ProxyHandler _handler;
 
-      _\$${classElement.name}Proxy(this._handler) : super(); //TODO super calls
+      _\$${classElement.name}Proxy(this._handler) : super();
 
       ${classvisitor.outputString}
     }
@@ -37,6 +41,8 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
 class ProxyClassVisitor extends ThrowingElementVisitor {
   String get outputString => output.toString();
   StringBuffer output = new StringBuffer();
+
+  bool foundNoArgConstructor = false;
 
   @override
   void visitMethodElement(MethodElement element) {
@@ -75,6 +81,9 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
 
   @override
   void visitConstructorElement(ConstructorElement element) {
-    //TODO
+    if (!element.isFactory && element.parameters.any((p) => p.isNotOptional))
+      return;
+
+    foundNoArgConstructor = true;
   }
 }

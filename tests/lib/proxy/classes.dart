@@ -2,6 +2,21 @@ import 'package:proxy/proxy.dart';
 
 part 'classes.g.dart';
 
+// @Proxy() // TODO test this
+// class HasNoZeroArgConstrClass {
+//   HasNoZeroArgConstrClass(num arg) {}
+// }
+
+@Proxy()
+class HasOptionalPosZeroArgConstrClass {
+  HasOptionalZeroArgConstrClass([num arg]) {}
+}
+
+@Proxy()
+class HasOptionalNameZeroArgConstrClass {
+  HasOptionalZeroArgConstrClass({num arg}) {}
+}
+
 @Proxy()
 class TestClass {
   void simpleMethod() {}
@@ -11,6 +26,8 @@ class TestClass {
   void methodWithNamedArgs({num namedArg, String namedArg2}) {}
   void methodWithPosArg([num arg]) {}
   void methodWithPosArgs([num arg1, String arg2]) {}
+
+  int methodWithReturn() {}
 
   //TODO default
 
