@@ -29,6 +29,8 @@ class TestClass {
 
   int methodWithReturn() {}
 
+  int get anGetter {}
+
   //TODO default
 
   factory TestClass.proxy(ProxyHandler handler) =>

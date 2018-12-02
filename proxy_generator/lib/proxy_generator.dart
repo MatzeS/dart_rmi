@@ -88,4 +88,22 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
 
     foundNoArgConstructor = true;
   }
+
+  @override
+  visitPropertyAccessorElement(PropertyAccessorElement element) {
+    print(element);
+    String declaration = element.computeNode().toSource();
+    output.write('''
+      ${declaration.substring(0, declaration.length - 1)}        
+        Invocation invocation = Invocation.getter(#${element.name});
+
+        return _handler.handle(invocation);
+      }
+    ''');
+  }
+
+  @override
+  visitFieldElement(FieldElement element) {
+    print(element);
+  }
 }

@@ -180,6 +180,30 @@ void main() {
     });
   });
 
+  group('getter /', () {
+    ReturnValueHandler handler;
+    setUp(() {
+      handler = new ReturnValueHandler();
+      testObject = TestClass.proxy(handler);
+    });
+    test('general call test', () {
+      testObject.anGetter;
+
+      expect(handler.invocations.length, 1);
+      expect(handler.invocations.first != null, true);
+      expect(handler.invocations.first.isMethod, false);
+      expect(handler.invocations.first.isGetter, true);
+      expect(handler.invocations.first.memberName, #anGetter);
+      expect(handler.invocations.first.positionalArguments.isEmpty, true);
+      expect(handler.invocations.first.namedArguments.isEmpty, true);
+    });
+
+    test('correct return value', () {
+      var returned = testObject.methodWithReturn();
+      expect(returned, 123456789);
+    });
+  });
+
   group('exception tests', () {
     ExceptionHandler handler;
     setUp(() {

@@ -47,6 +47,12 @@ class _$TestClassProxy implements TestClass {
 
   _$TestClassProxy(this._handler) : super();
 
+  int get anGetter {
+    Invocation invocation = Invocation.getter(#anGetter);
+
+    return _handler.handle(invocation);
+  }
+
   void simpleMethod() {
     List<Object> arguments = [];
 
