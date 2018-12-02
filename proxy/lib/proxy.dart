@@ -1,4 +1,4 @@
-library rmi_proxy;
+library proxy;
 
 /// Annotate a class with this to generate a proxy implementation
 ///

@@ -1,4 +1,4 @@
-name: rmi_proxy
+name: invoker
 version: 0.0.0
 description: >
   Invoker objects can invoke methods on an object given an Invokation parameter.
