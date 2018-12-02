@@ -1,0 +1,12 @@
+name: rmi_proxy
+version: 0.0.0
+description: >
+  Invoker objects can invoke methods on an object given an Invokation parameter.
+  This library is the runtime dependency.
+authors:
+- Matthias Sokolowski <matthias.sokolowski@googlemail.com>
+
+environment:
+  sdk: '>=2.0.0-dev <3.0.0'
+
+

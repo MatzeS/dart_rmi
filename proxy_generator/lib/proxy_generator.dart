@@ -40,13 +40,33 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
 
   @override
   void visitMethodElement(MethodElement element) {
-    String parameters = element.parameters.map((p) {
-      return '${p.type} ${p.name}';
-    }).join(',');
+    bool hasNamedArgs = element.parameters.any((p) => p.isNamed);
+    bool hasPositional = element.parameters.any((p) => p.isPositional);
+    assert(!(hasNamedArgs && hasPositional));
 
+    String argumentAdds = element.parameters
+        .where((p) => p.isPositional)
+        .map((p) => 'arguments.add(${p.name});')
+        .join('');
+
+    String namedArgumentAdds = '';
+    if (hasNamedArgs) {
+      namedArgumentAdds += element.parameters
+          .where((p) => p.isNamed)
+          .map((p) =>
+              'namedArguments.putIfAbsent(#${p.name}, () =>  ${p.name});')
+          .join('\n');
+    }
+
+    String declaration = element.computeNode().toSource();
     output.write('''
-      ${element.returnType} ${element.name}(${parameters}){
-        Invocation invocation = Invocation.method(#${element.name}, Iterable.empty()); //TODO empty parameters
+      ${declaration.substring(0, declaration.length - 1)}
+        List<Object> arguments =  [];
+        ${argumentAdds}
+        Map<Symbol, Object> namedArguments = {};
+        ${namedArgumentAdds}
+        Invocation invocation = Invocation
+          .method(#${element.name}, arguments, namedArguments);
 
         _handler.handle(invocation);
       }
