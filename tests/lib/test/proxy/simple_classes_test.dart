@@ -20,6 +20,17 @@ class ReturnValueHandler extends ProxyHandler {
   }
 }
 
+class ExceptionHandler extends ProxyHandler {
+  List<Invocation> invocations = [];
+  Exception get thrownException => new Exception("well this is a exception");
+
+  @override
+  Object handle(Invocation invocation) {
+    invocations.add(invocation);
+    throw thrownException;
+  }
+}
+
 void main() {
   TestClass testObject;
 
@@ -166,6 +177,36 @@ void main() {
     test('correct return value', () {
       var returned = testObject.methodWithReturn();
       expect(returned, 123456789);
+    });
+  });
+
+  group('exception tests', () {
+    ExceptionHandler handler;
+    setUp(() {
+      handler = new ExceptionHandler();
+      testObject = TestClass.proxy(handler);
+    });
+    test('general call test', () {
+      try {
+        testObject.simpleMethod();
+      } on Exception {}
+
+      expect(handler.invocations.length, 1);
+      expect(handler.invocations.first != null, true);
+      expect(handler.invocations.first.isMethod, true);
+      expect(handler.invocations.first.memberName, #simpleMethod);
+      expect(handler.invocations.first.positionalArguments.isEmpty, true);
+      expect(handler.invocations.first.namedArguments.isEmpty, true);
+    });
+
+    test('threw excpetion', () {
+      bool thrown = false;
+      try {
+        testObject.simpleMethod();
+      } on Exception catch (e) {
+        thrown = true;
+      }
+      expect(thrown, true);
     });
   });
 }
