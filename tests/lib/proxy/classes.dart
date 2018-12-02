@@ -28,7 +28,7 @@ class TestClass implements Invocable {
   void methodWithPosArg([num arg]) {}
   void methodWithPosArgs([num arg1, String arg2]) {}
   void methodWithMixedPositional(num required, [num positional]) {}
-  void methodWithMixedRequired(num required, {num named}) {}
+  void methodWithMixedNamed(num required, {num named}) {}
 
   num methodWithReturn() {}
 

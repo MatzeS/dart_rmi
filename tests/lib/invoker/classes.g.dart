@@ -9,9 +9,11 @@ part of 'classes.dart';
 class _$InvokerTestClassInvoker {
   static invoke(Invocation invocation, InvokerTestClass target) {
     if ( // check if invocation is applicable
-        'simpleMethod' == invocation.memberName.toString()) {
+        #simpleMethod == invocation.memberName) {
       //method call
-      return target.simpleMethod();
+      if (invocation.positionalArguments.length == 0) {
+        return target.simpleMethod();
+      }
     }
   }
 }

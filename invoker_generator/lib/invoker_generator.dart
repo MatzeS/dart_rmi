@@ -51,31 +51,45 @@ class InvocableClassVisitor extends ThrowingElementVisitor {
         element.parameters.length == 1 &&
         element.parameters[0].type.name == 'Invocation') return;
 
-    List<String> posArgList = [];
-    element.parameters
-        .where((p) => p.isPositional)
-        .toList()
-        .asMap()
-        .forEach((i, p) {
-      posArgList.add('invocation.positionalArguments[$i]');
-    });
-
     List<String> namedArgList = [];
     element.parameters.where((p) => p.isNamed)
       ..forEach((p) {
         namedArgList.add('${p.name}: invocation.namedArguments[#${p.name}]');
       });
 
-    String args = posArgList.join(', ');
-    if (args.isNotEmpty) args += ', ';
-    args += namedArgList.join(', ');
+    int reqArgCount = element.parameters
+        .where((p) => p.isPositional && p.isNotOptional)
+        .toList()
+        .length;
+    int optPosArgCount = element.parameters
+        .where((p) => p.isPositional && p.isOptional)
+        .toList()
+        .length;
+
+    List<String> methodCalls = [];
+    for (int i = 0; i < optPosArgCount + 1; i++) {
+      // +1 for no opt pos args
+
+      List<String> posArgList = [];
+      for (int j = 0; j < reqArgCount + i; j++)
+        posArgList.add('invocation.positionalArguments[$j]');
+
+      String args = posArgList.join(', ');
+      if (args.isNotEmpty) args += ', ';
+      args += namedArgList.join(', ');
+
+      methodCalls.add('''
+        if(invocation.positionalArguments.length == ${reqArgCount + i}){
+          return target.${element.displayName}($args);
+        }
+      ''');
+    }
 
     output.write('''
-      
       if( // check if invocation is applicable
-        '${element.displayName}' == invocation.memberName.toString()
+        #${element.displayName} == invocation.memberName
       ){ //method call
-        return target.${element.displayName}($args);
+        ${methodCalls.join('\n')}
       }
 
     ''');

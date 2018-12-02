@@ -9,80 +9,120 @@ part of 'classes.dart';
 class _$TestClassInvoker {
   static invoke(Invocation invocation, TestClass target) {
     if ( // check if invocation is applicable
-        'simpleMethod' == invocation.memberName.toString()) {
+        #simpleMethod == invocation.memberName) {
       //method call
-      return target.simpleMethod();
+      if (invocation.positionalArguments.length == 0) {
+        return target.simpleMethod();
+      }
     }
 
     if ( // check if invocation is applicable
-        'methodWithArg' == invocation.memberName.toString()) {
+        #methodWithArg == invocation.memberName) {
       //method call
-      return target.methodWithArg(
-        invocation.positionalArguments[0],
-      );
+      if (invocation.positionalArguments.length == 1) {
+        return target.methodWithArg(
+          invocation.positionalArguments[0],
+        );
+      }
     }
 
     if ( // check if invocation is applicable
-        'methodWithArgs' == invocation.memberName.toString()) {
+        #methodWithArgs == invocation.memberName) {
       //method call
-      return target.methodWithArgs(
-        invocation.positionalArguments[0],
-        invocation.positionalArguments[1],
-      );
+      if (invocation.positionalArguments.length == 2) {
+        return target.methodWithArgs(
+          invocation.positionalArguments[0],
+          invocation.positionalArguments[1],
+        );
+      }
     }
 
     if ( // check if invocation is applicable
-        'methodWithNamedArg' == invocation.memberName.toString()) {
+        #methodWithNamedArg == invocation.memberName) {
       //method call
-      return target.methodWithNamedArg(
-          namedArg: invocation.namedArguments[#namedArg]);
+      if (invocation.positionalArguments.length == 0) {
+        return target.methodWithNamedArg(
+            namedArg: invocation.namedArguments[#namedArg]);
+      }
     }
 
     if ( // check if invocation is applicable
-        'methodWithNamedArgs' == invocation.memberName.toString()) {
+        #methodWithNamedArgs == invocation.memberName) {
       //method call
-      return target.methodWithNamedArgs(
-          namedArg: invocation.namedArguments[#namedArg],
-          namedArg2: invocation.namedArguments[#namedArg2]);
+      if (invocation.positionalArguments.length == 0) {
+        return target.methodWithNamedArgs(
+            namedArg: invocation.namedArguments[#namedArg],
+            namedArg2: invocation.namedArguments[#namedArg2]);
+      }
     }
 
     if ( // check if invocation is applicable
-        'methodWithPosArg' == invocation.memberName.toString()) {
+        #methodWithPosArg == invocation.memberName) {
       //method call
-      return target.methodWithPosArg(
-        invocation.positionalArguments[0],
-      );
+      if (invocation.positionalArguments.length == 0) {
+        return target.methodWithPosArg();
+      }
+
+      if (invocation.positionalArguments.length == 1) {
+        return target.methodWithPosArg(
+          invocation.positionalArguments[0],
+        );
+      }
     }
 
     if ( // check if invocation is applicable
-        'methodWithPosArgs' == invocation.memberName.toString()) {
+        #methodWithPosArgs == invocation.memberName) {
       //method call
-      return target.methodWithPosArgs(
-        invocation.positionalArguments[0],
-        invocation.positionalArguments[1],
-      );
+      if (invocation.positionalArguments.length == 0) {
+        return target.methodWithPosArgs();
+      }
+
+      if (invocation.positionalArguments.length == 1) {
+        return target.methodWithPosArgs(
+          invocation.positionalArguments[0],
+        );
+      }
+
+      if (invocation.positionalArguments.length == 2) {
+        return target.methodWithPosArgs(
+          invocation.positionalArguments[0],
+          invocation.positionalArguments[1],
+        );
+      }
     }
 
     if ( // check if invocation is applicable
-        'methodWithMixedPositional' == invocation.memberName.toString()) {
+        #methodWithMixedPositional == invocation.memberName) {
       //method call
-      return target.methodWithMixedPositional(
-        invocation.positionalArguments[0],
-        invocation.positionalArguments[1],
-      );
+      if (invocation.positionalArguments.length == 1) {
+        return target.methodWithMixedPositional(
+          invocation.positionalArguments[0],
+        );
+      }
+
+      if (invocation.positionalArguments.length == 2) {
+        return target.methodWithMixedPositional(
+          invocation.positionalArguments[0],
+          invocation.positionalArguments[1],
+        );
+      }
     }
 
     if ( // check if invocation is applicable
-        'methodWithMixedRequired' == invocation.memberName.toString()) {
+        #methodWithMixedNamed == invocation.memberName) {
       //method call
-      return target.methodWithMixedRequired(invocation.positionalArguments[0],
-          named: invocation.namedArguments[#named]);
+      if (invocation.positionalArguments.length == 1) {
+        return target.methodWithMixedNamed(invocation.positionalArguments[0],
+            named: invocation.namedArguments[#named]);
+      }
     }
 
     if ( // check if invocation is applicable
-        'methodWithReturn' == invocation.memberName.toString()) {
+        #methodWithReturn == invocation.memberName) {
       //method call
-      return target.methodWithReturn();
+      if (invocation.positionalArguments.length == 0) {
+        return target.methodWithReturn();
+      }
     }
   }
 }
@@ -248,13 +288,13 @@ class _$TestClassProxy implements TestClass {
     _handler.handle(_$invocation);
   }
 
-  void methodWithMixedRequired(num required, {num named}) {
+  void methodWithMixedNamed(num required, {num named}) {
     List<Object> arguments = [];
     arguments.add(required);
     Map<Symbol, Object> namedArguments = {};
     namedArguments.putIfAbsent(#named, () => named);
     Invocation _$invocation =
-        Invocation.method(#methodWithMixedRequired, arguments, namedArguments);
+        Invocation.method(#methodWithMixedNamed, arguments, namedArguments);
 
     _handler.handle(_$invocation);
   }
