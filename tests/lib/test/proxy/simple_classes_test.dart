@@ -11,10 +11,20 @@ class RecordingHandler extends ProxyHandler {
   }
 }
 
+class ReturnValueHandler extends ProxyHandler {
+  List<Invocation> invocations = [];
+  @override
+  Object handle(Invocation invocation) {
+    invocations.add(invocation);
+    return 123456789;
+  }
+}
+
 void main() {
-  RecordingHandler handler;
   TestClass testObject;
-  group('generator', () {
+
+  group('method argument tests', () {
+    RecordingHandler handler;
     setUp(() {
       handler = new RecordingHandler();
       testObject = TestClass.proxy(handler);
@@ -133,6 +143,29 @@ void main() {
       expect(handler.invocations.first.namedArguments.length, 2);
       expect(handler.invocations.first.namedArguments[#namedArg], 1234);
       expect(handler.invocations.first.namedArguments[#namedArg2], 'asdf');
+    });
+  });
+
+  group('return value tests', () {
+    ReturnValueHandler handler;
+    setUp(() {
+      handler = new ReturnValueHandler();
+      testObject = TestClass.proxy(handler);
+    });
+    test('general call test', () {
+      testObject.methodWithReturn();
+
+      expect(handler.invocations.length, 1);
+      expect(handler.invocations.first != null, true);
+      expect(handler.invocations.first.isMethod, true);
+      expect(handler.invocations.first.memberName, #methodWithReturn);
+      expect(handler.invocations.first.positionalArguments.isEmpty, true);
+      expect(handler.invocations.first.namedArguments.isEmpty, true);
+    });
+
+    test('correct return value', () {
+      var returned = testObject.methodWithReturn();
+      expect(returned, 123456789);
     });
   });
 }

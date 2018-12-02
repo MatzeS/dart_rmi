@@ -46,6 +46,8 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
 
   @override
   void visitMethodElement(MethodElement element) {
+    if (element.isFactory) return;
+
     bool hasNamedArgs = element.parameters.any((p) => p.isNamed);
     bool hasPositional = element.parameters.any((p) => p.isPositional);
     assert(!(hasNamedArgs && hasPositional));
@@ -74,7 +76,7 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
         Invocation invocation = Invocation
           .method(#${element.name}, arguments, namedArguments);
 
-        _handler.handle(invocation);
+        ${!element.returnType.isVoid ? 'return' : ''} _handler.handle(invocation);
       }
     ''');
   }

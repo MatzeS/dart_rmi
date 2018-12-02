@@ -20,7 +20,7 @@ class _$HasOptionalPosZeroArgConstrClassProxy
     Invocation invocation = Invocation.method(
         #HasOptionalZeroArgConstrClass, arguments, namedArguments);
 
-    _handler.handle(invocation);
+    return _handler.handle(invocation);
   }
 }
 
@@ -38,7 +38,7 @@ class _$HasOptionalNameZeroArgConstrClassProxy
     Invocation invocation = Invocation.method(
         #HasOptionalZeroArgConstrClass, arguments, namedArguments);
 
-    _handler.handle(invocation);
+    return _handler.handle(invocation);
   }
 }
 
@@ -125,5 +125,16 @@ class _$TestClassProxy implements TestClass {
         Invocation.method(#methodWithPosArgs, arguments, namedArguments);
 
     _handler.handle(invocation);
+  }
+
+  int methodWithReturn() {
+    List<Object> arguments = [];
+
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation invocation =
+        Invocation.method(#methodWithReturn, arguments, namedArguments);
+
+    return _handler.handle(invocation);
   }
 }
