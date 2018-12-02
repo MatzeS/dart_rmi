@@ -11,14 +11,14 @@ environment:
 dependencies:
   proxy:
     path: ../proxy
-  # invoker:
-  #   path: ../invoker
+  invoker:
+    path: ../invoker
   
 dev_dependencies:
   proxy_generator:
     path: ../proxy_generator
-  # invoker_generator:
-  #   path: ../invoker_generator
+  invoker_generator:
+    path: ../invoker_generator
   build_runner:
   test: ^1.0.0
   
