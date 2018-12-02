@@ -27,9 +27,12 @@ class TestClass {
   void methodWithPosArg([num arg]) {}
   void methodWithPosArgs([num arg1, String arg2]) {}
 
-  int methodWithReturn() {}
+  num methodWithReturn() {}
 
-  int get anGetter {}
+  num get aGetter {}
+  set aSetter(num arg) {}
+
+  num aField;
 
   //TODO default
 

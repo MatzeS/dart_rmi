@@ -187,13 +187,12 @@ void main() {
       testObject = TestClass.proxy(handler);
     });
     test('general call test', () {
-      testObject.anGetter;
+      testObject.aGetter;
 
       expect(handler.invocations.length, 1);
       expect(handler.invocations.first != null, true);
-      expect(handler.invocations.first.isMethod, false);
       expect(handler.invocations.first.isGetter, true);
-      expect(handler.invocations.first.memberName, #anGetter);
+      expect(handler.invocations.first.memberName, #aGetter);
       expect(handler.invocations.first.positionalArguments.isEmpty, true);
       expect(handler.invocations.first.namedArguments.isEmpty, true);
     });
@@ -201,6 +200,30 @@ void main() {
     test('correct return value', () {
       var returned = testObject.methodWithReturn();
       expect(returned, 123456789);
+    });
+  });
+
+  group('setter /', () {
+    RecordingHandler handler;
+    setUp(() {
+      handler = new RecordingHandler();
+      testObject = TestClass.proxy(handler);
+    });
+    test('general call test', () {
+      testObject.aSetter = 1;
+
+      expect(handler.invocations.length, 1);
+      expect(handler.invocations.first != null, true);
+      expect(handler.invocations.first.isSetter, true);
+      expect(handler.invocations.first.memberName, #aSetter);
+      expect(handler.invocations.first.positionalArguments.length, 1);
+      expect(handler.invocations.first.namedArguments.isEmpty, true);
+    });
+
+    test('arg passing', () {
+      testObject.aSetter = 123456789;
+
+      expect(handler.invocations.first.positionalArguments.first, 123456789);
     });
   });
 

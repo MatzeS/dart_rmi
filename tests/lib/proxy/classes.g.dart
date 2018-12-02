@@ -47,10 +47,28 @@ class _$TestClassProxy implements TestClass {
 
   _$TestClassProxy(this._handler) : super();
 
-  int get anGetter {
-    Invocation invocation = Invocation.getter(#anGetter);
+  get aField {
+    Invocation invocation = Invocation.getter(#aField);
 
     return _handler.handle(invocation);
+  }
+
+  set aField(num _aField) {
+    Invocation invocation = Invocation.setter(#aField, _aField);
+
+    _handler.handle(invocation);
+  }
+
+  get aGetter {
+    Invocation invocation = Invocation.getter(#aGetter);
+
+    return _handler.handle(invocation);
+  }
+
+  set aSetter(num arg) {
+    Invocation invocation = Invocation.setter(#aSetter, arg);
+
+    _handler.handle(invocation);
   }
 
   void simpleMethod() {
@@ -133,7 +151,7 @@ class _$TestClassProxy implements TestClass {
     _handler.handle(invocation);
   }
 
-  int methodWithReturn() {
+  num methodWithReturn() {
     List<Object> arguments = [];
 
     Map<Symbol, Object> namedArguments = {};

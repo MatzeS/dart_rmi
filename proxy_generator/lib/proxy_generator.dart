@@ -89,12 +89,9 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
     foundNoArgConstructor = true;
   }
 
-  @override
-  visitPropertyAccessorElement(PropertyAccessorElement element) {
-    print(element);
-    String declaration = element.computeNode().toSource();
+  generateGetter(PropertyAccessorElement element) {
     output.write('''
-      ${declaration.substring(0, declaration.length - 1)}        
+      get ${element.name}{
         Invocation invocation = Invocation.getter(#${element.name});
 
         return _handler.handle(invocation);
@@ -102,8 +99,27 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
     ''');
   }
 
+  generateSetter(PropertyAccessorElement element) {
+    output.write('''
+      set ${element.displayName}(
+        ${element.parameters.first.type.name} ${element.parameters.first.displayName}
+        ){
+        Invocation invocation = Invocation.setter(
+          #${element.displayName}, ${element.parameters.first.displayName});
+
+        _handler.handle(invocation);
+      }
+    ''');
+  }
+
+  @override
+  visitPropertyAccessorElement(PropertyAccessorElement element) {
+    if (element.isGetter) generateGetter(element);
+    if (element.isSetter) generateSetter(element);
+  }
+
   @override
   visitFieldElement(FieldElement element) {
-    print(element);
+    // ignored since they are handled by property accessor with getter and setter implementation
   }
 }
