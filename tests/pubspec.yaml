@@ -1,0 +1,26 @@
+name: rmi_tests
+version: 0.0.0
+description: >
+  Tests for RMI, proxy objects and inovker.
+authors:
+- Matthias Sokolowski <matthias.sokolowski@googlemail.com>
+
+environment:
+  sdk: '>=2.0.0-dev <3.0.0'
+
+dependencies:
+  proxy:
+    path: ../proxy
+  # invoker:
+  #   path: ../invoker
+  
+dev_dependencies:
+  proxy_generator:
+    path: ../proxy_generator
+  # invoker_generator:
+  #   path: ../invoker_generator
+  build_runner:
+  test: ^1.0.0
+  
+
+

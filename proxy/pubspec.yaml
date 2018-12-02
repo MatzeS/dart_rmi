@@ -1,0 +1,13 @@
+name: proxy
+version: 0.0.0
+description: >
+  Proxy objects based code generation instead of reflection.
+  (entirely not related to internet proxies)
+  This library is the runtime dependency.
+authors:
+- Matthias Sokolowski <matthias.sokolowski@googlemail.com>
+
+environment:
+  sdk: '>=2.0.0-dev <3.0.0'
+
+
