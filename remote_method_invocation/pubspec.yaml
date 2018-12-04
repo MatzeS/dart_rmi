@@ -1,0 +1,25 @@
+name: remote_method_invocation
+version: 0.0.0
+description: >
+  Remote Method Invocation without reflection but using codegeneration.
+authors:
+- Matthias Sokolowski <matthias.sokolowski@googlemail.com>
+
+environment:
+  sdk: '>=2.0.0-dev <3.0.0'
+
+dependencies:
+  serializable:
+    path: ../serializable
+  proxy:
+    path: ../proxy
+  invoker:
+    path: ../invoker
+  
+dev_dependencies:
+  proxy_generator:
+    path: ../proxy_generator
+  invoker_generator:
+    path: ../invoker_generator
+  build_runner:
+  test:
