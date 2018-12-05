@@ -53,10 +53,6 @@ class _$TestClassProxy implements TestClass {
     Invocation _$invocation =
         Invocation.method(#someMethod, arguments, namedArguments);
 
-    var returnFuture = _handle(_$invocation);
-    var returnValue = await returnFuture;
-    print('a' + returnValue.toString());
-    print('a' + returnValue.runtimeType.toString());
-    return Future.value(returnValue);
+    return await _handle(_$invocation);
   }
 }

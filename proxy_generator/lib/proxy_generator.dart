@@ -4,6 +4,8 @@ import 'dart:async';
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/visitor.dart';
+import 'package:analyzer/dart/element/type.dart';
+
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:proxy/proxy.dart';
@@ -75,7 +77,7 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
   void visitMethodElement(MethodElement element) {
     if (element.isGenerator) return;
     if (element.isStatic) return;
-    if (element.isOperator) return; 
+    if (element.isOperator) return;
 
     if (visited.contains(element.name)) return;
     visited.add(element.name);
@@ -119,7 +121,7 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
     }
 
     output.write('''
-      ${element.returnType.name} ${element.displayName}($declarationArguments){
+      ${element.returnType} ${element.displayName}($declarationArguments) ${element.isAsynchronous ? 'async' : ''} {
         List<Object> arguments =  [];
         ${argumentAdds}
         Map<Symbol, Object> namedArguments = {};
@@ -127,7 +129,7 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
         Invocation _\$invocation = Invocation
           .method(#${element.name}, arguments, namedArguments);
 
-        ${!element.returnType.isVoid ? 'return' : ''} _handle(_\$invocation);
+        ${!element.returnType.isVoid ? 'return' : ''} ${element.isAsynchronous ? 'await' : ''} _handle(_\$invocation);
       }
     ''');
   }

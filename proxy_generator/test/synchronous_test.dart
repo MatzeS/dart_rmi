@@ -10,16 +10,17 @@ class SynchronousHandler {
   List<Invocation> invocations = [];
 
   Object handle(Invocation invocation) async {
-    print('waiting 5 sec');
-    await Future.delayed(Duration(seconds: 5));
-    print('waiting done');
+    await Future.delayed(Duration(seconds: 1));
     invocations.add(invocation);
     return returnValue;
   }
 }
 
 class TestClass implements Proxy {
-  Future<num> someMethod() async {}
+  Future<num> someMethod() async {
+    return 1;
+  }
+
   factory TestClass.proxy(InvocationHandlerFunction handler) =>
       _$TestClassProxy(handler);
 }
