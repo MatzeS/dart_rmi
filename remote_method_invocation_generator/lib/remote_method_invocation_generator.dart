@@ -45,8 +45,11 @@ class RmiGenerator extends Generator {
     output.write('''
         class _\$${classElement.name}Rmi {
           static TargetClass getRemote(Connection connection) {
-            ProxyHandler handler = RmiProxyHandler(connection);
-            return _\$${classElement.name}Proxy(handler);
+            RmiProxyHandler handler = RmiProxyHandler(connection);
+            return _\$${classElement.name}Proxy(handler.handle);
+          }
+          static void exposeRemote(Connection connection, ${classElement.name} target) {
+            return rmiExposeRemote(connection, target);
           }
         }
       ''');

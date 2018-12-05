@@ -13,5 +13,5 @@ class Proxy {
   const Proxy();
 }
 
-/// Implement this to handle the invocation
+/// Provide this function to handle the invocation
 typedef Object InvocationHandlerFunction(Invocation invocation);

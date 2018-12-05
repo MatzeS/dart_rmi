@@ -44,7 +44,7 @@ class ProxyGenerator extends Generator {
     ProxyClassVisitor classvisitor = new ProxyClassVisitor();
     classElement.allSupertypes
         .forEach((i) => (i.element.visitChildren(classvisitor)));
-    // classElement.visitChildren(classvisitor);
+    classElement.visitChildren(classvisitor);
 
     if (!classvisitor.foundNoArgConstructor) {
       log.severe('${classElement} must have a no argument constructor');
@@ -67,6 +67,7 @@ class ProxyGenerator extends Generator {
 class ProxyClassVisitor extends ThrowingElementVisitor {
   String get outputString => output.toString();
   StringBuffer output = new StringBuffer();
+  List<String> visited = new List();
 
   bool foundNoArgConstructor = false;
 
@@ -75,6 +76,9 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
     if (element.isGenerator) return;
     if (element.isStatic) return;
     if (element.isOperator) return; //TODO
+
+    if (visited.contains(element.name)) return;
+    visited.add(element.name);
 
     bool hasNamedArgs = element.parameters.any((p) => p.isNamed);
     bool hasPositionalArgs =
@@ -161,6 +165,9 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
 
   @override
   visitPropertyAccessorElement(PropertyAccessorElement element) {
+    if (visited.contains(element.name)) return;
+    visited.add(element.name);
+
     if (element.isGetter) {
       generateGetter(element);
     } else if (element.isSetter) {

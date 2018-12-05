@@ -17,10 +17,10 @@ dependencies:
     path: ../invoker
   
 dev_dependencies:
-  built_value_generator:
   proxy_generator:
     path: ../proxy_generator
   invoker_generator:
     path: ../invoker_generator
+  built_value_generator:
   build_runner:
   test:

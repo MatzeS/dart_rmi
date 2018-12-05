@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of remote_method_invocation;
+part of 'implementation.dart';
 
 // **************************************************************************
 // BuiltValueGenerator
@@ -19,7 +19,7 @@ part of remote_method_invocation;
 // ignore_for_file: unnecessary_new
 // ignore_for_file: test_types_in_equals
 
-Serializers _$defaultSerializers = (new Serializers().toBuilder()
+Serializers _$serializers = (new Serializers().toBuilder()
       ..add(SerializableInvocation.serializer)
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(Object)]),
@@ -29,11 +29,3 @@ Serializers _$defaultSerializers = (new Serializers().toBuilder()
               BuiltMap, const [const FullType(Symbol), const FullType(Object)]),
           () => new MapBuilder<Symbol, Object>()))
     .build();
-
-// **************************************************************************
-// InvokerGenerator
-// **************************************************************************
-
-class _$RmiTargetInvoker {
-  static invoke(Invocation invocation, RmiTarget target) {}
-}

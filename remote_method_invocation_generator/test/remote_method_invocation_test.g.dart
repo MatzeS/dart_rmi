@@ -7,13 +7,24 @@ part of 'remote_method_invocation_test.dart';
 // **************************************************************************
 
 class _$TargetClassInvoker {
-  static invoke(Invocation invocation, TargetClass target) {
-    if ( // check if invocation is applicable
-        #someMethod == invocation.memberName) {
-      //method call
-      if (invocation.positionalArguments.length == 0) {
-        return target.someMethod();
-      }
+  static dynamic invoke(Invocation invocation, TargetClass target) {
+    if (invocation.isMethod && #someMethod == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 0; i++)
+        positionalArguments.add(null);
+
+      return target.someMethod();
+    }
+    if (invocation.isMethod && #exposeRemote == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
+
+      return target.exposeRemote(
+        positionalArguments[0],
+      );
     }
   }
 }
@@ -23,9 +34,43 @@ class _$TargetClassInvoker {
 // **************************************************************************
 
 class _$TargetClassProxy implements TargetClass {
-  ProxyHandler _handler;
+  InvocationHandlerFunction _handle;
 
-  _$TargetClassProxy(this._handler) : super();
+  _$TargetClassProxy(this._handle) : super();
+
+  get hashCode {
+    Invocation invocation = Invocation.getter(#hashCode);
+
+    return _handle(invocation);
+  }
+
+  get runtimeType {
+    Invocation invocation = Invocation.getter(#runtimeType);
+
+    return _handle(invocation);
+  }
+
+  String toString() {
+    List<Object> arguments = [];
+
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#toString, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
+  dynamic noSuchMethod(Invocation invocation) {
+    List<Object> arguments = [];
+    arguments.add(invocation);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#noSuchMethod, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
 
   Object invoke(Invocation invocation) {
     List<Object> arguments = [];
@@ -35,7 +80,7 @@ class _$TargetClassProxy implements TargetClass {
     Invocation _$invocation =
         Invocation.method(#invoke, arguments, namedArguments);
 
-    return _handler.handle(_$invocation);
+    return _handle(_$invocation);
   }
 
   void someMethod() {
@@ -46,7 +91,18 @@ class _$TargetClassProxy implements TargetClass {
     Invocation _$invocation =
         Invocation.method(#someMethod, arguments, namedArguments);
 
-    _handler.handle(_$invocation);
+    _handle(_$invocation);
+  }
+
+  void exposeRemote(Connection connection) {
+    List<Object> arguments = [];
+    arguments.add(connection);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#exposeRemote, arguments, namedArguments);
+
+    _handle(_$invocation);
   }
 }
 
@@ -56,7 +112,11 @@ class _$TargetClassProxy implements TargetClass {
 
 class _$TargetClassRmi {
   static TargetClass getRemote(Connection connection) {
-    ProxyHandler handler = RmiProxyHandler(connection);
-    return _$TargetClassProxy(handler);
+    RmiProxyHandler handler = RmiProxyHandler(connection);
+    return _$TargetClassProxy(handler.handle);
+  }
+
+  static void exposeRemote(Connection connection, TargetClass target) {
+    return rmiExposeRemote(connection, target);
   }
 }

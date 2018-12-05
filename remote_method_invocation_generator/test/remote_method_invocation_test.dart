@@ -1,5 +1,4 @@
 import 'package:test/test.dart';
-import 'package:remote_method_invocation/serializable_invocation.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
@@ -27,8 +26,8 @@ class TargetClass implements RmiTarget {
 
   factory TargetClass.getRemote(Connection connection) =>
       _$TargetClassRmi.getRemote(connection);
-  static void exposeRemote(Connection connection, TargetClass target) =>
-      rmiExposeRemote(connection, target);
+  void exposeRemote(Connection connection) =>
+      _$TargetClassRmi.exposeRemote(connection, this);
 }
 
 main() {
@@ -39,8 +38,8 @@ main() {
       StreamController<String> getToExpose = StreamController();
 
       TargetClass remoteTarget = new TargetClass();
-      TargetClass.exposeRemote(
-          new Connection(getToExpose.stream, exposeToGet), remoteTarget);
+      remoteTarget
+          .exposeRemote(new Connection(getToExpose.stream, exposeToGet));
 
       TargetClass proxy = TargetClass.getRemote(
           new Connection(exposeToGet.stream, getToExpose));
