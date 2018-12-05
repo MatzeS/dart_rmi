@@ -18,6 +18,8 @@ class InvokerGenerator extends Generator {
   }
 
   bool elementFilter(Element element) {
+    if (element.name == 'RmiTarget') return false;
+
     if (isAnnotatedWith<NotInvocable>(element)) return false;
     if (TypeChecker.fromRuntime(NotInvocable).isAssignableFrom(element))
       return false;

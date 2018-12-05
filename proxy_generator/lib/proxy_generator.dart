@@ -22,6 +22,9 @@ class ProxyGenerator extends Generator {
   }
 
   bool elementFilter(Element element) {
+    if (element.name == 'RmiTarget')
+      return false; // this removes generation from the root class
+
     if (isAnnotatedWith<Proxy>(element)) return true;
     if (TypeChecker.fromRuntime(Proxy).isAssignableFrom(element)) return true;
 
