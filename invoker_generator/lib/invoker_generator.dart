@@ -10,27 +10,51 @@ import 'package:source_gen/source_gen.dart';
 import 'package:invoker/invoker.dart';
 
 class InvokerGenerator extends Generator {
-  FutureOr<String> generate(LibraryReader library, BuildStep buildStep) {
-    StringBuffer output = new StringBuffer();
-    library.classElements.forEach((classElement) {
-      if (!classElement.allSupertypes.map((t) => t.name).contains('Invocable'))
-        return;
+  BuilderOptions options;
+  InvokerGenerator(this.options);
 
-      if (classElement.metadata
-          .map((e) => e.computeConstantValue().toStringValue())
-          .contains(notInvocable)) return;
+  bool isAnnotatedWith<T>(Element element) {
+    return TypeChecker.fromRuntime(T).firstAnnotationOf(element) != null;
+  }
 
-      InvocableClassVisitor visitor = new InvocableClassVisitor(classElement);
-      classElement.visitChildren(visitor);
-      output.write('''
+  bool elementFilter(Element element) {
+    if (element.metadata
+        .map((e) => e.computeConstantValue().toStringValue())
+        .contains(notInvocable)) return false;
+
+    if (TypeChecker.fromRuntime(Invocable).isAssignableFrom(element))
+      return true;
+    // if (element is ClassElement &&
+    //     element.interfaces.contains(
+    //         (i) => TypeChecker.fromRuntime(RpcTarget).isAssignableFrom(i)))
+    //   return true;
+
+    return false;
+  }
+
+  @override
+  FutureOr<String> generate(LibraryReader library, BuildStep buildStep) async {
+    return library.allElements
+        .where(elementFilter)
+        .map((e) => generateForElement(e))
+        .join('\n\n');
+  }
+
+  String generateForElement(Element element) {
+    if (element is! ClassElement) {
+      log.severe('only classes can be Invocable, $element is not a class');
+    }
+    ClassElement classElement = element as ClassElement;
+
+    InvocableClassVisitor visitor = new InvocableClassVisitor(classElement);
+    classElement.visitChildren(visitor);
+    return '''
         class _\$${classElement.name}Invoker {
           static invoke(Invocation invocation, ${classElement.name} target){
             ${visitor.outputString}
           }
         }
-      ''');
-    });
-    return output.toString();
+      ''';
   }
 }
 
@@ -47,6 +71,7 @@ class InvocableClassVisitor extends ThrowingElementVisitor {
   }
   @override
   visitMethodElement(MethodElement element) {
+    if (element.isStatic) return;
     if (element.name == 'invoke' &&
         element.parameters.length == 1 &&
         element.parameters[0].type.name == 'Invocation') return;

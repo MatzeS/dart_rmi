@@ -9,14 +9,15 @@ environment:
   sdk: '>=2.0.0-dev <3.0.0'
 
 dependencies:
-  serializable:
-    path: ../serializable
+  built_value:
+  built_collection:
   proxy:
     path: ../proxy
   invoker:
     path: ../invoker
   
 dev_dependencies:
+  built_value_generator:
   proxy_generator:
     path: ../proxy_generator
   invoker_generator:

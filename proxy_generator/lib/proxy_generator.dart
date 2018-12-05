@@ -7,11 +7,38 @@ import 'package:analyzer/dart/element/visitor.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:proxy/proxy.dart';
+// import 'package:remote_method_invocation/remote_method_invocation.dart';
 
-class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
+class ProxyGenerator extends Generator {
+  BuilderOptions options;
+  ProxyGenerator(this.options);
+
+  // bool get isRpcActive => options.config.containsKey('rpc');
+
+  bool isAnnotatedWith<T>(Element element) {
+    return TypeChecker.fromRuntime(T).firstAnnotationOf(element) != null;
+  }
+
+  bool elementFilter(Element element) {
+    if (isAnnotatedWith<Proxy>(element)) return true;
+    // if (TypeChecker.fromRuntime(RpcTarget).isAssignableFrom(element))
+    //   return true; //TODO
+    if (element is ClassElement &&
+        element.interfaces.map((i) => i.name).contains('RpcTarget'))
+      return true;
+
+    return false;
+  }
+
   @override
-  Future<String> generateForAnnotatedElement(
-      Element element, ConstantReader annotation, BuildStep buildStep) async {
+  FutureOr<String> generate(LibraryReader library, BuildStep buildStep) async {
+    return library.allElements
+        .where(elementFilter)
+        .map((e) => generateForElement(e))
+        .join('\n\n');
+  }
+
+  String generateForElement(Element element) {
     if (element is! ClassElement) {
       log.severe('only classes can be proxies, $element is not a class');
     }
@@ -47,6 +74,7 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
   @override
   void visitMethodElement(MethodElement element) {
     if (element.isGenerator) return;
+    if (element.isStatic) return;
 
     bool hasNamedArgs = element.parameters.any((p) => p.isNamed);
     bool hasPositionalArgs =

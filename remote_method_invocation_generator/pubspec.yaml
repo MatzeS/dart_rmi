@@ -1,7 +1,7 @@
-name: rmi_tests
+name: remote_method_invocation_generator
 version: 0.0.0
 description: >
-  Tests for RMI, proxy objects and inovker.
+  This library is the dev dependency.
 authors:
 - Matthias Sokolowski <matthias.sokolowski@googlemail.com>
 
@@ -10,10 +10,17 @@ environment:
 
 dependencies:
   built_value:
+  built_collection:
   proxy:
     path: ../proxy
   invoker:
     path: ../invoker
+  remote_method_invocation:
+    path: ../remote_method_invocation
+  analyzer: ^0.33.3
+  build: ^1.0.0
+  build_config: ^0.3.1
+  source_gen: ^0.9.0
   
 dev_dependencies:
   built_value_generator:
@@ -22,7 +29,6 @@ dev_dependencies:
   invoker_generator:
     path: ../invoker_generator
   build_runner:
-  test: ^1.0.0
-  
+  test:
 
-
+  #TODO check
