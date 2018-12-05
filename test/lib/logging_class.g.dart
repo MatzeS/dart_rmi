@@ -1,14 +1,10 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'basic_class_test.dart';
+part of 'logging_class.dart';
 
 // **************************************************************************
 // InvokerGenerator
 // **************************************************************************
-
-class _$BasicClassInvoker {
-  static dynamic invoke(Invocation invocation, BasicClass target) {}
-}
 
 class _$LoggingClassInvoker {
   static dynamic invoke(Invocation invocation, LoggingClass target) {

@@ -1,3 +1,6 @@
+const int significantNumber = 123456789;
+const String significantString = 'asdf';
+
 class BasicClass {
   void simpleMethod() {}
   void methodWithArg(num numArg) {}

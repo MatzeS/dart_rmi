@@ -8,16 +8,14 @@ authors:
 environment:
   sdk: '>=2.0.0-dev <3.0.0'
 
-dependencies:
+dev_dependencies:
+  build_runner:
   built_value:
+  built_value_generator:
   proxy:
     path: ../proxy
   invoker:
     path: ../invoker
-  
-dev_dependencies:
-  build_runner:
-  built_value_generator:
   proxy_generator:
     path: ../proxy_generator
   invoker_generator:
