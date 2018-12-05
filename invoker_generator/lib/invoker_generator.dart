@@ -88,32 +88,24 @@ class InvocableClassVisitor extends ThrowingElementVisitor {
         .toList()
         .length;
 
-    List<String> methodCalls = [];
-    for (int i = 0; i < optPosArgCount + 1; i++) {
-      // +1 for no opt pos args
+    List<String> posArgList = [];
+    for (int i = 0; i < reqArgCount + optPosArgCount; i++)
+      posArgList.add('positionalArguments[$i]');
 
-      List<String> posArgList = [];
-      for (int j = 0; j < reqArgCount + i; j++)
-        posArgList.add('invocation.positionalArguments[$j]');
-
-      String args = posArgList.join(', ');
-      if (args.isNotEmpty) args += ', ';
-      args += namedArgList.join(', ');
-
-      methodCalls.add('''
-        if(invocation.positionalArguments.length == ${reqArgCount + i}){
-          return target.${element.displayName}($args);
-        }
-      ''');
-    }
+    String args = posArgList.join(', ');
+    if (args.isNotEmpty) args += ', ';
+    args += namedArgList.join(', ');
 
     output.write('''
       if( 
         #${element.displayName} == invocation.memberName
       ){ 
-        ${methodCalls.join('\n')}
-      }
+        List<Object> positionalArguments = List.from(invocation.positionalArguments);
+        for(int i = invocation.positionalArguments.length; i < ${reqArgCount + optPosArgCount}; i++)
+          positionalArguments.add(null);
 
+        return target.${element.displayName}($args);
+      }
     ''');
   }
 

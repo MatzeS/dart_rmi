@@ -12,161 +12,142 @@ class _$BasicClassInvoker {
 
 class _$LoggingClassInvoker {
   static invoke(Invocation invocation, LoggingClass target) {
-    if ( // check if invocation is applicable
-        #_log == invocation.memberName) {
-      //method call
-      if (invocation.positionalArguments.length == 1) {
-        return target._log(
-          invocation.positionalArguments[0],
-        );
-      }
+    if (#_log == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
+
+      return target._log(
+        positionalArguments[0],
+      );
     }
+    if (#_arg == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
 
-    if ( // check if invocation is applicable
-        #_arg == invocation.memberName) {
-      //method call
-      if (invocation.positionalArguments.length == 1) {
-        return target._arg(
-          invocation.positionalArguments[0],
-        );
-      }
+      return target._arg(
+        positionalArguments[0],
+      );
     }
+    if (#triggered == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
 
-    if ( // check if invocation is applicable
-        #triggered == invocation.memberName) {
-      //method call
-      if (invocation.positionalArguments.length == 1) {
-        return target.triggered(
-          invocation.positionalArguments[0],
-        );
-      }
+      return target.triggered(
+        positionalArguments[0],
+      );
     }
+    if (#triggeredOnce == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
 
-    if ( // check if invocation is applicable
-        #triggeredOnce == invocation.memberName) {
-      //method call
-      if (invocation.positionalArguments.length == 1) {
-        return target.triggeredOnce(
-          invocation.positionalArguments[0],
-        );
-      }
+      return target.triggeredOnce(
+        positionalArguments[0],
+      );
     }
+    if (#simpleMethod == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 0; i++)
+        positionalArguments.add(null);
 
-    if ( // check if invocation is applicable
-        #simpleMethod == invocation.memberName) {
-      //method call
-      if (invocation.positionalArguments.length == 0) {
-        return target.simpleMethod();
-      }
+      return target.simpleMethod();
     }
+    if (#methodWithArg == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
 
-    if ( // check if invocation is applicable
-        #methodWithArg == invocation.memberName) {
-      //method call
-      if (invocation.positionalArguments.length == 1) {
-        return target.methodWithArg(
-          invocation.positionalArguments[0],
-        );
-      }
+      return target.methodWithArg(
+        positionalArguments[0],
+      );
     }
+    if (#methodWithArgs == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 2; i++)
+        positionalArguments.add(null);
 
-    if ( // check if invocation is applicable
-        #methodWithArgs == invocation.memberName) {
-      //method call
-      if (invocation.positionalArguments.length == 2) {
-        return target.methodWithArgs(
-          invocation.positionalArguments[0],
-          invocation.positionalArguments[1],
-        );
-      }
+      return target.methodWithArgs(
+        positionalArguments[0],
+        positionalArguments[1],
+      );
     }
+    if (#methodWithNamedArg == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 0; i++)
+        positionalArguments.add(null);
 
-    if ( // check if invocation is applicable
-        #methodWithNamedArg == invocation.memberName) {
-      //method call
-      if (invocation.positionalArguments.length == 0) {
-        return target.methodWithNamedArg(
-            namedArg: invocation.namedArguments[#namedArg]);
-      }
+      return target.methodWithNamedArg(
+          namedArg: invocation.namedArguments[#namedArg]);
     }
+    if (#methodWithNamedArgs == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 0; i++)
+        positionalArguments.add(null);
 
-    if ( // check if invocation is applicable
-        #methodWithNamedArgs == invocation.memberName) {
-      //method call
-      if (invocation.positionalArguments.length == 0) {
-        return target.methodWithNamedArgs(
-            namedArg: invocation.namedArguments[#namedArg],
-            namedArg2: invocation.namedArguments[#namedArg2]);
-      }
+      return target.methodWithNamedArgs(
+          namedArg: invocation.namedArguments[#namedArg],
+          namedArg2: invocation.namedArguments[#namedArg2]);
     }
+    if (#methodWithPosArg == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
 
-    if ( // check if invocation is applicable
-        #methodWithPosArg == invocation.memberName) {
-      //method call
-      if (invocation.positionalArguments.length == 0) {
-        return target.methodWithPosArg();
-      }
-
-      if (invocation.positionalArguments.length == 1) {
-        return target.methodWithPosArg(
-          invocation.positionalArguments[0],
-        );
-      }
+      return target.methodWithPosArg(
+        positionalArguments[0],
+      );
     }
+    if (#methodWithPosArgs == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 2; i++)
+        positionalArguments.add(null);
 
-    if ( // check if invocation is applicable
-        #methodWithPosArgs == invocation.memberName) {
-      //method call
-      if (invocation.positionalArguments.length == 0) {
-        return target.methodWithPosArgs();
-      }
-
-      if (invocation.positionalArguments.length == 1) {
-        return target.methodWithPosArgs(
-          invocation.positionalArguments[0],
-        );
-      }
-
-      if (invocation.positionalArguments.length == 2) {
-        return target.methodWithPosArgs(
-          invocation.positionalArguments[0],
-          invocation.positionalArguments[1],
-        );
-      }
+      return target.methodWithPosArgs(
+        positionalArguments[0],
+        positionalArguments[1],
+      );
     }
+    if (#methodWithMixedPositional == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 2; i++)
+        positionalArguments.add(null);
 
-    if ( // check if invocation is applicable
-        #methodWithMixedPositional == invocation.memberName) {
-      //method call
-      if (invocation.positionalArguments.length == 1) {
-        return target.methodWithMixedPositional(
-          invocation.positionalArguments[0],
-        );
-      }
-
-      if (invocation.positionalArguments.length == 2) {
-        return target.methodWithMixedPositional(
-          invocation.positionalArguments[0],
-          invocation.positionalArguments[1],
-        );
-      }
+      return target.methodWithMixedPositional(
+        positionalArguments[0],
+        positionalArguments[1],
+      );
     }
+    if (#methodWithMixedNamed == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
 
-    if ( // check if invocation is applicable
-        #methodWithMixedNamed == invocation.memberName) {
-      //method call
-      if (invocation.positionalArguments.length == 1) {
-        return target.methodWithMixedNamed(invocation.positionalArguments[0],
-            named: invocation.namedArguments[#named]);
-      }
+      return target.methodWithMixedNamed(positionalArguments[0],
+          named: invocation.namedArguments[#named]);
     }
+    if (#methodWithReturn == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 0; i++)
+        positionalArguments.add(null);
 
-    if ( // check if invocation is applicable
-        #methodWithReturn == invocation.memberName) {
-      //method call
-      if (invocation.positionalArguments.length == 0) {
-        return target.methodWithReturn();
-      }
+      return target.methodWithReturn();
     }
   }
 }

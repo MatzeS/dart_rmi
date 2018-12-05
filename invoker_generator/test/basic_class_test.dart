@@ -13,7 +13,6 @@ abstract class BasicClass extends Test.BasicClass implements Invocable {}
 class LoggingClass implements BasicClass {
   Map<Symbol, int> log = {};
   List<Object> arguments = [];
-  int get argCount => arguments.where((e) => e != null).toList().length;
   void _log(Symbol key) {
     if (log.containsKey(key)) {
       int count = log[key];
@@ -165,8 +164,9 @@ void main() {
           Invocation.method(#methodWithMixedPositional, [significantNumber]));
 
       expect(testObject.triggeredOnce(#methodWithMixedPositional), true);
-      expect(testObject.argCount, 1);
+      expect(testObject.arguments.length, 2);
       expect(testObject.arguments[0], significantNumber);
+      expect(testObject.arguments[1], null);
     });
 
     test('optional positional and required, with optional', () {
@@ -184,8 +184,9 @@ void main() {
           Invocation.method(#methodWithMixedNamed, [significantNumber]));
 
       expect(testObject.triggeredOnce(#methodWithMixedNamed), true);
-      expect(testObject.argCount, 1);
+      expect(testObject.arguments.length, 2);
       expect(testObject.arguments[0], significantNumber);
+      expect(testObject.arguments[1], null);
     });
 
     test('optional named and required , with optional', () {
