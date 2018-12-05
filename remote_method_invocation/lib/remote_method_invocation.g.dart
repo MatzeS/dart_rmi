@@ -34,6 +34,6 @@ Serializers _$defaultSerializers = (new Serializers().toBuilder()
 // InvokerGenerator
 // **************************************************************************
 
-class _$RpcTargetInvoker {
-  static invoke(Invocation invocation, RpcTarget target) {}
+class _$RmiTargetInvoker {
+  static invoke(Invocation invocation, RmiTarget target) {}
 }

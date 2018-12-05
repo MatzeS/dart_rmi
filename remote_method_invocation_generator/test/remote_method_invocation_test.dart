@@ -14,7 +14,7 @@ part 'remote_method_invocation_test.g.dart';
 
 bool triggered = false;
 
-class TargetClass implements RpcTarget {
+class TargetClass implements RmiTarget {
   TargetClass();
 
   @override
@@ -26,9 +26,9 @@ class TargetClass implements RpcTarget {
   }
 
   factory TargetClass.getRemote(Connection connection) =>
-      _$TargetClassRpc.getRemote(connection);
+      _$TargetClassRmi.getRemote(connection);
   static void exposeRemote(Connection connection, TargetClass target) =>
-      rpcExposeRemote(connection, target);
+      rmiExposeRemote(connection, target);
 }
 
 main() {

@@ -11,21 +11,12 @@ import 'dart:convert';
 
 part 'remote_method_invocation.g.dart';
 
-abstract class RpcTarget implements Invocable {}
+abstract class RmiTarget implements Invocable, Proxy {}
 
 class Connection {
   Stream<String> input;
   StreamSink<String> output;
   Connection(this.input, this.output);
-}
-
-abstract class RemoteMethodInvocation<T> {
-  StreamSink<String> get outputStream;
-  Stream<String> get inputStream;
-
-  T get target;
-
-  RemoteMethodInvocation() {}
 }
 
 @SerializersFor(const [SerializableInvocation])
@@ -36,9 +27,9 @@ void prepareSerializers() {
   serializersBuilder.addPlugin(new StandardJsonPlugin());
 }
 
-class RpcProxyHandler extends ProxyHandler {
+class RmiProxyHandler extends ProxyHandler {
   Connection connection;
-  RpcProxyHandler(this.connection);
+  RmiProxyHandler(this.connection);
   @override
   Object handle(Invocation invocation) {
     //TODO serialize sub parameters
@@ -53,7 +44,7 @@ class RpcProxyHandler extends ProxyHandler {
   }
 }
 
-void rpcExposeRemote(Connection connection, Invocable target) {
+void rmiExposeRemote(Connection connection, Invocable target) {
   connection.input.listen((onData) {
     prepareSerializers();
     Serializers serializers = serializersBuilder.build();
@@ -64,24 +55,3 @@ void rpcExposeRemote(Connection connection, Invocable target) {
     target.invoke(invocation);
   });
 }
-
-// class RMIProxyHandler extends ProxyHandler {
-//   Stream<String> inputStream;
-//   StreamSink<String> outputStream;
-
-//   RMIProxyHandler(this.inputStream, this.outputStream);
-
-//   @override
-//   Object handle(Invocation invocation) {
-//     //sned and receive and return
-
-//     convertInvocation(invocation);
-//   }
-// }
-
-// T getRemoteTarget<T>(
-//     Stream<String> inputStream, StreamSink<String> outputStream) {
-//   ProxyHandler proxyHandler = new RMIProxyHandler(inputStream, outputStream);
-//   // return T.proxy(proxyHandler);
-//   return null;
-// }

@@ -13,7 +13,7 @@ class ProxyGenerator extends Generator {
   BuilderOptions options;
   ProxyGenerator(this.options);
 
-  // bool get isRpcActive => options.config.containsKey('rpc');
+  // bool get isRmiActive => options.config.containsKey('rmi');
 
   bool isAnnotatedWith<T>(Element element) {
     return TypeChecker.fromRuntime(T).firstAnnotationOf(element) != null;
@@ -21,11 +21,7 @@ class ProxyGenerator extends Generator {
 
   bool elementFilter(Element element) {
     if (isAnnotatedWith<Proxy>(element)) return true;
-    // if (TypeChecker.fromRuntime(RpcTarget).isAssignableFrom(element))
-    //   return true; //TODO
-    if (element is ClassElement &&
-        element.interfaces.map((i) => i.name).contains('RpcTarget'))
-      return true;
+    if (TypeChecker.fromRuntime(Proxy).isAssignableFrom(element)) return true;
 
     return false;
   }

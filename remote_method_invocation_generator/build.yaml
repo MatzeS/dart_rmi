@@ -8,8 +8,8 @@ builders:
   remote_method_invocation:
     target: ":remote_method_invocation_generator"
     import: "package:remote_method_invocation_generator/builder.dart"
-    builder_factories: ["rpcBuilder"]
-    build_extensions: {".dart": [".rpc.g.part"]}
+    builder_factories: ["rmiBuilder"]
+    build_extensions: {".dart": [".rmi.g.part"]}
     auto_apply: dependents
     build_to: cache
     applies_builders: ["source_gen|combining_builder"]

@@ -26,7 +26,7 @@ class InvokerGenerator extends Generator {
       return true;
     // if (element is ClassElement &&
     //     element.interfaces.contains(
-    //         (i) => TypeChecker.fromRuntime(RpcTarget).isAssignableFrom(i)))
+    //         (i) => TypeChecker.fromRuntime(RmiTarget).isAssignableFrom(i)))
     //   return true;
 
     return false;

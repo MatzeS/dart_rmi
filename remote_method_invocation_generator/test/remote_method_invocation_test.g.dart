@@ -51,12 +51,12 @@ class _$TargetClassProxy implements TargetClass {
 }
 
 // **************************************************************************
-// RpcGenerator
+// RmiGenerator
 // **************************************************************************
 
-class _$TargetClassRpc {
+class _$TargetClassRmi {
   static TargetClass getRemote(Connection connection) {
-    ProxyHandler handler = RpcProxyHandler(connection);
+    ProxyHandler handler = RmiProxyHandler(connection);
     return _$TargetClassProxy(handler);
   }
 }
