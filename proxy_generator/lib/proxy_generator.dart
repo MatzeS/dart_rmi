@@ -40,8 +40,11 @@ class ProxyGenerator extends Generator {
     }
 
     ClassElement classElement = element as ClassElement;
+
     ProxyClassVisitor classvisitor = new ProxyClassVisitor();
-    classElement.visitChildren(classvisitor);
+    classElement.allSupertypes
+        .forEach((i) => (i.element.visitChildren(classvisitor)));
+    // classElement.visitChildren(classvisitor);
 
     if (!classvisitor.foundNoArgConstructor) {
       log.severe('${classElement} must have a no argument constructor');
@@ -49,9 +52,9 @@ class ProxyGenerator extends Generator {
 
     String classOutput = '''
     class _\$${classElement.name}Proxy implements ${classElement.name}{
-      ProxyHandler _handler;
+      InvocationHandlerFunction _handle;
 
-      _\$${classElement.name}Proxy(this._handler) : super();
+      _\$${classElement.name}Proxy(this._handle) : super();
 
       ${classvisitor.outputString}
     }
@@ -71,6 +74,7 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
   void visitMethodElement(MethodElement element) {
     if (element.isGenerator) return;
     if (element.isStatic) return;
+    if (element.isOperator) return; //TODO
 
     bool hasNamedArgs = element.parameters.any((p) => p.isNamed);
     bool hasPositionalArgs =
@@ -119,7 +123,7 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
         Invocation _\$invocation = Invocation
           .method(#${element.name}, arguments, namedArguments);
 
-        ${!element.returnType.isVoid ? 'return' : ''} _handler.handle(_\$invocation);
+        ${!element.returnType.isVoid ? 'return' : ''} _handle(_\$invocation);
       }
     ''');
   }
@@ -137,7 +141,7 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
       get ${element.name}{
         Invocation invocation = Invocation.getter(#${element.name});
 
-        return _handler.handle(invocation);
+        return _handle(invocation);
       }
     ''');
   }
@@ -150,15 +154,20 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
         Invocation invocation = Invocation.setter(
           #${element.displayName}, ${element.parameters.first.displayName});
 
-        _handler.handle(invocation);
+        _handle(invocation);
       }
     ''');
   }
 
   @override
   visitPropertyAccessorElement(PropertyAccessorElement element) {
-    if (element.isGetter) generateGetter(element);
-    if (element.isSetter) generateSetter(element);
+    if (element.isGetter) {
+      generateGetter(element);
+    } else if (element.isSetter) {
+      generateSetter(element);
+    } else {
+      throw new Exception('invalid accessor element');
+    }
   }
 
   @override

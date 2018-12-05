@@ -1,34 +1,47 @@
 import 'package:test/test.dart';
-
-import 'package:rmi_tests/proxy/classes.dart';
 import 'package:proxy/proxy.dart';
+import 'package:rmi_test/basic_class.dart';
 
-class RecordingHandler extends ProxyHandler {
+part 'basic_class_test.g.dart';
+
+const num significantNumber = 123456789;
+const String significantString = 'asdf';
+
+class RecordingHandler {
   List<Invocation> invocations = [];
   @override
   Object handle(Invocation invocation) {
     invocations.add(invocation);
+    return null;
   }
 }
 
-class ReturnValueHandler extends ProxyHandler {
+class ReturnValueHandler {
+  Object returnValue;
+  ReturnValueHandler(this.returnValue);
   List<Invocation> invocations = [];
   @override
   Object handle(Invocation invocation) {
     invocations.add(invocation);
-    return 123456789;
+    return returnValue;
   }
 }
 
-class ExceptionHandler extends ProxyHandler {
+class ExceptionHandler extends Proxy {
   List<Invocation> invocations = [];
-  Exception get thrownException => new Exception("well this is a exception");
+  Exception toThrow;
+  ExceptionHandler(this.toThrow);
 
   @override
   Object handle(Invocation invocation) {
     invocations.add(invocation);
-    throw thrownException;
+    throw toThrow;
   }
+}
+
+class TestClass extends BasicClass implements Proxy {
+  factory TestClass.proxy(InvocationHandlerFunction handler) =>
+      _$TestClassProxy(handler);
 }
 
 void main() {
@@ -38,9 +51,9 @@ void main() {
     RecordingHandler handler;
     setUp(() {
       handler = new RecordingHandler();
-      testObject = TestClass.proxy(handler);
+      testObject = TestClass.proxy(handler.handle);
     });
-    test('TestClass.simpleMethod generation', () {
+    test('simple method', () {
       testObject.simpleMethod();
 
       expect(handler.invocations.length, 1);
@@ -50,37 +63,41 @@ void main() {
       expect(handler.invocations.first.positionalArguments.length, 0);
     });
 
-    test('TestClass single argument passing', () {
-      testObject.methodWithArg(123456789);
+    test('single argument', () {
+      testObject.methodWithArg(significantNumber);
 
       expect(handler.invocations.first.namedArguments.isEmpty, true);
       expect(handler.invocations.first.positionalArguments.length, 1);
-      expect(handler.invocations.first.positionalArguments.first, 123456789);
+      expect(handler.invocations.first.positionalArguments.first,
+          significantNumber);
     });
 
-    test('TestClass two arguments passing', () {
-      testObject.methodWithArgs(123456789, 'asdf');
+    test('two arguments', () {
+      testObject.methodWithArgs(significantNumber, significantString);
 
       expect(handler.invocations.first.positionalArguments.length, 2);
-      expect(handler.invocations.first.positionalArguments[0], 123456789);
-      expect(handler.invocations.first.positionalArguments[1], 'asdf');
+      expect(
+          handler.invocations.first.positionalArguments[0], significantNumber);
+      expect(
+          handler.invocations.first.positionalArguments[1], significantString);
     });
 
-    test('TestClass one positional arg empty', () {
+    test('one positional argument (not set)', () {
       testObject.methodWithPosArg();
 
       expect(handler.invocations.first.namedArguments.isEmpty, true);
       expect(handler.invocations.first.positionalArguments.length, 1);
       expect(handler.invocations.first.positionalArguments.first, null);
     });
-    test('TestClass one positional arg set', () {
-      testObject.methodWithPosArg(123456789);
+    test('one positioanl argument (set)', () {
+      testObject.methodWithPosArg(significantNumber);
 
       expect(handler.invocations.first.positionalArguments.length, 1);
-      expect(handler.invocations.first.positionalArguments.first, 123456789);
+      expect(handler.invocations.first.positionalArguments.first,
+          significantNumber);
     });
 
-    test('TestClass two positional arg both empty', () {
+    test('two positional arguments (none set)', () {
       testObject.methodWithPosArgs();
 
       expect(handler.invocations.first.positionalArguments.length, 2);
@@ -88,23 +105,26 @@ void main() {
       expect(handler.invocations.first.positionalArguments[1], null);
     });
 
-    test('TestClass two positional arg one empty one set', () {
-      testObject.methodWithPosArgs(123456789);
+    test('two positional arguments (one set)', () {
+      testObject.methodWithPosArgs(significantNumber);
 
       expect(handler.invocations.first.positionalArguments.length, 2);
-      expect(handler.invocations.first.positionalArguments[0], 123456789);
+      expect(
+          handler.invocations.first.positionalArguments[0], significantNumber);
       expect(handler.invocations.first.positionalArguments[1], null);
     });
 
-    test('TestClass two positional arg both set', () {
-      testObject.methodWithPosArgs(123456789, 'asdf');
+    test('two positional arguments (two set)', () {
+      testObject.methodWithPosArgs(significantNumber, significantString);
 
       expect(handler.invocations.first.positionalArguments.length, 2);
-      expect(handler.invocations.first.positionalArguments[0], 123456789);
-      expect(handler.invocations.first.positionalArguments[1], 'asdf');
+      expect(
+          handler.invocations.first.positionalArguments[0], significantNumber);
+      expect(
+          handler.invocations.first.positionalArguments[1], significantString);
     });
 
-    test('TestClass one named arg empty', () {
+    test('one named arguments (not set)', () {
       testObject.methodWithNamedArg();
 
       expect(handler.invocations.first.positionalArguments.isEmpty, true);
@@ -112,7 +132,7 @@ void main() {
       expect(handler.invocations.first.namedArguments['namedArg'], null);
     });
 
-    test('TestClass one named arg set', () {
+    test('one named arguments (set)', () {
       testObject.methodWithNamedArg(namedArg: 1234);
 
       expect(handler.invocations.first.positionalArguments.isEmpty, true);
@@ -120,7 +140,7 @@ void main() {
       expect(handler.invocations.first.namedArguments[#namedArg], 1234);
     });
 
-    test('TestClass tow named arg both empty', () {
+    test('two named arguments (none set)', () {
       testObject.methodWithNamedArgs();
 
       expect(handler.invocations.first.positionalArguments.isEmpty, true);
@@ -129,7 +149,7 @@ void main() {
       expect(handler.invocations.first.namedArguments[#namedArg2], null);
     });
 
-    test('TestClass tow named arg only first set', () {
+    test('two named arguments (first set)', () {
       testObject.methodWithNamedArgs(namedArg: 1234);
 
       expect(handler.invocations.first.positionalArguments.isEmpty, true);
@@ -138,30 +158,32 @@ void main() {
       expect(handler.invocations.first.namedArguments[#namedArg2], null);
     });
 
-    test('TestClass tow named arg only second set', () {
-      testObject.methodWithNamedArgs(namedArg2: 'asdf');
+    test('two named arguments (second set)', () {
+      testObject.methodWithNamedArgs(namedArg2: significantString);
 
       expect(handler.invocations.first.positionalArguments.isEmpty, true);
       expect(handler.invocations.first.namedArguments.length, 2);
       expect(handler.invocations.first.namedArguments[#namedArg], null);
-      expect(handler.invocations.first.namedArguments[#namedArg2], 'asdf');
+      expect(handler.invocations.first.namedArguments[#namedArg2],
+          significantString);
     });
 
-    test('TestClass tow named arg both set', () {
-      testObject.methodWithNamedArgs(namedArg: 1234, namedArg2: 'asdf');
+    test('two named arguments (both set)', () {
+      testObject.methodWithNamedArgs(
+          namedArg: 1234, namedArg2: significantString);
 
       expect(handler.invocations.first.positionalArguments.isEmpty, true);
       expect(handler.invocations.first.namedArguments.length, 2);
       expect(handler.invocations.first.namedArguments[#namedArg], 1234);
-      expect(handler.invocations.first.namedArguments[#namedArg2], 'asdf');
+      expect(handler.invocations.first.namedArguments[#namedArg2],
+          significantString);
     });
   });
-
-  group('return value tests', () {
+  group('return value', () {
     ReturnValueHandler handler;
     setUp(() {
-      handler = new ReturnValueHandler();
-      testObject = TestClass.proxy(handler);
+      handler = new ReturnValueHandler(significantNumber);
+      testObject = TestClass.proxy(handler.handle);
     });
     test('general call test', () {
       testObject.methodWithReturn();
@@ -176,15 +198,15 @@ void main() {
 
     test('correct return value', () {
       var returned = testObject.methodWithReturn();
-      expect(returned, 123456789);
+      expect(returned, significantNumber);
     });
   });
 
-  group('getter /', () {
+  group('getter', () {
     ReturnValueHandler handler;
     setUp(() {
-      handler = new ReturnValueHandler();
-      testObject = TestClass.proxy(handler);
+      handler = new ReturnValueHandler(significantNumber);
+      testObject = TestClass.proxy(handler.handle);
     });
     test('general call test', () {
       testObject.aGetter;
@@ -199,15 +221,15 @@ void main() {
 
     test('correct return value', () {
       var returned = testObject.methodWithReturn();
-      expect(returned, 123456789);
+      expect(returned, significantNumber);
     });
   });
 
-  group('setter /', () {
+  group('setter', () {
     RecordingHandler handler;
     setUp(() {
       handler = new RecordingHandler();
-      testObject = TestClass.proxy(handler);
+      testObject = TestClass.proxy(handler.handle);
     });
     test('general call test', () {
       testObject.aSetter = 1;
@@ -221,17 +243,19 @@ void main() {
     });
 
     test('arg passing', () {
-      testObject.aSetter = 123456789;
+      testObject.aSetter = significantNumber;
 
-      expect(handler.invocations.first.positionalArguments.first, 123456789);
+      expect(handler.invocations.first.positionalArguments.first,
+          significantNumber);
     });
   });
 
   group('exception tests', () {
     ExceptionHandler handler;
+    Exception exception = new Exception('well this is an exception');
     setUp(() {
-      handler = new ExceptionHandler();
-      testObject = TestClass.proxy(handler);
+      handler = new ExceptionHandler(exception);
+      testObject = TestClass.proxy(handler.handle);
     });
     test('general call test', () {
       try {
@@ -247,13 +271,9 @@ void main() {
     });
 
     test('threw excpetion', () {
-      bool thrown = false;
-      try {
+      expect(new Future(() {
         testObject.simpleMethod();
-      } on Exception catch (e) {
-        thrown = true;
-      }
-      expect(thrown, true);
+      }), throwsA(exception));
     });
   });
 }

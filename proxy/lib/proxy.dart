@@ -1,13 +1,17 @@
 library proxy;
 
-/// Annotate a class with this to generate a proxy implementation
+/// Annotate or implement this to generate a proxy implementation
 ///
-/// Add a factory redirecting to the generated proxy, this also takes the invocation handler
-/// TODO write example here
+/// Add a proxy-factory redirecting to the generated code
+/// ```
+/// class ExampleClass implements Proxy {
+///   factory ExampleClass.proxy(InvocationHandlerFunction handler)
+///     => _$ExampleClassProxy(handler);
+/// }
+/// ```
 class Proxy {
   const Proxy();
 }
 
-abstract class ProxyHandler {
-  Object handle(Invocation invocation);
-}
+/// Implement this to handle the invocation
+typedef Object InvocationHandlerFunction(Invocation invocation);
