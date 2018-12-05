@@ -2,7 +2,7 @@ name: invoker
 version: 0.0.0
 description: >
   Invoker objects can invoke methods on an object given an Invokation parameter.
-  This library is the runtime dependency.
+  This library is the runtime dependency. Additionally add `invoker_generator` as dev dependency.  
 authors:
 - Matthias Sokolowski <matthias.sokolowski@googlemail.com>
 

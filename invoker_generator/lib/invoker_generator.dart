@@ -46,7 +46,7 @@ class InvokerGenerator extends Generator {
     classElement.visitChildren(visitor);
     return '''
         class _\$${classElement.name}Invoker {
-          static invoke(Invocation invocation, ${classElement.name} target){
+          static dynamic invoke(Invocation invocation, ${classElement.name} target){
             ${visitor.outputString}
           }
         }
@@ -98,6 +98,7 @@ class InvocableClassVisitor extends ThrowingElementVisitor {
 
     output.write('''
       if( 
+        invocation.isMethod &&
         #${element.displayName} == invocation.memberName
       ){ 
         List<Object> positionalArguments = List.from(invocation.positionalArguments);
@@ -111,11 +112,32 @@ class InvocableClassVisitor extends ThrowingElementVisitor {
 
   @override
   visitPropertyAccessorElement(PropertyAccessorElement element) {
-    print(element);
+    if (element.isSetter) {
+      output.write('''
+      if( 
+        invocation.isSetter &&
+        #${element.displayName} == invocation.memberName
+      ){ 
+        target.${element.displayName} = invocation.positionalArguments[0];
+        return null;
+      }
+    ''');
+    } else if (element.isGetter) {
+      output.write('''
+      if( 
+        invocation.isGetter &&
+        #${element.displayName} == invocation.memberName
+      ){ 
+        return target.${element.displayName};
+      }
+    ''');
+    } else {
+      throw new Exception('invalid property accessor');
+    }
   }
 
   @override
   visitFieldElement(FieldElement element) {
-    print(element);
+    // handled by property accessor
   }
 }

@@ -86,6 +86,7 @@ class LoggingClass implements BasicClass {
 
   num get aGetter {
     _log(#aGetter);
+    return significantNumber;
   }
 
   set aSetter(num arg) {
@@ -93,7 +94,15 @@ class LoggingClass implements BasicClass {
     _arg(arg);
   }
 
-  num aField; //TODO
+  num get aField {
+    _log(#aField);
+    return significantNumber;
+  }
+
+  set aField(num aField) {
+    _log(#aField);
+    _arg(aField);
+  }
 
   @override
   Object invoke(Invocation invocation) =>
@@ -101,25 +110,26 @@ class LoggingClass implements BasicClass {
 }
 
 void main() {
-  group('basic class/', () {
-    LoggingClass testObject;
-    setUp(() {
-      testObject = new LoggingClass();
-    });
-    test('simple method test', () {
+  LoggingClass testObject;
+  setUp(() {
+    testObject = new LoggingClass();
+  });
+  group('general', () {
+    test('simple method call', () {
       testObject.invoke(Invocation.method(#simpleMethod, []));
       expect(testObject.triggeredOnce(#simpleMethod), true);
       testObject.invoke(Invocation.method(#simpleMethod, []));
       expect(testObject.triggered(#simpleMethod), 2);
     });
-    test('single arg test', () {
+  });
+  group('arguments', () {
+    test('single arg', () {
       testObject.invoke(Invocation.method(#methodWithArg, [significantNumber]));
 
       expect(testObject.triggeredOnce(#methodWithArg), true);
       expect(testObject.arguments.length, 1);
       expect(testObject.arguments.first, significantNumber);
     });
-
     test('two args', () {
       testObject.invoke(Invocation.method(
           #methodWithArgs, [significantNumber, significantString]));
@@ -129,8 +139,9 @@ void main() {
       expect(testObject.arguments[0], significantNumber);
       expect(testObject.arguments[1], significantString);
     });
-
-    test('optional named arg', () {
+  });
+  group('named arguments', () {
+    test('single named arg', () {
       testObject.invoke(Invocation.method(
           #methodWithNamedArg, [], {#namedArg: significantNumber}));
 
@@ -138,8 +149,7 @@ void main() {
       expect(testObject.arguments.length, 1);
       expect(testObject.arguments[0], significantNumber);
     });
-
-    test('optional named args', () {
+    test('two named args', () {
       testObject.invoke(Invocation.method(#methodWithNamedArgs, [],
           {#namedArg: significantNumber, #namedArg2: significantString}));
 
@@ -148,38 +158,7 @@ void main() {
       expect(testObject.arguments[0], significantNumber);
       expect(testObject.arguments[1], significantString);
     });
-
-    test('optional positional args', () {
-      testObject.invoke(Invocation.method(
-          #methodWithPosArgs, [significantNumber, significantString]));
-
-      expect(testObject.triggeredOnce(#methodWithPosArgs), true);
-      expect(testObject.arguments.length, 2);
-      expect(testObject.arguments[0], significantNumber);
-      expect(testObject.arguments[1], significantString);
-    });
-
-    test('optional positional and required, no optional', () {
-      testObject.invoke(
-          Invocation.method(#methodWithMixedPositional, [significantNumber]));
-
-      expect(testObject.triggeredOnce(#methodWithMixedPositional), true);
-      expect(testObject.arguments.length, 2);
-      expect(testObject.arguments[0], significantNumber);
-      expect(testObject.arguments[1], null);
-    });
-
-    test('optional positional and required, with optional', () {
-      testObject.invoke(Invocation.method(#methodWithMixedPositional,
-          [significantNumber, significantNumber + 1]));
-
-      expect(testObject.triggeredOnce(#methodWithMixedPositional), true);
-      expect(testObject.arguments.length, 2);
-      expect(testObject.arguments[0], significantNumber);
-      expect(testObject.arguments[1], significantNumber + 1);
-    });
-
-    test('optional named and required, no optional', () {
+    test('one required, one optional (not set)', () {
       testObject.invoke(
           Invocation.method(#methodWithMixedNamed, [significantNumber]));
 
@@ -188,8 +167,7 @@ void main() {
       expect(testObject.arguments[0], significantNumber);
       expect(testObject.arguments[1], null);
     });
-
-    test('optional named and required , with optional', () {
+    test('one required, one optional (set)', () {
       testObject.invoke(Invocation.method(#methodWithMixedNamed,
           [significantNumber], {#named: significantNumber + 1}));
 
@@ -197,6 +175,75 @@ void main() {
       expect(testObject.arguments.length, 2);
       expect(testObject.arguments[0], significantNumber);
       expect(testObject.arguments[1], significantNumber + 1);
+    });
+  });
+  group('positional optional arguments', () {
+    test('one positional arg', () {
+      testObject
+          .invoke(Invocation.method(#methodWithPosArg, [significantNumber]));
+
+      expect(testObject.triggeredOnce(#methodWithPosArg), true);
+      expect(testObject.arguments.length, 1);
+      expect(testObject.arguments[0], significantNumber);
+    });
+    test('two positional args', () {
+      testObject.invoke(Invocation.method(
+          #methodWithPosArgs, [significantNumber, significantString]));
+
+      expect(testObject.triggeredOnce(#methodWithPosArgs), true);
+      expect(testObject.arguments.length, 2);
+      expect(testObject.arguments[0], significantNumber);
+      expect(testObject.arguments[1], significantString);
+    });
+    test('one required, one optional (not set)', () {
+      testObject.invoke(
+          Invocation.method(#methodWithMixedPositional, [significantNumber]));
+
+      expect(testObject.triggeredOnce(#methodWithMixedPositional), true);
+      expect(testObject.arguments.length, 2);
+      expect(testObject.arguments[0], significantNumber);
+      expect(testObject.arguments[1], null);
+    });
+    test('one required, one optional (set)', () {
+      testObject.invoke(Invocation.method(#methodWithMixedPositional,
+          [significantNumber, significantNumber + 1]));
+
+      expect(testObject.triggeredOnce(#methodWithMixedPositional), true);
+      expect(testObject.arguments.length, 2);
+      expect(testObject.arguments[0], significantNumber);
+      expect(testObject.arguments[1], significantNumber + 1);
+    });
+  });
+  group('accessor', () {
+    test('getter', () {
+      num val = testObject.invoke(Invocation.getter(#aGetter));
+
+      expect(testObject.triggeredOnce(#aGetter), true);
+      expect(testObject.arguments.length, 0);
+      expect(val, significantNumber);
+    });
+    test('setter', () {
+      testObject.invoke(Invocation.setter(#aSetter, significantNumber));
+
+      expect(testObject.triggeredOnce(#aSetter), true);
+      expect(testObject.arguments.length, 1);
+      expect(testObject.arguments[0], significantNumber);
+    });
+  });
+  group('field', () {
+    test('getter', () {
+      num val = testObject.invoke(Invocation.getter(#aField));
+
+      expect(testObject.triggeredOnce(#aField), true);
+      expect(testObject.arguments.length, 0);
+      expect(val, significantNumber);
+    });
+    test('setter', () {
+      testObject.invoke(Invocation.setter(#aField, significantNumber));
+
+      expect(testObject.triggeredOnce(#aField), true);
+      expect(testObject.arguments.length, 1);
+      expect(testObject.arguments[0], significantNumber);
     });
   });
 }

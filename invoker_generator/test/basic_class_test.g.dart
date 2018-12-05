@@ -7,12 +7,40 @@ part of 'basic_class_test.dart';
 // **************************************************************************
 
 class _$BasicClassInvoker {
-  static invoke(Invocation invocation, BasicClass target) {}
+  static dynamic invoke(Invocation invocation, BasicClass target) {}
 }
 
 class _$LoggingClassInvoker {
-  static invoke(Invocation invocation, LoggingClass target) {
-    if (#_log == invocation.memberName) {
+  static dynamic invoke(Invocation invocation, LoggingClass target) {
+    if (invocation.isGetter && #log == invocation.memberName) {
+      return target.log;
+    }
+    if (invocation.isSetter && #log == invocation.memberName) {
+      target.log = invocation.positionalArguments[0];
+      return null;
+    }
+    if (invocation.isGetter && #arguments == invocation.memberName) {
+      return target.arguments;
+    }
+    if (invocation.isSetter && #arguments == invocation.memberName) {
+      target.arguments = invocation.positionalArguments[0];
+      return null;
+    }
+    if (invocation.isGetter && #aGetter == invocation.memberName) {
+      return target.aGetter;
+    }
+    if (invocation.isSetter && #aSetter == invocation.memberName) {
+      target.aSetter = invocation.positionalArguments[0];
+      return null;
+    }
+    if (invocation.isGetter && #aField == invocation.memberName) {
+      return target.aField;
+    }
+    if (invocation.isSetter && #aField == invocation.memberName) {
+      target.aField = invocation.positionalArguments[0];
+      return null;
+    }
+    if (invocation.isMethod && #_log == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
       for (int i = invocation.positionalArguments.length; i < 1; i++)
@@ -22,7 +50,7 @@ class _$LoggingClassInvoker {
         positionalArguments[0],
       );
     }
-    if (#_arg == invocation.memberName) {
+    if (invocation.isMethod && #_arg == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
       for (int i = invocation.positionalArguments.length; i < 1; i++)
@@ -32,7 +60,7 @@ class _$LoggingClassInvoker {
         positionalArguments[0],
       );
     }
-    if (#triggered == invocation.memberName) {
+    if (invocation.isMethod && #triggered == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
       for (int i = invocation.positionalArguments.length; i < 1; i++)
@@ -42,7 +70,7 @@ class _$LoggingClassInvoker {
         positionalArguments[0],
       );
     }
-    if (#triggeredOnce == invocation.memberName) {
+    if (invocation.isMethod && #triggeredOnce == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
       for (int i = invocation.positionalArguments.length; i < 1; i++)
@@ -52,7 +80,7 @@ class _$LoggingClassInvoker {
         positionalArguments[0],
       );
     }
-    if (#simpleMethod == invocation.memberName) {
+    if (invocation.isMethod && #simpleMethod == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
       for (int i = invocation.positionalArguments.length; i < 0; i++)
@@ -60,7 +88,7 @@ class _$LoggingClassInvoker {
 
       return target.simpleMethod();
     }
-    if (#methodWithArg == invocation.memberName) {
+    if (invocation.isMethod && #methodWithArg == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
       for (int i = invocation.positionalArguments.length; i < 1; i++)
@@ -70,7 +98,7 @@ class _$LoggingClassInvoker {
         positionalArguments[0],
       );
     }
-    if (#methodWithArgs == invocation.memberName) {
+    if (invocation.isMethod && #methodWithArgs == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
       for (int i = invocation.positionalArguments.length; i < 2; i++)
@@ -81,7 +109,7 @@ class _$LoggingClassInvoker {
         positionalArguments[1],
       );
     }
-    if (#methodWithNamedArg == invocation.memberName) {
+    if (invocation.isMethod && #methodWithNamedArg == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
       for (int i = invocation.positionalArguments.length; i < 0; i++)
@@ -90,7 +118,7 @@ class _$LoggingClassInvoker {
       return target.methodWithNamedArg(
           namedArg: invocation.namedArguments[#namedArg]);
     }
-    if (#methodWithNamedArgs == invocation.memberName) {
+    if (invocation.isMethod && #methodWithNamedArgs == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
       for (int i = invocation.positionalArguments.length; i < 0; i++)
@@ -100,7 +128,7 @@ class _$LoggingClassInvoker {
           namedArg: invocation.namedArguments[#namedArg],
           namedArg2: invocation.namedArguments[#namedArg2]);
     }
-    if (#methodWithPosArg == invocation.memberName) {
+    if (invocation.isMethod && #methodWithPosArg == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
       for (int i = invocation.positionalArguments.length; i < 1; i++)
@@ -110,7 +138,7 @@ class _$LoggingClassInvoker {
         positionalArguments[0],
       );
     }
-    if (#methodWithPosArgs == invocation.memberName) {
+    if (invocation.isMethod && #methodWithPosArgs == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
       for (int i = invocation.positionalArguments.length; i < 2; i++)
@@ -121,7 +149,8 @@ class _$LoggingClassInvoker {
         positionalArguments[1],
       );
     }
-    if (#methodWithMixedPositional == invocation.memberName) {
+    if (invocation.isMethod &&
+        #methodWithMixedPositional == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
       for (int i = invocation.positionalArguments.length; i < 2; i++)
@@ -132,7 +161,7 @@ class _$LoggingClassInvoker {
         positionalArguments[1],
       );
     }
-    if (#methodWithMixedNamed == invocation.memberName) {
+    if (invocation.isMethod && #methodWithMixedNamed == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
       for (int i = invocation.positionalArguments.length; i < 1; i++)
@@ -141,7 +170,7 @@ class _$LoggingClassInvoker {
       return target.methodWithMixedNamed(positionalArguments[0],
           named: invocation.namedArguments[#named]);
     }
-    if (#methodWithReturn == invocation.memberName) {
+    if (invocation.isMethod && #methodWithReturn == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
       for (int i = invocation.positionalArguments.length; i < 0; i++)
