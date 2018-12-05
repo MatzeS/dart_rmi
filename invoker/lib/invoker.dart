@@ -7,4 +7,6 @@ abstract class Invocable {
   Object invoke(Invocation invocation);
 }
 
-const String notInvocable = 'notInvocable';
+abstract class NotInvocable {
+  const NotInvocable();
+}

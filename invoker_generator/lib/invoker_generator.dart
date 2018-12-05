@@ -18,16 +18,12 @@ class InvokerGenerator extends Generator {
   }
 
   bool elementFilter(Element element) {
-    if (element.metadata
-        .map((e) => e.computeConstantValue().toStringValue())
-        .contains(notInvocable)) return false;
+    if (isAnnotatedWith<NotInvocable>(element)) return false;
+    if (TypeChecker.fromRuntime(NotInvocable).isAssignableFrom(element))
+      return false;
 
     if (TypeChecker.fromRuntime(Invocable).isAssignableFrom(element))
       return true;
-    // if (element is ClassElement &&
-    //     element.interfaces.contains(
-    //         (i) => TypeChecker.fromRuntime(RmiTarget).isAssignableFrom(i)))
-    //   return true;
 
     return false;
   }
@@ -69,6 +65,7 @@ class InvocableClassVisitor extends ThrowingElementVisitor {
   visitConstructorElement(ConstructorElement element) {
     // constructors cannot be called by invocations
   }
+
   @override
   visitMethodElement(MethodElement element) {
     if (element.isStatic) return;
@@ -111,9 +108,9 @@ class InvocableClassVisitor extends ThrowingElementVisitor {
     }
 
     output.write('''
-      if( // check if invocation is applicable
+      if( 
         #${element.displayName} == invocation.memberName
-      ){ //method call
+      ){ 
         ${methodCalls.join('\n')}
       }
 

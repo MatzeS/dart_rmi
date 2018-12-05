@@ -1,4 +1,4 @@
-name: rmi_tests
+name: rmi_test
 version: 0.0.0
 description: >
   Tests for RMI, proxy objects and inovker.
@@ -16,12 +16,12 @@ dependencies:
     path: ../invoker
   
 dev_dependencies:
+  build_runner:
   built_value_generator:
   proxy_generator:
     path: ../proxy_generator
   invoker_generator:
     path: ../invoker_generator
-  build_runner:
   test: ^1.0.0
   
 
