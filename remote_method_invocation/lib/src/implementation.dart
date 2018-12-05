@@ -43,17 +43,18 @@ class RmiProxyHandler {
     connection.output.add(serializedJson);
 
     Response response = await answer;
-    print('response got ' + response.returnValue.toString());
     return response.returnValue;
   }
 }
 
 void internalExposeRemote(Connection connection, Invocable target) {
-  connection.input.listen((onData) {
+  connection.input.listen((onData) async {
     Query query = serializers.deserialize(json.decode(onData));
     Invocation invocation = convertSerializableInvocation(query.invocation);
-    Object returnValue = target.invoke(invocation);
-    print('target returned:  ' + returnValue.toString());
+    FutureOr<Object> returnValue = target.invoke(invocation);
+    if (returnValue is Future) {
+      returnValue = await returnValue;
+    }
     Response response = Response((b) => b
           ..query = query.uuid
           ..returnValue = returnValue

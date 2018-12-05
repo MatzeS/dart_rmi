@@ -21,7 +21,7 @@ class TargetClass implements RmiTarget {
     triggered = true;
   }
 
-  num methodWithReturnValue() {
+  Future<num> methodWithReturnValue() async {
     return value;
   }
 
@@ -36,7 +36,7 @@ class TargetClass implements RmiTarget {
 
 main() {
   group('remote method invocation tests', () {
-    test('simple method call', () {
+    test('simple method call', () async {
       StreamController<String> exposeToGet = StreamController();
       StreamController<String> getToExpose = StreamController();
 
@@ -47,24 +47,23 @@ main() {
       TargetClass proxy = TargetClass.getRemote(
           new Connection(exposeToGet.stream, getToExpose));
 
-      proxy.someMethod();
-      print('tset is here');
+      await proxy.someMethod();
       expect(triggered, true);
     });
 
-    // test('return value', () {
-    //   StreamController<String> exposeToGet = StreamController();
-    //   StreamController<String> getToExpose = StreamController();
+    test('return value', () async {
+      StreamController<String> exposeToGet = StreamController();
+      StreamController<String> getToExpose = StreamController();
 
-    //   TargetClass remoteTarget = new TargetClass(1234);
-    //   remoteTarget
-    //       .exposeRemote(new Connection(getToExpose.stream, exposeToGet));
+      TargetClass remoteTarget = new TargetClass(1234);
+      remoteTarget
+          .exposeRemote(new Connection(getToExpose.stream, exposeToGet));
 
-    //   TargetClass proxy = TargetClass.getRemote(
-    //       new Connection(exposeToGet.stream, getToExpose));
-    //   // num result = proxy.methodWithReturnValue();
+      TargetClass proxy = TargetClass.getRemote(
+          new Connection(exposeToGet.stream, getToExpose));
+      num result = await proxy.methodWithReturnValue();
 
-    //   // expect(result, 1234);
-    // });
+      expect(result, 1234);
+    });
   });
 }

@@ -8,6 +8,13 @@ part of 'remote_method_invocation_test.dart';
 
 class _$TargetClassInvoker {
   static dynamic invoke(Invocation invocation, TargetClass target) {
+    if (invocation.isGetter && #value == invocation.memberName) {
+      return target.value;
+    }
+    if (invocation.isSetter && #value == invocation.memberName) {
+      target.value = invocation.positionalArguments[0];
+      return null;
+    }
     if (invocation.isMethod && #someMethod == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
@@ -15,6 +22,15 @@ class _$TargetClassInvoker {
         positionalArguments.add(null);
 
       return target.someMethod();
+    }
+    if (invocation.isMethod &&
+        #methodWithReturnValue == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 0; i++)
+        positionalArguments.add(null);
+
+      return target.methodWithReturnValue();
     }
     if (invocation.isMethod && #exposeRemote == invocation.memberName) {
       List<Object> positionalArguments =
@@ -83,6 +99,18 @@ class _$TargetClassProxy implements TargetClass {
     return _handle(_$invocation);
   }
 
+  get value {
+    Invocation invocation = Invocation.getter(#value);
+
+    return _handle(invocation);
+  }
+
+  set value(num _value) {
+    Invocation invocation = Invocation.setter(#value, _value);
+
+    _handle(invocation);
+  }
+
   void someMethod() {
     List<Object> arguments = [];
 
@@ -92,6 +120,17 @@ class _$TargetClassProxy implements TargetClass {
         Invocation.method(#someMethod, arguments, namedArguments);
 
     _handle(_$invocation);
+  }
+
+  Future<num> methodWithReturnValue() async {
+    List<Object> arguments = [];
+
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#methodWithReturnValue, arguments, namedArguments);
+
+    return await _handle(_$invocation);
   }
 
   void exposeRemote(Connection connection) {
