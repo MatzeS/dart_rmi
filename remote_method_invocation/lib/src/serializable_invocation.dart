@@ -40,7 +40,8 @@ Invocation convertSerializableInvocation(SerializableInvocation invocation) {
   } else if (invocation.isGetter) {
     return Invocation.getter(invocation.memberName);
   } else if (invocation.isMethod) {
-    // if (invocation.typeArguments.isEmpty) { //TODO
+    // if (invocation.typeArguments.isEmpty) {
+    // generic stuff has not been implemented so far
     return Invocation.method(
         invocation.memberName, invocation.positionalArguments);
     // } else {

@@ -9,9 +9,15 @@ import 'dart:convert';
 import '../remote_method_invocation.dart';
 import 'symbol_serializer.dart';
 
+import 'package:uuid/uuid.dart';
+import 'packets.dart';
+
 part 'implementation.g.dart';
 
-@SerializersFor(const [SerializableInvocation])
+var uuid = new Uuid();
+String generateUUID() => uuid.v1();
+
+@SerializersFor(const [SerializableInvocation, Query, Response])
 Serializers serializers = (_$serializers.toBuilder()
       ..add(new SymbolSerializer())
       ..addPlugin(new StandardJsonPlugin()))
@@ -21,23 +27,38 @@ class RmiProxyHandler {
   Connection connection;
   RmiProxyHandler(this.connection);
   @override
-  Object handle(Invocation invocation) {
-    //TODO serialize sub parameters
-
+  Object handle(Invocation invocation) async {
     SerializableInvocation serializableInvocation =
         convertInvocation(invocation);
-    Object serialized = serializers.serialize(serializableInvocation);
-    String serializedJson = json.encode(serialized);
+    Query query = Query((b) => b
+      ..uuid = generateUUID()
+      ..invocation = serializableInvocation.toBuilder());
+
+    String serializedJson = json.encode(serializers.serialize(query));
+
+    Future answer = connection.input
+        .map((data) => serializers.deserialize(json.decode(data)) as Response)
+        .firstWhere((r) => r.query == query.uuid);
+
     connection.output.add(serializedJson);
+
+    Response response = await answer;
+    print('response got ' + response.returnValue.toString());
+    return response.returnValue;
   }
 }
 
 void internalExposeRemote(Connection connection, Invocable target) {
   connection.input.listen((onData) {
-    SerializableInvocation serializableInvocation =
-        serializers.deserialize(json.decode(onData));
-    Invocation invocation =
-        convertSerializableInvocation(serializableInvocation);
-    target.invoke(invocation);
+    Query query = serializers.deserialize(json.decode(onData));
+    Invocation invocation = convertSerializableInvocation(query.invocation);
+    Object returnValue = target.invoke(invocation);
+    print('target returned:  ' + returnValue.toString());
+    Response response = Response((b) => b
+          ..query = query.uuid
+          ..returnValue = returnValue
+        // ..exception = exception
+        );
+    connection.output.add(json.encode(serializers.serialize(response)));
   });
 }

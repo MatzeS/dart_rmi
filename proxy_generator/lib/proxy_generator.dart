@@ -75,7 +75,7 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
   void visitMethodElement(MethodElement element) {
     if (element.isGenerator) return;
     if (element.isStatic) return;
-    if (element.isOperator) return; //TODO
+    if (element.isOperator) return; 
 
     if (visited.contains(element.name)) return;
     visited.add(element.name);

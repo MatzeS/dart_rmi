@@ -20,6 +20,8 @@ part of 'implementation.dart';
 // ignore_for_file: test_types_in_equals
 
 Serializers _$serializers = (new Serializers().toBuilder()
+      ..add(Query.serializer)
+      ..add(Response.serializer)
       ..add(SerializableInvocation.serializer)
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(Object)]),

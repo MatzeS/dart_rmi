@@ -14,16 +14,20 @@ part 'remote_method_invocation_test.g.dart';
 bool triggered = false;
 
 class TargetClass implements RmiTarget {
-  TargetClass();
-
-  @override
-  Object invoke(Invocation invocation) =>
-      _$TargetClassInvoker.invoke(invocation, this);
+  num value;
+  TargetClass(this.value);
 
   void someMethod() {
     triggered = true;
   }
 
+  num methodWithReturnValue() {
+    return value;
+  }
+
+  @override
+  Object invoke(Invocation invocation) =>
+      _$TargetClassInvoker.invoke(invocation, this);
   factory TargetClass.getRemote(Connection connection) =>
       _$TargetClassRmi.getRemote(connection);
   void exposeRemote(Connection connection) =>
@@ -32,22 +36,35 @@ class TargetClass implements RmiTarget {
 
 main() {
   group('remote method invocation tests', () {
-    //TODO testcoverage
-    test('', () {
+    test('simple method call', () {
       StreamController<String> exposeToGet = StreamController();
       StreamController<String> getToExpose = StreamController();
 
-      TargetClass remoteTarget = new TargetClass();
+      TargetClass remoteTarget = new TargetClass(1234);
       remoteTarget
           .exposeRemote(new Connection(getToExpose.stream, exposeToGet));
 
       TargetClass proxy = TargetClass.getRemote(
           new Connection(exposeToGet.stream, getToExpose));
-      proxy.someMethod();
 
-      Future.delayed(Duration(seconds: 2), () {
-        expect(triggered, true);
-      });
+      proxy.someMethod();
+      print('tset is here');
+      expect(triggered, true);
     });
+
+    // test('return value', () {
+    //   StreamController<String> exposeToGet = StreamController();
+    //   StreamController<String> getToExpose = StreamController();
+
+    //   TargetClass remoteTarget = new TargetClass(1234);
+    //   remoteTarget
+    //       .exposeRemote(new Connection(getToExpose.stream, exposeToGet));
+
+    //   TargetClass proxy = TargetClass.getRemote(
+    //       new Connection(exposeToGet.stream, getToExpose));
+    //   // num result = proxy.methodWithReturnValue();
+
+    //   // expect(result, 1234);
+    // });
   });
 }

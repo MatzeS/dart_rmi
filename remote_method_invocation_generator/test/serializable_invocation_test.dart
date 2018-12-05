@@ -14,7 +14,6 @@ Serializers serializers = _$serializers;
 
 main() {
   group('serializable invocation tests', () {
-    //TODO testcoverage
     test('works without error or exception', () {
       SerializableInvocation invoc = SerializableInvocation((b) => b
         ..isGetter = false

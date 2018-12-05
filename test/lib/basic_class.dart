@@ -17,6 +17,4 @@ class BasicClass {
   set aSetter(num arg) {}
 
   num aField;
-
-  //TODO check lang spec what else could be here
 }
