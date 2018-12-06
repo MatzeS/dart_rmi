@@ -10,6 +10,7 @@ import 'package:source_gen/source_gen.dart';
 import 'package:invoker/invoker.dart';
 import 'package:remote_method_invocation/remote_method_invocation.dart';
 import 'package:proxy/proxy.dart';
+import 'package:built_value/built_value.dart';
 
 class RmiGenerator extends Generator {
   BuilderOptions options;
@@ -41,18 +42,78 @@ class RmiGenerator extends Generator {
     }
     ClassElement classElement = element as ClassElement;
 
+    RmiClassVisitor visitor = new RmiClassVisitor();
+    classElement.visitChildren(visitor);
+
+    String serializerList =
+        visitor.serializableTypes.map((t) => t.name + '.serializer').join(',');
+
     StringBuffer output = new StringBuffer();
     output.write('''
         class _\$${classElement.name}Rmi {
+          static bool _registered = false;
+          static void _registerSerializers() {
+            if (_registered) return;
+            _registered = true;
+
+            rmiRegisterSerializers([$serializerList]);
+        }
           static TargetClass getRemote(Connection connection) {
+            _registerSerializers();
             RmiProxyHandler handler = RmiProxyHandler(connection);
             return _\$${classElement.name}Proxy(handler.handle);
           }
           static void exposeRemote(Connection connection, ${classElement.name} target) {
+            _registerSerializers();
             return rmiExposeRemote(connection, target);
           }
         }
       ''');
     return output.toString();
+  }
+}
+
+class RmiClassVisitor extends ThrowingElementVisitor {
+  List<DartType> serializableTypes = [];
+
+  add(DartType type) {
+    if (!serializableTypes.contains(type)) serializableTypes.add(type);
+  }
+
+  check(DartType type) {
+    if (type == null) return;
+    if (type.isObject) return;
+    if (type.isVoid) return;
+
+    if (TypeChecker.fromRuntime(Built).isAssignableFromType(type)) {
+      add(type);
+    }
+  }
+
+  @override
+  visitMethodElement(MethodElement element) {
+    check(element.returnType);
+    element.parameters.forEach((e) => check(e.type));
+  }
+
+  @override
+  visitFieldElement(FieldElement element) {
+    // covered by accessor
+  }
+
+  @override
+  visitPropertyAccessorElement(PropertyAccessorElement element) {
+    if (element.isGetter) {
+      check(element.returnType);
+    } else if (element.isSetter) {
+      check(element.parameters.first.type);
+    } else {
+      throw new Exception('invalid accessor');
+    }
+  }
+
+  @override
+  visitConstructorElement(ConstructorElement element) {
+    // constructors are not invocable
   }
 }

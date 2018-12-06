@@ -24,3 +24,6 @@ class Connection {
 
 void rmiExposeRemote(Connection connection, Invocable target) =>
     internalExposeRemote(connection, target);
+
+void rmiRegisterSerializers(List<Serializer> serializers) =>
+    internalRegisterSerializers(serializers);

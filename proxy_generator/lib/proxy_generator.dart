@@ -147,10 +147,10 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
 
   generateGetter(PropertyAccessorElement element) {
     output.write('''
-      get ${element.name}{
+      get ${element.name} ${element.isAsynchronous ? 'async' : ''} {
         Invocation invocation = Invocation.getter(#${element.name});
 
-        return _handle(invocation);
+        return ${element.isAsynchronous ? 'await' : ''} _handle(invocation);
       }
     ''');
   }

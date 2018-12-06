@@ -23,6 +23,10 @@ Serializers serializers = (_$serializers.toBuilder()
       ..addPlugin(new StandardJsonPlugin()))
     .build();
 
+void _addSerializer(Serializer serializer) {
+  serializers = (serializers.toBuilder()..add(serializer)).build();
+}
+
 class RmiProxyHandler {
   Connection connection;
   RmiProxyHandler(this.connection);
@@ -51,7 +55,7 @@ void internalExposeRemote(Connection connection, Invocable target) {
   connection.input.listen((onData) async {
     Query query = serializers.deserialize(json.decode(onData));
     Invocation invocation = convertSerializableInvocation(query.invocation);
-    FutureOr<Object> returnValue = target.invoke(invocation);
+    var returnValue = target.invoke(invocation);
     if (returnValue is Future) {
       returnValue = await returnValue;
     }
@@ -61,5 +65,11 @@ void internalExposeRemote(Connection connection, Invocable target) {
         // ..exception = exception
         );
     connection.output.add(json.encode(serializers.serialize(response)));
+  });
+}
+
+void internalRegisterSerializers(List<Serializer> serializers) {
+  serializers.forEach((s) {
+    _addSerializer(s);
   });
 }

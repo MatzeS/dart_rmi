@@ -150,12 +150,22 @@ class _$TargetClassProxy implements TargetClass {
 // **************************************************************************
 
 class _$TargetClassRmi {
+  static bool _registered = false;
+  static void _registerSerializers() {
+    if (_registered) return;
+    _registered = true;
+
+    rmiRegisterSerializers([]);
+  }
+
   static TargetClass getRemote(Connection connection) {
+    _registerSerializers();
     RmiProxyHandler handler = RmiProxyHandler(connection);
     return _$TargetClassProxy(handler.handle);
   }
 
   static void exposeRemote(Connection connection, TargetClass target) {
+    _registerSerializers();
     return rmiExposeRemote(connection, target);
   }
 }
