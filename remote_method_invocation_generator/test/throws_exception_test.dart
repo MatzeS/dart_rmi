@@ -13,7 +13,7 @@ import 'dart:async';
 part 'throws_exception_test.g.dart';
 
 class TargetClass implements RmiTarget {
-  Future<void> someMethod() {
+  Future<void> someMethod() async {
     throw new Exception('some exception');
   }
 
@@ -28,32 +28,43 @@ class TargetClass implements RmiTarget {
 }
 
 main() {
-  group('exception', () {
-    test('simple method call', () async {
-      StreamController<String> exposeToGet = StreamController();
-      StreamController<String> getToExpose = StreamController();
+  StreamController<String> exposeToGet;
+  StreamController<String> getToExpose;
 
-      TargetClass remoteTarget = new TargetClass();
+  TargetClass remoteTarget;
+  TargetClass proxy;
+  group('exception', () {
+    setUp(() {
+      exposeToGet = StreamController();
+      getToExpose = StreamController();
+
+      remoteTarget = new TargetClass();
       remoteTarget
           .exposeRemote(new Connection(getToExpose.stream, exposeToGet));
 
-      TargetClass proxy = TargetClass.getRemote(
+      proxy = TargetClass.getRemote(
           new Connection(exposeToGet.stream, getToExpose));
-
-      int exception = 0;
+    });
+    test('simple method call with await', () async {
+      bool exception = false;
 
       try {
         await proxy.someMethod();
       } on Exception catch (e) {
-        exception++;
+        exception = true;
       }
 
+      expect(exception, true);
+    });
+    test('simple method call with future syntax', () async {
+      bool exception = false;
+
       proxy.someMethod().catchError((Object e) {
-        exception++;
+        exception = true;
       });
       await Future.delayed(Duration(seconds: 1));
 
-      expect(exception, 2);
+      expect(exception, true);
     });
   });
 }

@@ -17,11 +17,12 @@ abstract class Response implements Built<Response, ResponseBuilder> {
   /// uuid of the query this responds to
   String get query;
 
-  bool get returnIsNull;
+  // `true` if the invocation returned null or an exception was raised
+  bool get returnedNull;
   @nullable
   Object get returnValue;
   @nullable
-  String get exception;
+  String get exception; // TODO might serialize exception
 
   static Serializer<Response> get serializer => _$responseSerializer;
   Response._();

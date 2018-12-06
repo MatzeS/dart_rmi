@@ -10,3 +10,10 @@ think about object methods, tostring hashcode
 write pubsepcs
 write versions
 check lang spec for other members what else could be here
+Serialize exceptions
+There might be unserializable exceptions raised
+send stack on exception
+
+invoker
+ - what todo on no method
+ - elses...

@@ -47,10 +47,10 @@ class RmiProxyHandler {
     connection.output.add(serializedJson);
 
     Response response = await answer;
-    if (response.returnIsNull || response.returnValue != null) {
-      return response.returnValue;
-    } else if (response.exception != null) {
+    if (response.exception != null) {
       throw new Exception(response.exception);
+    } else if (response.returnedNull || response.returnValue != null) {
+      return response.returnValue;
     } else {
       throw new Exception(
           'response contains no exception or return value'); //TODO
@@ -63,25 +63,24 @@ void internalExposeRemote(Connection connection, Invocable target) {
     Query query = serializers.deserialize(json.decode(onData));
     Invocation invocation = convertSerializableInvocation(query.invocation);
 
-    bool returnedNull = false;
-    String exception = null;
-    var returnValue;
+    ResponseBuilder response = new ResponseBuilder();
+    response.query = query.uuid;
+
     try {
-      returnValue = target.invoke(invocation);
-      if (returnValue == null) returnedNull = true;
-    } on Exception catch (e) {
-      exception = e.toString();
+      var returnValue = target.invoke(invocation);
+
+      if (returnValue is Future) {
+        returnValue = await returnValue;
+      }
+
+      response.returnValue = returnValue;
+      response.returnedNull = returnValue == null;
+    } catch (exception, stack) {
+      response.exception = exception.toString();
+      response.returnedNull = true;
     }
-    if (returnValue is Future) {
-      returnValue = await returnValue;
-      if (returnValue == null) returnedNull = true;
-    }
-    Response response = Response((b) => b
-      ..query = query.uuid
-      ..returnValue = returnValue
-      ..returnIsNull = returnedNull
-      ..exception = exception);
-    connection.output.add(json.encode(serializers.serialize(response)));
+
+    connection.output.add(json.encode(serializers.serialize(response.build())));
   });
 }
 

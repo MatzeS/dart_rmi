@@ -82,8 +82,8 @@ class _$ResponseSerializer implements StructuredSerializer<Response> {
       'query',
       serializers.serialize(object.query,
           specifiedType: const FullType(String)),
-      'returnIsNull',
-      serializers.serialize(object.returnIsNull,
+      'returnedNull',
+      serializers.serialize(object.returnedNull,
           specifiedType: const FullType(bool)),
     ];
     if (object.returnValue != null) {
@@ -117,8 +117,8 @@ class _$ResponseSerializer implements StructuredSerializer<Response> {
           result.query = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
-        case 'returnIsNull':
-          result.returnIsNull = serializers.deserialize(value,
+        case 'returnedNull':
+          result.returnedNull = serializers.deserialize(value,
               specifiedType: const FullType(bool)) as bool;
           break;
         case 'returnValue':
@@ -246,7 +246,7 @@ class _$Response extends Response {
   @override
   final String query;
   @override
-  final bool returnIsNull;
+  final bool returnedNull;
   @override
   final Object returnValue;
   @override
@@ -256,13 +256,13 @@ class _$Response extends Response {
       (new ResponseBuilder()..update(updates)).build();
 
   _$Response._(
-      {this.query, this.returnIsNull, this.returnValue, this.exception})
+      {this.query, this.returnedNull, this.returnValue, this.exception})
       : super._() {
     if (query == null) {
       throw new BuiltValueNullFieldError('Response', 'query');
     }
-    if (returnIsNull == null) {
-      throw new BuiltValueNullFieldError('Response', 'returnIsNull');
+    if (returnedNull == null) {
+      throw new BuiltValueNullFieldError('Response', 'returnedNull');
     }
   }
 
@@ -278,7 +278,7 @@ class _$Response extends Response {
     if (identical(other, this)) return true;
     return other is Response &&
         query == other.query &&
-        returnIsNull == other.returnIsNull &&
+        returnedNull == other.returnedNull &&
         returnValue == other.returnValue &&
         exception == other.exception;
   }
@@ -286,7 +286,7 @@ class _$Response extends Response {
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc(0, query.hashCode), returnIsNull.hashCode),
+        $jc($jc($jc(0, query.hashCode), returnedNull.hashCode),
             returnValue.hashCode),
         exception.hashCode));
   }
@@ -295,7 +295,7 @@ class _$Response extends Response {
   String toString() {
     return (newBuiltValueToStringHelper('Response')
           ..add('query', query)
-          ..add('returnIsNull', returnIsNull)
+          ..add('returnedNull', returnedNull)
           ..add('returnValue', returnValue)
           ..add('exception', exception))
         .toString();
@@ -309,9 +309,9 @@ class ResponseBuilder implements Builder<Response, ResponseBuilder> {
   String get query => _$this._query;
   set query(String query) => _$this._query = query;
 
-  bool _returnIsNull;
-  bool get returnIsNull => _$this._returnIsNull;
-  set returnIsNull(bool returnIsNull) => _$this._returnIsNull = returnIsNull;
+  bool _returnedNull;
+  bool get returnedNull => _$this._returnedNull;
+  set returnedNull(bool returnedNull) => _$this._returnedNull = returnedNull;
 
   Object _returnValue;
   Object get returnValue => _$this._returnValue;
@@ -326,7 +326,7 @@ class ResponseBuilder implements Builder<Response, ResponseBuilder> {
   ResponseBuilder get _$this {
     if (_$v != null) {
       _query = _$v.query;
-      _returnIsNull = _$v.returnIsNull;
+      _returnedNull = _$v.returnedNull;
       _returnValue = _$v.returnValue;
       _exception = _$v.exception;
       _$v = null;
@@ -352,7 +352,7 @@ class ResponseBuilder implements Builder<Response, ResponseBuilder> {
     final _$result = _$v ??
         new _$Response._(
             query: query,
-            returnIsNull: returnIsNull,
+            returnedNull: returnedNull,
             returnValue: returnValue,
             exception: exception);
     replace(_$result);
