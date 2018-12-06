@@ -17,10 +17,11 @@ abstract class Response implements Built<Response, ResponseBuilder> {
   /// uuid of the query this responds to
   String get query;
 
+  bool get returnIsNull;
   @nullable
   Object get returnValue;
   @nullable
-  Object get exception;
+  String get exception;
 
   static Serializer<Response> get serializer => _$responseSerializer;
   Response._();
