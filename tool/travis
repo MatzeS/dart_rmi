@@ -1,5 +1,5 @@
 #!/bin/bash
 set -e
 
-tool/local_dependency
+rmi_generator/tool/local_dependency
 tool/presubmit
