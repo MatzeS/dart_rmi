@@ -1,48 +1,11 @@
-# Created with package:mono_repo v1.2.1
 language: dart
 
-jobs:
-  include:
-    - stage: analyze
-      name: "SDK: stable - DIR: rmi - TASKS: dartanalyzer ."
-      script: ./tool/travis.sh dartanalyzer
-      env: PKG="rmi"
-      dart: stable
-    - stage: analyze
-      name: "SDK: stable - DIR: rmi - TASKS: dartfmt -n --set-exit-if-changed ."
-      script: ./tool/travis.sh dartfmt
-      env: PKG="rmi"
-      dart: stable
-    - stage: analyze
-      name: "SDK: stable - DIR: rmi_generator - TASKS: dartanalyzer ."
-      script: ./tool/travis.sh dartanalyzer
-      env: PKG="rmi_generator"
-      dart: stable
-    - stage: analyze
-      name: "SDK: stable - DIR: rmi_generator - TASKS: dartfmt -n --set-exit-if-changed ."
-      script: ./tool/travis.sh dartfmt
-      env: PKG="rmi_generator"
-      dart: stable
-    - stage: unit_test
-      name: "SDK: stable - DIR: rmi_generator - TASKS: pub run test --platform vm"
-      script: ./tool/travis.sh test_0
-      env: PKG="rmi_generator"
-      dart: stable
-    - stage: unit_test
-      name: "SDK: stable - DIR: rmi_generator - TASKS: pub run test --platform chrome"
-      script: ./tool/travis.sh test_1
-      env: PKG="rmi_generator"
-      dart: stable
+dart:
+  - dev
 
-stages:
-  - analyze
-  - unit_test
+sudo: required
+addons:
+  chrome: stable
 
-# Only building master means that we don't run two builds for each pull request.
-branches:
-  only:
-    - master
-
-cache:
-  directories:
-    - "$HOME/.pub-cache"
+script:
+  - tool/presubmit
