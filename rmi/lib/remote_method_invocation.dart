@@ -1,4 +1,4 @@
-library remote_method_invocation;
+library rmi;
 
 import 'proxy.dart';
 import 'invoker.dart';

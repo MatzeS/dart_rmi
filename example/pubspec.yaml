@@ -1,0 +1,15 @@
+name: rmi_example
+version: 0.0.1
+description: >
+authors:
+- Matthias Sokolowski <matthias.sokolowski@googlemail.com>
+homepage: https://github.com/MatzeS/dart_rmi
+
+environment:
+  sdk: '>=2.0.0-dev <3.0.0'
+
+dependencies:
+  rmi: ^0.0.1
+  
+dev_dependencies:
+  rmi_generator: ^0.0.1

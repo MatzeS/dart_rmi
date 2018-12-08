@@ -1,4 +1,5 @@
 # Remote Method Invocation for dart
+[![Build Status](https://travis-ci.org/MatzeS/dart_rmi.svg?branch=master)](https://travis-ci.org/MatzeS/dart_rmi)
 
 This project provides an solution for remote method invocation in dart without the use of reflection. Since reflection is only available on the Dart VM but not on a JS VM, this solution is instead based on code generation, which provides a proxy and invoke implementation.
 
@@ -14,14 +15,15 @@ class ExampleClass implements RmiTarget {
 	print('some stuff');
   }
 
+  ExampleClass();
   // required boilerplate for code generation
   @override
   Object invoke(Invocation invocation) =>
-      _$TargetClassInvoker.invoke(invocation, this);
-  factory TargetClass.getRemote(Context context, String uuid) =>
-      _$TargetClassRmi.getRemote(context, uuid);
+      _$ExampleClassInvoker.invoke(invocation, this);
+  factory ExampleClass.getRemote(Context context, String uuid) =>
+      _$ExampleClassRmi.getRemote(context, uuid);
   Provision provideRemote(Context context) =>
-      _$TargetClassRmi.provideRemote(context, this);
+      _$ExampleClassRmi.provideRemote(context, this);
 }
 ```
 
