@@ -4,34 +4,34 @@ language: dart
 jobs:
   include:
     - stage: analyze
-      name: "SDK: stable - DIR: remote_method_invocation - TASKS: dartanalyzer ."
+      name: "SDK: stable - DIR: rmi - TASKS: dartanalyzer ."
       script: ./tool/travis.sh dartanalyzer
-      env: PKG="remote_method_invocation"
+      env: PKG="rmi"
       dart: stable
     - stage: analyze
-      name: "SDK: stable - DIR: remote_method_invocation - TASKS: dartfmt -n --set-exit-if-changed ."
+      name: "SDK: stable - DIR: rmi - TASKS: dartfmt -n --set-exit-if-changed ."
       script: ./tool/travis.sh dartfmt
-      env: PKG="remote_method_invocation"
+      env: PKG="rmi"
       dart: stable
     - stage: analyze
-      name: "SDK: stable - DIR: remote_method_invocation_generator - TASKS: dartanalyzer ."
+      name: "SDK: stable - DIR: rmi_generator - TASKS: dartanalyzer ."
       script: ./tool/travis.sh dartanalyzer
-      env: PKG="remote_method_invocation_generator"
+      env: PKG="rmi_generator"
       dart: stable
     - stage: analyze
-      name: "SDK: stable - DIR: remote_method_invocation_generator - TASKS: dartfmt -n --set-exit-if-changed ."
+      name: "SDK: stable - DIR: rmi_generator - TASKS: dartfmt -n --set-exit-if-changed ."
       script: ./tool/travis.sh dartfmt
-      env: PKG="remote_method_invocation_generator"
+      env: PKG="rmi_generator"
       dart: stable
     - stage: unit_test
-      name: "SDK: stable - DIR: remote_method_invocation_generator - TASKS: pub run test --platform vm"
+      name: "SDK: stable - DIR: rmi_generator - TASKS: pub run test --platform vm"
       script: ./tool/travis.sh test_0
-      env: PKG="remote_method_invocation_generator"
+      env: PKG="rmi_generator"
       dart: stable
     - stage: unit_test
-      name: "SDK: stable - DIR: remote_method_invocation_generator - TASKS: pub run test --platform chrome"
+      name: "SDK: stable - DIR: rmi_generator - TASKS: pub run test --platform chrome"
       script: ./tool/travis.sh test_1
-      env: PKG="remote_method_invocation_generator"
+      env: PKG="rmi_generator"
       dart: stable
 
 stages:
