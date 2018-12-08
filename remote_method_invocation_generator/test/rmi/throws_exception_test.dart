@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
-import 'package:remote_method_invocation/remote_method_invocation.dart';
-import 'package:proxy/proxy.dart';
+import 'package:rmi/remote_method_invocation.dart';
+import 'package:rmi/proxy.dart';
 
 import 'dart:async';
 
@@ -58,7 +58,7 @@ main() {
       });
       await Future.delayed(Duration(seconds: 1));
 
-      expect(exception, false);
+      expect(exception, true);
     });
   });
 }

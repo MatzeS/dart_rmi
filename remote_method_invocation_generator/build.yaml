@@ -1,14 +1,14 @@
 targets:
   $default:
     builders:
-      remote_method_invocation_generator|remote_method_invocation:
+      rmi_generator|rmi:
         enabled: true
 
 builders:
-  remote_method_invocation:
-    target: ":remote_method_invocation_generator"
-    import: "package:remote_method_invocation_generator/builder.dart"
-    builder_factories: ["rmiBuilder"]
+  rmi:
+    target: ":rmi_generator"
+    import: "package:rmi_generator/builder.dart"
+    builder_factories: ["rmiBuilder", 'proxyBuilder', 'invokerBuilder']
     build_extensions: {".dart": [".rmi.g.part"]}
     auto_apply: dependents
     build_to: cache

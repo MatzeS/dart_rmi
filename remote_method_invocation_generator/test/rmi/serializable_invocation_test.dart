@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/standard_json_plugin.dart';
-import 'package:remote_method_invocation/remote_method_invocation.dart';
+import 'package:rmi/remote_method_invocation.dart';
 
 part 'serializable_invocation_test.g.dart';
 

@@ -1,5 +1,3 @@
-library proxy;
-
 /// Annotate or implement this to generate a proxy implementation
 ///
 /// Add a proxy-factory redirecting to the generated code

@@ -1,7 +1,7 @@
 library remote_method_invocation;
 
-import 'package:invoker/invoker.dart';
-import 'package:proxy/proxy.dart';
+import 'proxy.dart';
+import 'invoker.dart';
 import 'package:built_value/serializer.dart';
 import 'dart:async';
 

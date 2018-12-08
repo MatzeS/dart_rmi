@@ -31,16 +31,11 @@ while (( "$#" )); do
     ;;
   test_0) echo
     echo -e '\033[1mTASK: test_0\033[22m'
-    echo -e 'pub run test'
-    pub run test || EXIT_CODE=$?
-    ;;
-  test_1) echo
-    echo -e '\033[1mTASK: test_1\033[22m'
     echo -e 'pub run test --platform vm'
     pub run test --platform vm || EXIT_CODE=$?
     ;;
-  test_2) echo
-    echo -e '\033[1mTASK: test_2\033[22m'
+  test_1) echo
+    echo -e '\033[1mTASK: test_1\033[22m'
     echo -e 'pub run test --platform chrome'
     pub run test --platform chrome || EXIT_CODE=$?
     ;;

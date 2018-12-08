@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
-import 'package:proxy/proxy.dart';
-import 'package:rmi_test/basic_class.dart';
+import 'package:rmi/proxy.dart';
+import '../basic_class.dart';
 
 part 'basic_class_test.g.dart';
 

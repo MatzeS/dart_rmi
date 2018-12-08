@@ -1,7 +1,8 @@
-name: remote_method_invocation
+name: rmi
 version: 0.0.0
 description: >
-  Remote Method Invocation without reflection but using codegeneration.
+  Remote Method Invocation without reflection but basd on code generation.
+  This library is the runtime dependency. Additionally add `rmi__generator` as dev dependency. 
 authors:
 - Matthias Sokolowski <matthias.sokolowski@googlemail.com>
 homepage: https://github.com/MatzeS/dart_rmi
@@ -10,18 +11,10 @@ environment:
   sdk: '>=2.0.0-dev <3.0.0'
 
 dependencies:
-  uuid: 
-  built_value:
-  built_collection:
-  proxy:
-    path: ../proxy
-  invoker:
-    path: ../invoker
+  uuid: ^1.0.3
+  built_value: ^6.1.6
+  built_collection: ^4.1.0
   
 dev_dependencies:
-  proxy_generator:
-    path: ../proxy_generator
-  invoker_generator:
-    path: ../invoker_generator
-  built_value_generator:
-  build_runner:
+  built_value_generator: ^6.1.6
+  build_runner: ^1.1.2

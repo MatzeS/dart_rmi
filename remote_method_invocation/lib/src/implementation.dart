@@ -1,4 +1,3 @@
-import 'package:invoker/invoker.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:built_collection/built_collection.dart';
@@ -7,10 +6,9 @@ import 'dart:async';
 import 'dart:convert';
 import '../remote_method_invocation.dart';
 import 'symbol_serializer.dart';
-
 import 'package:uuid/uuid.dart';
 import 'packets.dart';
-
+import '../invoker.dart';
 part 'implementation.g.dart';
 
 String generateUUID() => new Uuid().v1();

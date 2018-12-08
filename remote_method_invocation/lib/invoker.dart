@@ -1,5 +1,3 @@
-library invoker;
-
 /// Implement this and delegate [invoke] to the generated code
 ///
 /// Example:

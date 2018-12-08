@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:proxy/proxy.dart';
+import 'package:rmi/proxy.dart';
 
 part 'synchronous_test.g.dart';
 
@@ -36,8 +36,6 @@ void main() {
     test('simple method', () async {
       var val = testObject.someMethod();
       await val;
-      print(val);
-      print(val.runtimeType); //TODO remove prints
 
       expect(handler.invocations.length, 1);
       expect(handler.invocations.first != null, true);

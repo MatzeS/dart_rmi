@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
 
-import 'package:rmi_test/basic_class.dart';
-import 'package:rmi_test/logging_class.dart';
+import '../basic_class.dart';
+import '../logging_class.dart';
 
 void main() {
   LoggingClass testObject;

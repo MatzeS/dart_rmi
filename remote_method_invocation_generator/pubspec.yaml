@@ -1,4 +1,4 @@
-name: remote_method_invocation_generator
+name: rmi_generator
 version: 0.0.0
 description: >
   This library is the dev dependency.
@@ -10,25 +10,17 @@ environment:
   sdk: '>=2.0.0-dev <3.0.0'
 
 dependencies:
-  built_value:
-  built_collection:
-  proxy:
-    path: ../proxy
-  invoker:
-    path: ../invoker
-  remote_method_invocation:
+  rmi:
     path: ../remote_method_invocation
   analyzer: ^0.33.3
   build: ^1.0.0
   build_config: ^0.3.1
   source_gen: ^0.9.0
+  built_value: ^6.1.6
+  built_collection: ^4.1.0
   
 dev_dependencies:
-  built_value_generator:
-  proxy_generator:
-    path: ../proxy_generator
-  invoker_generator:
-    path: ../invoker_generator
-  build_runner:
-  test:
+  built_value_generator: ^6.1.6
+  build_runner: ^1.1.2
+  test: ^1.5.1
 

@@ -1,5 +1,5 @@
 import 'basic_class.dart';
-import 'package:invoker/invoker.dart';
+import 'package:rmi/invoker.dart';
 
 part 'logging_class.g.dart';
 
