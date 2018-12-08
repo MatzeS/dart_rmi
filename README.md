@@ -1,7 +1,7 @@
 # Remote Method Invocation for dart
 [![Build Status](https://travis-ci.org/MatzeS/dart_rmi.svg?branch=master)](https://travis-ci.org/MatzeS/dart_rmi)
 
-This project provides an solution for remote method invocation in dart without the use of reflection. Since reflection is only available on the Dart VM but not on a JS VM, this solution is instead based on code generation, which provides a proxy and invoke implementation.
+This project provides an solution for remote method invocation in dart without the use of reflection. Since reflection is only available on the Dart VM but not on a JS VM, this solution is entirely based on code generation instead.
 
 ## Getting Started
 

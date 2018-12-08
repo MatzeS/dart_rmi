@@ -13,6 +13,7 @@ dartanalyzer \
   --fatal-infos \
   .
 cd ..;
+
 cd rmi_generator;
 pub get
 pub upgrade
@@ -28,3 +29,18 @@ pub run test --platform vm;
 pub run test --platform chrome;
 pub run test --platform node;
 cd ..;
+
+cd example;
+pub get
+pub upgrade
+pub run build_runner build \
+  --delete-conflicting-outputs \
+  --fail-on-severe
+dartfmt -w .
+dartanalyzer \
+  --fatal-warnings \
+  --fatal-infos \
+  .
+dart lib/example.dart
+cd ..;
+
