@@ -1,5 +1,4 @@
 import 'package:invoker/invoker.dart';
-import 'package:proxy/proxy.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:built_collection/built_collection.dart';
@@ -127,7 +126,7 @@ Provision internalProvideRemote(Context context, Invocable target) {
 
       response.returnValue = returnValue;
       response.returnedNull = returnValue == null;
-    } catch (exception, stack) {
+    } catch (exception) {
       response.exception = exception.toString();
       response.returnedNull = true;
     }

@@ -9,7 +9,7 @@ const String significantString = 'asdf';
 
 class RecordingHandler {
   List<Invocation> invocations = [];
-  @override
+
   Object handle(Invocation invocation) {
     invocations.add(invocation);
     return null;
@@ -20,19 +20,18 @@ class ReturnValueHandler {
   Object returnValue;
   ReturnValueHandler(this.returnValue);
   List<Invocation> invocations = [];
-  @override
+
   Object handle(Invocation invocation) {
     invocations.add(invocation);
     return returnValue;
   }
 }
 
-class ExceptionHandler extends Proxy {
+class ExceptionHandler {
   List<Invocation> invocations = [];
   Exception toThrow;
   ExceptionHandler(this.toThrow);
 
-  @override
   Object handle(Invocation invocation) {
     invocations.add(invocation);
     throw toThrow;

@@ -11,9 +11,10 @@ class BasicClass {
   void methodWithPosArgs([num arg1, String arg2]) {}
   void methodWithMixedPositional(num required, [num positional]) {}
   void methodWithMixedNamed(num required, {num named}) {}
-  num methodWithReturn() {}
+  num methodWithReturn() => -1;
 
-  num get aGetter {}
+  num get aGetter => -1;
+
   set aSetter(num arg) {}
 
   num aField;

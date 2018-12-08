@@ -79,6 +79,7 @@ class LoggingClass implements BasicClass, Invocable {
 
   num methodWithReturn() {
     _log(#methodWithReturn);
+    return -1;
   }
 
   num get aGetter {

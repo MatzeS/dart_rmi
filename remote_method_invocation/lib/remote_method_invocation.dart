@@ -3,10 +3,7 @@ library remote_method_invocation;
 import 'package:invoker/invoker.dart';
 import 'package:proxy/proxy.dart';
 import 'package:built_value/serializer.dart';
-import 'package:built_value/standard_json_plugin.dart';
-import 'package:built_collection/built_collection.dart';
 import 'dart:async';
-import 'dart:convert';
 
 import 'src/implementation.dart';
 

@@ -1,5 +1,4 @@
 import 'package:test/test.dart';
-import 'package:invoker/invoker.dart';
 
 import 'package:rmi_test/basic_class.dart';
 import 'package:rmi_test/logging_class.dart';

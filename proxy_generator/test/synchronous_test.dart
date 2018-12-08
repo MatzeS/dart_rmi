@@ -1,6 +1,5 @@
 import 'package:test/test.dart';
 import 'package:proxy/proxy.dart';
-import 'package:rmi_test/basic_class.dart';
 
 part 'synchronous_test.g.dart';
 

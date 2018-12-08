@@ -1,0 +1,113 @@
+# Created with package:mono_repo v1.2.1
+language: dart
+
+jobs:
+  include:
+    - stage: analyze
+      name: "SDK: stable - DIR: invoker - TASKS: dartanalyzer ."
+      script: ./tool/travis.sh dartanalyzer
+      env: PKG="invoker"
+      dart: stable
+    - stage: analyze
+      name: "SDK: stable - DIR: invoker - TASKS: dartfmt -n --set-exit-if-changed ."
+      script: ./tool/travis.sh dartfmt
+      env: PKG="invoker"
+      dart: stable
+    - stage: analyze
+      name: "SDK: stable - DIR: invoker_generator - TASKS: dartanalyzer ."
+      script: ./tool/travis.sh dartanalyzer
+      env: PKG="invoker_generator"
+      dart: stable
+    - stage: analyze
+      name: "SDK: stable - DIR: invoker_generator - TASKS: dartfmt -n --set-exit-if-changed ."
+      script: ./tool/travis.sh dartfmt
+      env: PKG="invoker_generator"
+      dart: stable
+    - stage: unit_test
+      name: "SDK: stable - DIR: invoker_generator - TASKS: pub run test"
+      script: ./tool/travis.sh test_0
+      env: PKG="invoker_generator"
+      dart: stable
+    - stage: analyze
+      name: "SDK: stable - DIR: proxy - TASKS: dartanalyzer ."
+      script: ./tool/travis.sh dartanalyzer
+      env: PKG="proxy"
+      dart: stable
+    - stage: analyze
+      name: "SDK: stable - DIR: proxy - TASKS: dartfmt -n --set-exit-if-changed ."
+      script: ./tool/travis.sh dartfmt
+      env: PKG="proxy"
+      dart: stable
+    - stage: analyze
+      name: "SDK: stable - DIR: proxy_generator - TASKS: dartanalyzer ."
+      script: ./tool/travis.sh dartanalyzer
+      env: PKG="proxy_generator"
+      dart: stable
+    - stage: analyze
+      name: "SDK: stable - DIR: proxy_generator - TASKS: dartfmt -n --set-exit-if-changed ."
+      script: ./tool/travis.sh dartfmt
+      env: PKG="proxy_generator"
+      dart: stable
+    - stage: unit_test
+      name: "SDK: stable - DIR: proxy_generator - TASKS: pub run test"
+      script: ./tool/travis.sh test_0
+      env: PKG="proxy_generator"
+      dart: stable
+    - stage: analyze
+      name: "SDK: stable - DIR: remote_method_invocation - TASKS: dartanalyzer ."
+      script: ./tool/travis.sh dartanalyzer
+      env: PKG="remote_method_invocation"
+      dart: stable
+    - stage: analyze
+      name: "SDK: stable - DIR: remote_method_invocation - TASKS: dartfmt -n --set-exit-if-changed ."
+      script: ./tool/travis.sh dartfmt
+      env: PKG="remote_method_invocation"
+      dart: stable
+    - stage: analyze
+      name: "SDK: stable - DIR: remote_method_invocation_generator - TASKS: dartanalyzer ."
+      script: ./tool/travis.sh dartanalyzer
+      env: PKG="remote_method_invocation_generator"
+      dart: stable
+    - stage: analyze
+      name: "SDK: stable - DIR: remote_method_invocation_generator - TASKS: dartfmt -n --set-exit-if-changed ."
+      script: ./tool/travis.sh dartfmt
+      env: PKG="remote_method_invocation_generator"
+      dart: stable
+    - stage: unit_test
+      name: "SDK: stable - DIR: remote_method_invocation_generator - TASKS: pub run test --platform vm"
+      script: ./tool/travis.sh test_1
+      env: PKG="remote_method_invocation_generator"
+      dart: stable
+    - stage: unit_test
+      name: "SDK: stable - DIR: remote_method_invocation_generator - TASKS: pub run test --platform chrome"
+      script: ./tool/travis.sh test_2
+      env: PKG="remote_method_invocation_generator"
+      dart: stable
+    - stage: analyze
+      name: "SDK: stable - DIR: test - TASKS: dartanalyzer ."
+      script: ./tool/travis.sh dartanalyzer
+      env: PKG="test"
+      dart: stable
+    - stage: analyze
+      name: "SDK: stable - DIR: test - TASKS: dartfmt -n --set-exit-if-changed ."
+      script: ./tool/travis.sh dartfmt
+      env: PKG="test"
+      dart: stable
+    - stage: unit_test
+      name: "SDK: stable - DIR: test - TASKS: pub run test"
+      script: ./tool/travis.sh test_0
+      env: PKG="test"
+      dart: stable
+
+stages:
+  - analyze
+  - unit_test
+
+# Only building master means that we don't run two builds for each pull request.
+branches:
+  only:
+    - master
+
+cache:
+  directories:
+    - "$HOME/.pub-cache"

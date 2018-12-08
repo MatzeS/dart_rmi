@@ -1,0 +1,10 @@
+dart:
+ - stable
+
+stages:
+  - analyze:
+    - dartanalyzer
+    - dartfmt
+  - unit_test:
+    - test: --platform vm
+    - test: --platform chrome

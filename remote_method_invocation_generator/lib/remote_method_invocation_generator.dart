@@ -7,9 +7,7 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/dart/element/visitor.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
-import 'package:invoker/invoker.dart';
 import 'package:remote_method_invocation/remote_method_invocation.dart';
-import 'package:proxy/proxy.dart';
 import 'package:built_value/built_value.dart';
 
 class RmiGenerator extends Generator {

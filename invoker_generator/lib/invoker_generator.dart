@@ -3,7 +3,6 @@ library invoker_generator;
 import 'dart:async';
 
 import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/dart/element/visitor.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
@@ -18,7 +17,7 @@ class InvokerGenerator extends Generator {
   }
 
   bool elementFilter(Element element) {
-    if (element.name == 'RmiTarget') return false;
+    if (element.name == 'RmiTarget') return false; //TODO
 
     if (isAnnotatedWith<NotInvocable>(element)) return false;
     if (TypeChecker.fromRuntime(NotInvocable).isAssignableFrom(element))

@@ -20,7 +20,6 @@ class AProxyHandler {
 
   AProxyHandler(this.delegate);
 
-  @override
   Object handle(Invocation invocation) {
     return delegate.invoke(invocation);
   }

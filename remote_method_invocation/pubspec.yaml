@@ -24,4 +24,3 @@ dev_dependencies:
     path: ../invoker_generator
   built_value_generator:
   build_runner:
-  test:
