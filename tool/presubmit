@@ -3,6 +3,7 @@ cd rmi;
 pub get
 pub upgrade
 pub run build_runner build \
+  --delete-conflicting-outputs \
   --fail-on-severe
 dartfmt -w . 
 dartanalyzer \
@@ -15,6 +16,7 @@ tool/local_dependency.sh
 pub get
 pub upgrade
 pub run build_runner build \
+  --delete-conflicting-outputs \
   --fail-on-severe
 dartfmt -w .
 dartanalyzer \
