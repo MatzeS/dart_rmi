@@ -1,11 +1,7 @@
 #!/bin/bash
 set -e
 
-function evil_git_dirty {
-  return $(git diff --shortstat 2> /dev/null | tail -n1) != "";
-}
-
-if [ evil_git_dirty ]
+if [[ $(git diff --shortstat 2> /dev/null | tail -n1) != "" ]]
 then
       echo 'ERROR: git repo is not clean';
       exit 1;
