@@ -9,3 +9,7 @@ addons:
 
 script:
   - tool/presubmit
+
+branches:
+  only:
+  - master
