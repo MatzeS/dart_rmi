@@ -8,7 +8,7 @@ addons:
   chrome: stable
 
 script:
-  - tool/presubmit
+  - tool/travis
 
 branches:
   only:

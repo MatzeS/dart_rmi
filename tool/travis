@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+
+tool/local_dependency
+tool/presubmit

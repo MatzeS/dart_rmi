@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+tool/presubmit
+
+target=( rmi rmi_generator )
+resource=( README.md LICENSE example CHANGELOG.md )
+for i in "${target[@]}"
+do      
+      for j in "${resource[@]}"
+      do      
+            cp $resource $target/ 
+      done       
+done 

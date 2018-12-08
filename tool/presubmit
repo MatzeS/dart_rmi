@@ -14,7 +14,6 @@ dartanalyzer \
   .
 cd ..;
 cd rmi_generator;
-tool/local_dependency
 pub get
 pub upgrade
 pub run build_runner build \
