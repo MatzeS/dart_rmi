@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 cd rmi;
 pub get
 pub upgrade
@@ -12,7 +14,7 @@ dartanalyzer \
   .
 cd ..;
 cd rmi_generator;
-tool/local_dependency.sh
+tool/local_dependency
 pub get
 pub upgrade
 pub run build_runner build \
