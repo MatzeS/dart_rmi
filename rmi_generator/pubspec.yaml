@@ -1,5 +1,5 @@
 name: rmi_generator
-version: 0.0.2
+version: 0.0.3
 description: >
   Remote Method Invocation without reflection but basd on code generation.
   This is the dev dependency.
@@ -11,7 +11,7 @@ environment:
   sdk: '>=2.0.0-dev <3.0.0'
 
 dependencies:
-  rmi: ^0.0.2
+  rmi: ^0.0.3
   analyzer: ^0.33.3
   build: ^1.0.0
   build_config: ^0.3.1

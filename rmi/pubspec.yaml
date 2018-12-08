@@ -1,5 +1,5 @@
 name: rmi
-version: 0.0.2
+version: 0.0.3
 description: >
   Remote Method Invocation without reflection but basd on code generation.
   This library is the runtime dependency. Additionally add `rmi__generator` as dev dependency. 

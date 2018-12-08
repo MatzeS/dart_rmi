@@ -1,5 +1,5 @@
 name: rmi_example
-version: 0.0.2
+version: 0.0.3
 description: >
 authors:
 - Matthias Sokolowski <matthias.sokolowski@googlemail.com>
@@ -9,8 +9,8 @@ environment:
   sdk: '>=2.0.0-dev <3.0.0'
 
 dependencies:
-  rmi: ^0.0.2
+  rmi: ^0.0.3
   
 dev_dependencies:
-  rmi_generator: ^0.0.2
+  rmi_generator: ^0.0.3
   build_runner: ^1.1.2
