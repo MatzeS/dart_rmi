@@ -26,3 +26,5 @@ pubspec.lock
 *.iws
 .idea
 .DS_Store
+
+.history/

@@ -60,3 +60,6 @@ remoteObject.someMethod(); // prints 'some stuff' on the other machine
 - Serialize exceptions
 - send stack on exception
 - Add else clause to invoker to provide an error message
+- write doc
+- cleanup exports
+- write install script

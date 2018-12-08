@@ -2,6 +2,7 @@ library rmi;
 
 import 'proxy.dart';
 import 'invoker.dart';
+import 'src/packets.dart';
 import 'package:built_value/serializer.dart';
 import 'dart:async';
 
@@ -10,7 +11,6 @@ import 'src/implementation.dart';
 export 'src/serializable_invocation.dart';
 export 'src/symbol_serializer.dart';
 export 'src/implementation.dart';
-import 'src/packets.dart';
 
 abstract class RmiTarget implements Invocable, Proxy {
   Provision provideRemote(Context context);

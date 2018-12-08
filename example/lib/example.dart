@@ -1,4 +1,5 @@
 import 'package:rmi/remote_method_invocation.dart';
+import 'package:rmi/proxy.dart';
 import 'dart:async';
 
 part 'example.g.dart';
