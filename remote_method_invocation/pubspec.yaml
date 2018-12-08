@@ -4,6 +4,7 @@ description: >
   Remote Method Invocation without reflection but using codegeneration.
 authors:
 - Matthias Sokolowski <matthias.sokolowski@googlemail.com>
+homepage: https://github.com/MatzeS/dart_rmi
 
 environment:
   sdk: '>=2.0.0-dev <3.0.0'

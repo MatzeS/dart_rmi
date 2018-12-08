@@ -6,6 +6,7 @@ description: >
   This library is the runtime dependency.
 authors:
 - Matthias Sokolowski <matthias.sokolowski@googlemail.com>
+homepage: https://github.com/MatzeS/dart_rmi
 
 environment:
   sdk: '>=2.0.0-dev <3.0.0'

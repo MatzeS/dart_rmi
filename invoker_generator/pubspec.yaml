@@ -5,6 +5,7 @@ description: >
   This library is the dev dependency.
 authors:
 - Matthias Sokolowski <matthias.sokolowski@googlemail.com>
+homepage: https://github.com/MatzeS/dart_rmi
 
 environment:
   sdk: '>=2.0.0-dev <3.0.0'
@@ -18,7 +19,6 @@ dependencies:
   source_gen: ^0.9.0
 
 dev_dependencies:
-  test:
-  build_runner:
-  rmi_test:
-    path: ../test
+  test: ^1.5.1
+  build_runner: ^1.1.2
+  rmi_test: ^0.0.1
