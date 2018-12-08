@@ -32,13 +32,13 @@ class _$TargetClassInvoker {
 
       return target.methodWithReturnValue();
     }
-    if (invocation.isMethod && #exposeRemote == invocation.memberName) {
+    if (invocation.isMethod && #provideRemote == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
       for (int i = invocation.positionalArguments.length; i < 1; i++)
         positionalArguments.add(null);
 
-      return target.exposeRemote(
+      return target.provideRemote(
         positionalArguments[0],
       );
     }
@@ -88,6 +88,17 @@ class _$TargetClassProxy implements TargetClass {
     return _handle(_$invocation);
   }
 
+  Provision provideRemote(Context context) {
+    List<Object> arguments = [];
+    arguments.add(context);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#provideRemote, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
   Object invoke(Invocation invocation) {
     List<Object> arguments = [];
     arguments.add(invocation);
@@ -132,17 +143,6 @@ class _$TargetClassProxy implements TargetClass {
 
     return await _handle(_$invocation);
   }
-
-  void exposeRemote(Connection connection) {
-    List<Object> arguments = [];
-    arguments.add(connection);
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#exposeRemote, arguments, namedArguments);
-
-    _handle(_$invocation);
-  }
 }
 
 // **************************************************************************
@@ -158,14 +158,17 @@ class _$TargetClassRmi {
     rmiRegisterSerializers([]);
   }
 
-  static TargetClass getRemote(Connection connection) {
+  static void _registerStubConstructors(Context context) {}
+  static TargetClass getRemote(Context context, String uuid) {
     _registerSerializers();
-    RmiProxyHandler handler = RmiProxyHandler(connection);
+    _registerStubConstructors(context);
+    RmiProxyHandler handler = RmiProxyHandler(context, uuid);
     return _$TargetClassProxy(handler.handle);
   }
 
-  static void exposeRemote(Connection connection, TargetClass target) {
+  static Provision provideRemote(Context context, TargetClass target) {
     _registerSerializers();
-    return rmiExposeRemote(connection, target);
+    _registerStubConstructors(context);
+    return rmiProvideRemote(context, target);
   }
 }

@@ -13,17 +13,36 @@ import 'src/implementation.dart';
 export 'src/serializable_invocation.dart';
 export 'src/symbol_serializer.dart';
 export 'src/implementation.dart';
+import 'src/packets.dart';
 
-abstract class RmiTarget implements Invocable, Proxy {}
-
-class Connection {
-  Stream<String> input;
-  StreamSink<String> output;
-  Connection(this.input, this.output);
+abstract class RmiTarget implements Invocable, Proxy {
+  Provision provideRemote(Context context);
 }
 
-void rmiExposeRemote(Connection connection, Invocable target) =>
-    internalExposeRemote(connection, target);
+class Context {
+  Map<String, RemoteStubConstructor> remoteStubConstructors = {};
+  Stream<String> input;
+  StreamSink<String> output;
+  Context(this.input, this.output);
+
+  Object getRemote(RemoteStub stub) => internalGetRemoteFromStub(stub, this);
+
+  void registerRemoteStubConstructor(
+      String type, RemoteStubConstructor constructor) {
+    remoteStubConstructors.putIfAbsent(type, () => constructor);
+  }
+}
+
+typedef Object RemoteStubConstructor(Context context, String uuid);
+
+class Provision {
+  Context context;
+  String uuid;
+  // void terminate();
+}
+
+Provision rmiProvideRemote(Context context, Invocable target) =>
+    internalProvideRemote(context, target);
 
 void rmiRegisterSerializers(List<Serializer> serializers) =>
     internalRegisterSerializers(serializers);

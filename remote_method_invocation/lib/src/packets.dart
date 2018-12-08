@@ -6,6 +6,7 @@ part 'packets.g.dart';
 
 abstract class Query implements Built<Query, QueryBuilder> {
   String get uuid;
+  String get targetUuid;
   SerializableInvocation get invocation;
 
   static Serializer<Query> get serializer => _$querySerializer;
@@ -27,4 +28,14 @@ abstract class Response implements Built<Response, ResponseBuilder> {
   static Serializer<Response> get serializer => _$responseSerializer;
   Response._();
   factory Response([updates(ResponseBuilder b)]) = _$Response;
+}
+
+/// Not directly a packet but a argument replacement for a remote object
+abstract class RemoteStub implements Built<RemoteStub, RemoteStubBuilder> {
+  String get uuid;
+  String get type;
+
+  static Serializer<RemoteStub> get serializer => _$remoteStubSerializer;
+  RemoteStub._();
+  factory RemoteStub([updates(RemoteStubBuilder b)]) = _$RemoteStub;
 }

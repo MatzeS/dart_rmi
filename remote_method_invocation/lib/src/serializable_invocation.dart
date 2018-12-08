@@ -23,27 +23,29 @@ abstract class SerializableInvocation
       _$SerializableInvocation;
 }
 
-SerializableInvocation convertInvocation(Invocation invocation) {
+SerializableInvocation convertInvocation(Invocation invocation,
+    List<Object> positionalArguments, Map<Symbol, Object> namedArguments) {
+  //TODO
   return SerializableInvocation((b) => b
     ..memberName = invocation.memberName
-    ..positionalArguments = new ListBuilder(invocation.positionalArguments)
-    ..namedArguments = new MapBuilder(invocation.namedArguments)
+    ..positionalArguments = new ListBuilder<Object>(positionalArguments)
+    ..namedArguments = new MapBuilder<Symbol, Object>(namedArguments)
     ..isMethod = invocation.isMethod
     ..isSetter = invocation.isSetter
     ..isGetter = invocation.isGetter);
 }
 
-Invocation convertSerializableInvocation(SerializableInvocation invocation) {
+Invocation convertSerializableInvocation(SerializableInvocation invocation,
+    List<Object> positionalArguments, Map<Symbol, Object> namedArguments) {
   if (invocation.isSetter) {
-    return Invocation.setter(
-        invocation.memberName, invocation.positionalArguments.first);
+    return Invocation.setter(invocation.memberName, positionalArguments.first);
   } else if (invocation.isGetter) {
     return Invocation.getter(invocation.memberName);
   } else if (invocation.isMethod) {
     // if (invocation.typeArguments.isEmpty) {
     // generic stuff has not been implemented so far
     return Invocation.method(
-        invocation.memberName, invocation.positionalArguments);
+        invocation.memberName, positionalArguments, namedArguments);
     // } else {
     //   return Invocation.genericMethod(invocation.memberName,
     //       invocation.typeArguments, invocation.positionalArguments);

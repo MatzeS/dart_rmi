@@ -24,19 +24,19 @@ main() {
         ..positionalArguments =
             BuiltList<Object>.from([0, 123, 'asdf']).toBuilder()
         ..memberName = #asdf);
-      // print(invoc);
       Serializer customSerializer = new SymbolSerializer();
       SerializersBuilder serializersBuilder = serializers.toBuilder();
       serializersBuilder.add(customSerializer);
       serializersBuilder.addPlugin(new StandardJsonPlugin());
       serializers = serializersBuilder.build();
       Object serialized = serializers.serialize(invoc);
-      // print(serialized);
       SerializableInvocation serializableInvocation =
           serializers.deserialize(serialized);
 
-      Invocation invocation =
-          convertSerializableInvocation(serializableInvocation);
+      Invocation invocation = convertSerializableInvocation(
+          serializableInvocation,
+          serializableInvocation.positionalArguments.toList(),
+          serializableInvocation.namedArguments.toMap());
     });
   });
 }

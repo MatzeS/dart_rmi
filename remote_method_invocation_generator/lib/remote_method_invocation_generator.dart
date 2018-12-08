@@ -48,6 +48,11 @@ class RmiGenerator extends Generator {
     String serializerList =
         visitor.serializableTypes.map((t) => t.name + '.serializer').join(',');
 
+    StringBuffer stubTypeRegistrations = new StringBuffer();
+    for (DartType type in visitor.remoteTargetTypes)
+      stubTypeRegistrations.write(
+          "context.registerRemoteStubConstructor('${type.displayName}', _\$${type.displayName}Rmi.getRemote);");
+
     StringBuffer output = new StringBuffer();
     output.write('''
         class _\$${classElement.name}Rmi {
@@ -57,15 +62,20 @@ class RmiGenerator extends Generator {
             _registered = true;
 
             rmiRegisterSerializers([$serializerList]);
-        }
-          static TargetClass getRemote(Connection connection) {
+          }
+          static void _registerStubConstructors(Context context){
+            $stubTypeRegistrations
+          }
+          static ${classElement.name} getRemote(Context context, String uuid) {
             _registerSerializers();
-            RmiProxyHandler handler = RmiProxyHandler(connection);
+            _registerStubConstructors(context);
+            RmiProxyHandler handler = RmiProxyHandler(context, uuid);
             return _\$${classElement.name}Proxy(handler.handle);
           }
-          static void exposeRemote(Connection connection, ${classElement.name} target) {
+          static Provision provideRemote(Context context, ${classElement.name} target) {
             _registerSerializers();
-            return rmiExposeRemote(connection, target);
+            _registerStubConstructors(context);
+            return rmiProvideRemote(context, target);
           }
         }
       ''');
@@ -75,19 +85,20 @@ class RmiGenerator extends Generator {
 
 class RmiClassVisitor extends ThrowingElementVisitor {
   List<DartType> serializableTypes = [];
-
-  add(DartType type) {
-    if (!serializableTypes.contains(type)) serializableTypes.add(type);
-  }
+  List<DartType> remoteTargetTypes = [];
 
   check(DartType type) {
     if (type == null) return;
     if (type.isObject) return;
     if (type.isVoid) return;
 
-    if (TypeChecker.fromRuntime(Built).isAssignableFromType(type)) {
-      add(type);
-    }
+    if (TypeChecker.fromRuntime(Built)
+        .isAssignableFromType(type)) if (!serializableTypes.contains(type))
+      serializableTypes.add(type);
+
+    if (TypeChecker.fromRuntime(RmiTarget)
+        .isAssignableFromType(type)) if (!remoteTargetTypes.contains(type))
+      remoteTargetTypes.add(type);
   }
 
   @override

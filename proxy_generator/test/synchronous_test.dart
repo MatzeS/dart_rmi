@@ -38,7 +38,7 @@ void main() {
       var val = testObject.someMethod();
       await val;
       print(val);
-      print(val.runtimeType);
+      print(val.runtimeType); //TODO remove prints
 
       expect(handler.invocations.length, 1);
       expect(handler.invocations.first != null, true);

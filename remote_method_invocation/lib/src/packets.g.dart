@@ -21,6 +21,7 @@ part of 'packets.dart';
 
 Serializer<Query> _$querySerializer = new _$QuerySerializer();
 Serializer<Response> _$responseSerializer = new _$ResponseSerializer();
+Serializer<RemoteStub> _$remoteStubSerializer = new _$RemoteStubSerializer();
 
 class _$QuerySerializer implements StructuredSerializer<Query> {
   @override
@@ -34,6 +35,9 @@ class _$QuerySerializer implements StructuredSerializer<Query> {
     final result = <Object>[
       'uuid',
       serializers.serialize(object.uuid, specifiedType: const FullType(String)),
+      'targetUuid',
+      serializers.serialize(object.targetUuid,
+          specifiedType: const FullType(String)),
       'invocation',
       serializers.serialize(object.invocation,
           specifiedType: const FullType(SerializableInvocation)),
@@ -55,6 +59,10 @@ class _$QuerySerializer implements StructuredSerializer<Query> {
       switch (key) {
         case 'uuid':
           result.uuid = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'targetUuid':
+          result.targetUuid = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
         case 'invocation':
@@ -136,18 +144,68 @@ class _$ResponseSerializer implements StructuredSerializer<Response> {
   }
 }
 
+class _$RemoteStubSerializer implements StructuredSerializer<RemoteStub> {
+  @override
+  final Iterable<Type> types = const [RemoteStub, _$RemoteStub];
+  @override
+  final String wireName = 'RemoteStub';
+
+  @override
+  Iterable serialize(Serializers serializers, RemoteStub object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'uuid',
+      serializers.serialize(object.uuid, specifiedType: const FullType(String)),
+      'type',
+      serializers.serialize(object.type, specifiedType: const FullType(String)),
+    ];
+
+    return result;
+  }
+
+  @override
+  RemoteStub deserialize(Serializers serializers, Iterable serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new RemoteStubBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'uuid':
+          result.uuid = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'type':
+          result.type = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
 class _$Query extends Query {
   @override
   final String uuid;
+  @override
+  final String targetUuid;
   @override
   final SerializableInvocation invocation;
 
   factory _$Query([void updates(QueryBuilder b)]) =>
       (new QueryBuilder()..update(updates)).build();
 
-  _$Query._({this.uuid, this.invocation}) : super._() {
+  _$Query._({this.uuid, this.targetUuid, this.invocation}) : super._() {
     if (uuid == null) {
       throw new BuiltValueNullFieldError('Query', 'uuid');
+    }
+    if (targetUuid == null) {
+      throw new BuiltValueNullFieldError('Query', 'targetUuid');
     }
     if (invocation == null) {
       throw new BuiltValueNullFieldError('Query', 'invocation');
@@ -166,18 +224,21 @@ class _$Query extends Query {
     if (identical(other, this)) return true;
     return other is Query &&
         uuid == other.uuid &&
+        targetUuid == other.targetUuid &&
         invocation == other.invocation;
   }
 
   @override
   int get hashCode {
-    return $jf($jc($jc(0, uuid.hashCode), invocation.hashCode));
+    return $jf($jc(
+        $jc($jc(0, uuid.hashCode), targetUuid.hashCode), invocation.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('Query')
           ..add('uuid', uuid)
+          ..add('targetUuid', targetUuid)
           ..add('invocation', invocation))
         .toString();
   }
@@ -190,6 +251,10 @@ class QueryBuilder implements Builder<Query, QueryBuilder> {
   String get uuid => _$this._uuid;
   set uuid(String uuid) => _$this._uuid = uuid;
 
+  String _targetUuid;
+  String get targetUuid => _$this._targetUuid;
+  set targetUuid(String targetUuid) => _$this._targetUuid = targetUuid;
+
   SerializableInvocationBuilder _invocation;
   SerializableInvocationBuilder get invocation =>
       _$this._invocation ??= new SerializableInvocationBuilder();
@@ -201,6 +266,7 @@ class QueryBuilder implements Builder<Query, QueryBuilder> {
   QueryBuilder get _$this {
     if (_$v != null) {
       _uuid = _$v.uuid;
+      _targetUuid = _$v.targetUuid;
       _invocation = _$v.invocation?.toBuilder();
       _$v = null;
     }
@@ -224,8 +290,11 @@ class QueryBuilder implements Builder<Query, QueryBuilder> {
   _$Query build() {
     _$Query _$result;
     try {
-      _$result =
-          _$v ?? new _$Query._(uuid: uuid, invocation: invocation.build());
+      _$result = _$v ??
+          new _$Query._(
+              uuid: uuid,
+              targetUuid: targetUuid,
+              invocation: invocation.build());
     } catch (_) {
       String _$failedField;
       try {
@@ -355,6 +424,94 @@ class ResponseBuilder implements Builder<Response, ResponseBuilder> {
             returnedNull: returnedNull,
             returnValue: returnValue,
             exception: exception);
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$RemoteStub extends RemoteStub {
+  @override
+  final String uuid;
+  @override
+  final String type;
+
+  factory _$RemoteStub([void updates(RemoteStubBuilder b)]) =>
+      (new RemoteStubBuilder()..update(updates)).build();
+
+  _$RemoteStub._({this.uuid, this.type}) : super._() {
+    if (uuid == null) {
+      throw new BuiltValueNullFieldError('RemoteStub', 'uuid');
+    }
+    if (type == null) {
+      throw new BuiltValueNullFieldError('RemoteStub', 'type');
+    }
+  }
+
+  @override
+  RemoteStub rebuild(void updates(RemoteStubBuilder b)) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  RemoteStubBuilder toBuilder() => new RemoteStubBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is RemoteStub && uuid == other.uuid && type == other.type;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc($jc(0, uuid.hashCode), type.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('RemoteStub')
+          ..add('uuid', uuid)
+          ..add('type', type))
+        .toString();
+  }
+}
+
+class RemoteStubBuilder implements Builder<RemoteStub, RemoteStubBuilder> {
+  _$RemoteStub _$v;
+
+  String _uuid;
+  String get uuid => _$this._uuid;
+  set uuid(String uuid) => _$this._uuid = uuid;
+
+  String _type;
+  String get type => _$this._type;
+  set type(String type) => _$this._type = type;
+
+  RemoteStubBuilder();
+
+  RemoteStubBuilder get _$this {
+    if (_$v != null) {
+      _uuid = _$v.uuid;
+      _type = _$v.type;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(RemoteStub other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$RemoteStub;
+  }
+
+  @override
+  void update(void updates(RemoteStubBuilder b)) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$RemoteStub build() {
+    final _$result = _$v ?? new _$RemoteStub._(uuid: uuid, type: type);
     replace(_$result);
     return _$result;
   }

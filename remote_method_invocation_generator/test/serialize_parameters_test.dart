@@ -35,10 +35,10 @@ class TargetClass implements RmiTarget {
   @override
   Object invoke(Invocation invocation) =>
       _$TargetClassInvoker.invoke(invocation, this);
-  factory TargetClass.getRemote(Connection connection) =>
-      _$TargetClassRmi.getRemote(connection);
-  void exposeRemote(Connection connection) =>
-      _$TargetClassRmi.exposeRemote(connection, this);
+  factory TargetClass.getRemote(Context context, String uuid) =>
+      _$TargetClassRmi.getRemote(context, uuid);
+  Provision provideRemote(Context context) =>
+      _$TargetClassRmi.provideRemote(context, this);
 }
 
 main() {
@@ -48,11 +48,11 @@ main() {
       StreamController<String> getToExpose = StreamController();
 
       TargetClass remoteTarget = new TargetClass();
-      remoteTarget
-          .exposeRemote(new Connection(getToExpose.stream, exposeToGet));
+      var provision = remoteTarget
+          .provideRemote(new Context(getToExpose.stream, exposeToGet));
 
       TargetClass proxy = TargetClass.getRemote(
-          new Connection(exposeToGet.stream, getToExpose));
+          new Context(exposeToGet.stream, getToExpose), provision.uuid);
       SomeParameter parameter = SomeParameter((b) => b.wrapped = 1234);
       await proxy.someMethod(parameter);
     });
@@ -62,11 +62,11 @@ main() {
       StreamController<String> getToExpose = StreamController();
 
       TargetClass remoteTarget = new TargetClass();
-      remoteTarget
-          .exposeRemote(new Connection(getToExpose.stream, exposeToGet));
+      var provision = remoteTarget
+          .provideRemote(new Context(getToExpose.stream, exposeToGet));
 
       TargetClass proxy = TargetClass.getRemote(
-          new Connection(exposeToGet.stream, getToExpose));
+          new Context(exposeToGet.stream, getToExpose), provision.uuid);
       SomeParameter parameter = SomeParameter((b) => b.wrapped = 1234);
       num result = await proxy.methodWithReturnValue(parameter);
 
@@ -78,11 +78,11 @@ main() {
       StreamController<String> getToExpose = StreamController();
 
       TargetClass remoteTarget = new TargetClass();
-      remoteTarget
-          .exposeRemote(new Connection(getToExpose.stream, exposeToGet));
+      var provision = remoteTarget
+          .provideRemote(new Context(getToExpose.stream, exposeToGet));
 
       TargetClass proxy = TargetClass.getRemote(
-          new Connection(exposeToGet.stream, getToExpose));
+          new Context(exposeToGet.stream, getToExpose), provision.uuid);
 
       var returned = await proxy.aGetter;
       expect(returned.wrapped, 123456789);

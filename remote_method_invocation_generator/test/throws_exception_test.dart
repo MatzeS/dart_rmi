@@ -21,10 +21,10 @@ class TargetClass implements RmiTarget {
   @override
   Object invoke(Invocation invocation) =>
       _$TargetClassInvoker.invoke(invocation, this);
-  factory TargetClass.getRemote(Connection connection) =>
-      _$TargetClassRmi.getRemote(connection);
-  void exposeRemote(Connection connection) =>
-      _$TargetClassRmi.exposeRemote(connection, this);
+  factory TargetClass.getRemote(Context context, String uuid) =>
+      _$TargetClassRmi.getRemote(context, uuid);
+  Provision provideRemote(Context context) =>
+      _$TargetClassRmi.provideRemote(context, this);
 }
 
 main() {
@@ -39,11 +39,11 @@ main() {
       getToExpose = StreamController();
 
       remoteTarget = new TargetClass();
-      remoteTarget
-          .exposeRemote(new Connection(getToExpose.stream, exposeToGet));
+      var provision = remoteTarget
+          .provideRemote(new Context(getToExpose.stream, exposeToGet));
 
       proxy = TargetClass.getRemote(
-          new Connection(exposeToGet.stream, getToExpose));
+          new Context(exposeToGet.stream, getToExpose), provision.uuid);
     });
     test('simple method call with await', () async {
       bool exception = false;

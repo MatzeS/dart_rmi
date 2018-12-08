@@ -21,6 +21,7 @@ part of 'implementation.dart';
 
 Serializers _$serializers = (new Serializers().toBuilder()
       ..add(Query.serializer)
+      ..add(RemoteStub.serializer)
       ..add(Response.serializer)
       ..add(SerializableInvocation.serializer)
       ..addBuilderFactory(

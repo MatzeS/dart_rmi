@@ -28,10 +28,10 @@ class TargetClass implements RmiTarget {
   @override
   Object invoke(Invocation invocation) =>
       _$TargetClassInvoker.invoke(invocation, this);
-  factory TargetClass.getRemote(Connection connection) =>
-      _$TargetClassRmi.getRemote(connection);
-  void exposeRemote(Connection connection) =>
-      _$TargetClassRmi.exposeRemote(connection, this);
+  factory TargetClass.getRemote(Context context, String uuid) =>
+      _$TargetClassRmi.getRemote(context, uuid);
+  Provision provideRemote(Context context) =>
+      _$TargetClassRmi.provideRemote(context, this);
 }
 
 main() {
@@ -41,11 +41,11 @@ main() {
       StreamController<String> getToExpose = StreamController();
 
       TargetClass remoteTarget = new TargetClass(1234);
-      remoteTarget
-          .exposeRemote(new Connection(getToExpose.stream, exposeToGet));
+      var provision = remoteTarget
+          .provideRemote(new Context(getToExpose.stream, exposeToGet));
 
       TargetClass proxy = TargetClass.getRemote(
-          new Connection(exposeToGet.stream, getToExpose));
+          new Context(exposeToGet.stream, getToExpose), provision.uuid);
 
       await proxy.someMethod();
       expect(triggered, true);
@@ -56,11 +56,11 @@ main() {
       StreamController<String> getToExpose = StreamController();
 
       TargetClass remoteTarget = new TargetClass(1234);
-      remoteTarget
-          .exposeRemote(new Connection(getToExpose.stream, exposeToGet));
+      var provision = remoteTarget
+          .provideRemote(new Context(getToExpose.stream, exposeToGet));
 
       TargetClass proxy = TargetClass.getRemote(
-          new Connection(exposeToGet.stream, getToExpose));
+          new Context(exposeToGet.stream, getToExpose), provision.uuid);
       num result = await proxy.methodWithReturnValue();
 
       expect(result, 1234);
