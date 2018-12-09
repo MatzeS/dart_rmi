@@ -8,10 +8,9 @@ part of 'basic_class_test.dart';
 
 class _$TestClassProxy implements TestClass {
   InvocationHandlerFunction _handle;
-
   _$TestClassProxy(this._handle) : super();
 
-  get aField {
+  num get aField {
     Invocation invocation = Invocation.getter(#aField);
 
     return _handle(invocation);
@@ -23,7 +22,7 @@ class _$TestClassProxy implements TestClass {
     _handle(invocation);
   }
 
-  get aGetter {
+  num get aGetter {
     Invocation invocation = Invocation.getter(#aGetter);
 
     return _handle(invocation);
@@ -33,6 +32,18 @@ class _$TestClassProxy implements TestClass {
     Invocation invocation = Invocation.setter(#aSetter, arg);
 
     _handle(invocation);
+  }
+
+  int get hashCode {
+    Invocation invocation = Invocation.getter(#hashCode);
+
+    return _handle(invocation);
+  }
+
+  Type get runtimeType {
+    Invocation invocation = Invocation.getter(#runtimeType);
+
+    return _handle(invocation);
   }
 
   void simpleMethod() {
@@ -147,18 +158,6 @@ class _$TestClassProxy implements TestClass {
         Invocation.method(#methodWithReturn, arguments, namedArguments);
 
     return _handle(_$invocation);
-  }
-
-  get hashCode {
-    Invocation invocation = Invocation.getter(#hashCode);
-
-    return _handle(invocation);
-  }
-
-  get runtimeType {
-    Invocation invocation = Invocation.getter(#runtimeType);
-
-    return _handle(invocation);
   }
 
   String toString() {

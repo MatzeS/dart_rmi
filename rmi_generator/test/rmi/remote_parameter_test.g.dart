@@ -126,66 +126,9 @@ class _$TargetClassInvoker {
 
 class _$ASubParameterProxy implements ASubParameter {
   InvocationHandlerFunction _handle;
-
   _$ASubParameterProxy(this._handle) : super();
 
-  get hashCode {
-    Invocation invocation = Invocation.getter(#hashCode);
-
-    return _handle(invocation);
-  }
-
-  get runtimeType {
-    Invocation invocation = Invocation.getter(#runtimeType);
-
-    return _handle(invocation);
-  }
-
-  String toString() {
-    List<Object> arguments = [];
-
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#toString, arguments, namedArguments);
-
-    return _handle(_$invocation);
-  }
-
-  dynamic noSuchMethod(Invocation invocation) {
-    List<Object> arguments = [];
-    arguments.add(invocation);
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#noSuchMethod, arguments, namedArguments);
-
-    return _handle(_$invocation);
-  }
-
-  Provision provideRemote(Context context) {
-    List<Object> arguments = [];
-    arguments.add(context);
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#provideRemote, arguments, namedArguments);
-
-    return _handle(_$invocation);
-  }
-
-  Object invoke(Invocation invocation) {
-    List<Object> arguments = [];
-    arguments.add(invocation);
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#invoke, arguments, namedArguments);
-
-    return _handle(_$invocation);
-  }
-
-  get triggered {
+  bool get triggered {
     Invocation invocation = Invocation.getter(#triggered);
 
     return _handle(invocation);
@@ -197,7 +140,7 @@ class _$ASubParameterProxy implements ASubParameter {
     _handle(invocation);
   }
 
-  get aField {
+  String get aField {
     Invocation invocation = Invocation.getter(#aField);
 
     return _handle(invocation);
@@ -209,25 +152,41 @@ class _$ASubParameterProxy implements ASubParameter {
     _handle(invocation);
   }
 
-  get someStringGetter async {
+  Future<String> get someStringGetter async {
     Invocation invocation = Invocation.getter(#someStringGetter);
 
     return await _handle(invocation);
   }
-}
 
-class _$AParameterProxy implements AParameter {
-  InvocationHandlerFunction _handle;
+  Object invoke(Invocation invocation) {
+    List<Object> arguments = [];
+    arguments.add(invocation);
+    Map<Symbol, Object> namedArguments = {};
 
-  _$AParameterProxy(this._handle) : super();
+    Invocation _$invocation =
+        Invocation.method(#invoke, arguments, namedArguments);
 
-  get hashCode {
+    return _handle(_$invocation);
+  }
+
+  Provision provideRemote(Context context) {
+    List<Object> arguments = [];
+    arguments.add(context);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#provideRemote, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
+  int get hashCode {
     Invocation invocation = Invocation.getter(#hashCode);
 
     return _handle(invocation);
   }
 
-  get runtimeType {
+  Type get runtimeType {
     Invocation invocation = Invocation.getter(#runtimeType);
 
     return _handle(invocation);
@@ -254,30 +213,13 @@ class _$AParameterProxy implements AParameter {
 
     return _handle(_$invocation);
   }
+}
 
-  Provision provideRemote(Context context) {
-    List<Object> arguments = [];
-    arguments.add(context);
-    Map<Symbol, Object> namedArguments = {};
+class _$AParameterProxy implements AParameter {
+  InvocationHandlerFunction _handle;
+  _$AParameterProxy(this._handle) : super();
 
-    Invocation _$invocation =
-        Invocation.method(#provideRemote, arguments, namedArguments);
-
-    return _handle(_$invocation);
-  }
-
-  Object invoke(Invocation invocation) {
-    List<Object> arguments = [];
-    arguments.add(invocation);
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#invoke, arguments, namedArguments);
-
-    return _handle(_$invocation);
-  }
-
-  get value {
+  num get value {
     Invocation invocation = Invocation.getter(#value);
 
     return _handle(invocation);
@@ -289,7 +231,7 @@ class _$AParameterProxy implements AParameter {
     _handle(invocation);
   }
 
-  get triggered {
+  bool get triggered {
     Invocation invocation = Invocation.getter(#triggered);
 
     return _handle(invocation);
@@ -301,7 +243,7 @@ class _$AParameterProxy implements AParameter {
     _handle(invocation);
   }
 
-  get sub {
+  ASubParameter get sub {
     Invocation invocation = Invocation.getter(#sub);
 
     return _handle(invocation);
@@ -313,7 +255,7 @@ class _$AParameterProxy implements AParameter {
     _handle(invocation);
   }
 
-  get getSub async {
+  Future<ASubParameter> get getSub async {
     Invocation invocation = Invocation.getter(#getSub);
 
     return await _handle(invocation);
@@ -329,20 +271,36 @@ class _$AParameterProxy implements AParameter {
 
     return await _handle(_$invocation);
   }
-}
 
-class _$TargetClassProxy implements TargetClass {
-  InvocationHandlerFunction _handle;
+  Object invoke(Invocation invocation) {
+    List<Object> arguments = [];
+    arguments.add(invocation);
+    Map<Symbol, Object> namedArguments = {};
 
-  _$TargetClassProxy(this._handle) : super();
+    Invocation _$invocation =
+        Invocation.method(#invoke, arguments, namedArguments);
 
-  get hashCode {
+    return _handle(_$invocation);
+  }
+
+  Provision provideRemote(Context context) {
+    List<Object> arguments = [];
+    arguments.add(context);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#provideRemote, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
+  int get hashCode {
     Invocation invocation = Invocation.getter(#hashCode);
 
     return _handle(invocation);
   }
 
-  get runtimeType {
+  Type get runtimeType {
     Invocation invocation = Invocation.getter(#runtimeType);
 
     return _handle(invocation);
@@ -369,28 +327,11 @@ class _$TargetClassProxy implements TargetClass {
 
     return _handle(_$invocation);
   }
+}
 
-  Provision provideRemote(Context context) {
-    List<Object> arguments = [];
-    arguments.add(context);
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#provideRemote, arguments, namedArguments);
-
-    return _handle(_$invocation);
-  }
-
-  Object invoke(Invocation invocation) {
-    List<Object> arguments = [];
-    arguments.add(invocation);
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#invoke, arguments, namedArguments);
-
-    return _handle(_$invocation);
-  }
+class _$TargetClassProxy implements TargetClass {
+  InvocationHandlerFunction _handle;
+  _$TargetClassProxy(this._handle) : super();
 
   Future<num> someMethod(AParameter parameter) async {
     List<Object> arguments = [];
@@ -412,6 +353,62 @@ class _$TargetClassProxy implements TargetClass {
         Invocation.method(#subElementCheck, arguments, namedArguments);
 
     return await _handle(_$invocation);
+  }
+
+  Object invoke(Invocation invocation) {
+    List<Object> arguments = [];
+    arguments.add(invocation);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#invoke, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
+  Provision provideRemote(Context context) {
+    List<Object> arguments = [];
+    arguments.add(context);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#provideRemote, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
+  int get hashCode {
+    Invocation invocation = Invocation.getter(#hashCode);
+
+    return _handle(invocation);
+  }
+
+  Type get runtimeType {
+    Invocation invocation = Invocation.getter(#runtimeType);
+
+    return _handle(invocation);
+  }
+
+  String toString() {
+    List<Object> arguments = [];
+
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#toString, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
+  dynamic noSuchMethod(Invocation invocation) {
+    List<Object> arguments = [];
+    arguments.add(invocation);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#noSuchMethod, arguments, namedArguments);
+
+    return _handle(_$invocation);
   }
 }
 

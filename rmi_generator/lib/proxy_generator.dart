@@ -2,11 +2,16 @@ import 'dart:async';
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/visitor.dart';
+import 'package:analyzer/dart/element/type.dart';
 
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:rmi/proxy.dart';
 // import 'package:rmi/remote_method_invocation.dart';
+
+import 'package:source_gen_class_visitor/class_visitor.dart';
+import 'package:source_gen_class_visitor/output_visitor.dart';
+import 'package:source_gen_class_visitor/override_visitor.dart';
 
 class ProxyGenerator extends Generator {
   BuilderOptions options;
@@ -29,84 +34,73 @@ class ProxyGenerator extends Generator {
   }
 
   @override
-  FutureOr<String> generate(LibraryReader library, BuildStep buildStep) async {
-    return library.allElements
+  generate(LibraryReader library, BuildStep buildStep) async {
+    var futures = library.allElements
         .where(elementFilter)
-        .map((e) => generateForElement(e))
-        .join('\n\n');
+        .map((e) async => await generateForElement(e))
+        .toList();
+    var result = await Future.wait(futures);
+    return result.join('\n\n');
   }
 
-  String generateForElement(Element element) {
+  generateForElement(Element element) async {
     if (element is! ClassElement) {
       log.severe('only classes can be proxies, $element is not a class');
     }
 
     ClassElement classElement = element as ClassElement;
 
-    ProxyClassVisitor classvisitor = new ProxyClassVisitor();
-    classElement.allSupertypes
-        .forEach((i) => (i.element.visitChildren(classvisitor)));
-    classElement.visitChildren(classvisitor);
+    ProxyClassVisitor classVisitor = new ProxyClassVisitor(classElement);
+    OverrideVisitor overrideVisitor = new OverrideVisitor(classVisitor);
+    ClassOutputVisitor outputVisitor = new ClassOutputVisitor(overrideVisitor);
 
-    if (!classvisitor.foundNoArgConstructor) {
-      log.severe('${classElement} must have a no argument constructor');
+    List<Element> elements = [];
+    elements.add(classElement);
+    elements.addAll(classElement.accessors);
+    elements.addAll(classElement.methods);
+
+    void addElements(List<Element> mapper(InterfaceType e)) {
+      elements.addAll(classElement.allSupertypes
+          .map((e) => mapper(e))
+          .fold<List<Element>>([], (a, b) {
+        a.addAll(b);
+        return a;
+      }));
     }
 
-    String classOutput = '''
-    class _\$${classElement.name}Proxy implements ${classElement.name}{
-      InvocationHandlerFunction _handle;
+    addElements((e) => e.accessors);
+    addElements((e) => e.methods);
 
-      _\$${classElement.name}Proxy(this._handle) : super();
+    await outputVisitor.visitElements(elements);
 
-      ${classvisitor.outputString}
-    }
-    ''';
-
-    return classOutput;
+    return await outputVisitor.output;
   }
 }
 
-class ProxyClassVisitor extends ThrowingElementVisitor {
-  String get outputString => output.toString();
-  StringBuffer output = new StringBuffer();
-  List<String> visited = new List();
-
-  bool foundNoArgConstructor = false;
+class ProxyClassVisitor extends ClassVisitor {
+  ProxyClassVisitor(ClassElement element) : super(element);
 
   @override
-  void visitMethodElement(MethodElement element) {
-    if (element.isGenerator) return;
-    if (element.isStatic) return;
-    if (element.isOperator) return;
+  FutureOr<String> visitClassElement(ClassElement element) {
+    classDeclaration
+        .complete('class _\$${element.name}Proxy implements ${element.name}');
 
-    if (visited.contains(element.name)) return;
-    visited.add(element.name);
+    return '''
+      InvocationHandlerFunction _handle;
+      _\$${classElement.name}Proxy(this._handle) : super();    
+    ''';
+  }
+
+  @override
+  visitMethodElement(MethodElement element) {
+    if (element.isGenerator) return '';
+    if (element.isStatic) return '';
+    if (element.isOperator) return '';
+
+    // if (visited.contains(element.name)) return;
+    // visited.add(element.name);
 
     bool hasNamedArgs = element.parameters.any((p) => p.isNamed);
-    bool hasPositionalArgs =
-        element.parameters.any((p) => p.isPositional && p.isOptional);
-    if (hasNamedArgs && hasPositionalArgs) {
-      log.severe('named and positional arguments $element');
-    }
-
-    String argumentEncoder(Iterable<ParameterElement> elements) =>
-        elements.map((p) => '${p.type.name} ${p.name}').join(', ');
-    String declarationRequiredArguments =
-        argumentEncoder(element.parameters.where((p) => p.isNotOptional));
-    String declarationPositionalArguments = argumentEncoder(
-        element.parameters.where((p) => p.isPositional && p.isOptional));
-    String declarationNamedArguments =
-        argumentEncoder(element.parameters.where((p) => p.isNamed));
-    String declarationArguments = declarationRequiredArguments;
-    if ((hasNamedArgs || hasPositionalArgs) &&
-        declarationRequiredArguments.isNotEmpty) declarationArguments += ', ';
-    if (hasPositionalArgs) {
-      declarationArguments += '[' + declarationPositionalArguments + ']';
-    }
-    if (hasNamedArgs) {
-      declarationArguments += '{' + declarationNamedArguments + '}';
-    }
-
     String argumentAdds = element.parameters
         .where((p) => p.isPositional)
         .map((p) => 'arguments.add(${p.name});')
@@ -119,64 +113,49 @@ class ProxyClassVisitor extends ThrowingElementVisitor {
               'namedArguments.putIfAbsent(#${p.name}, () =>  ${p.name});')
           .join('\n');
     }
+    return '''
+    {
+      List<Object> arguments =  [];
+      ${argumentAdds}
+      Map<Symbol, Object> namedArguments = {};
+      ${namedArgumentAdds}
+      Invocation _\$invocation = Invocation
+        .method(#${element.name}, arguments, namedArguments);
 
-    output.write('''
-      ${element.returnType} ${element.displayName}($declarationArguments) ${element.isAsynchronous ? 'async' : ''} {
-        List<Object> arguments =  [];
-        ${argumentAdds}
-        Map<Symbol, Object> namedArguments = {};
-        ${namedArgumentAdds}
-        Invocation _\$invocation = Invocation
-          .method(#${element.name}, arguments, namedArguments);
-
-        ${!element.returnType.isVoid ? 'return' : ''} ${element.isAsynchronous ? 'await' : ''} _handle(_\$invocation);
-      }
-    ''');
-  }
-
-  @override
-  void visitConstructorElement(ConstructorElement element) {
-    if (!element.isFactory && element.parameters.any((p) => p.isNotOptional))
-      return;
-
-    foundNoArgConstructor = true;
+      ${!element.returnType.isVoid ? 'return' : ''} ${element.isAsynchronous ? 'await' : ''} _handle(_\$invocation);      
+    }
+    ''';
   }
 
   generateGetter(PropertyAccessorElement element) {
-    output.write('''
-      get ${element.name} ${element.isAsynchronous ? 'async' : ''} {
-        Invocation invocation = Invocation.getter(#${element.name});
+    return '''
+    {
+      Invocation invocation = Invocation.getter(#${element.name});
 
-        return ${element.isAsynchronous ? 'await' : ''} _handle(invocation);
-      }
-    ''');
+      return ${element.isAsynchronous ? 'await' : ''} _handle(invocation);
+    }
+    ''';
   }
 
   generateSetter(PropertyAccessorElement element) {
-    output.write('''
-      set ${element.displayName}(
-        ${element.parameters.first.type.name} ${element.parameters.first.displayName}
-        ){
-        Invocation invocation = Invocation.setter(
-          #${element.displayName}, ${element.parameters.first.displayName});
+    return '''
+    {
 
-        _handle(invocation);
-      }
-    ''');
+      Invocation invocation = Invocation.setter(
+        #${element.displayName}, ${element.parameters.first.displayName});
+
+      _handle(invocation);
+    }
+    ''';
   }
 
   @override
   visitPropertyAccessorElement(PropertyAccessorElement element) {
-    if (visited.contains(element.name)) return;
-    visited.add(element.name);
+    // if (visited.contains(element.name)) return;
+    // visited.add(element.name);
 
-    if (element.isGetter) {
-      generateGetter(element);
-    } else if (element.isSetter) {
-      generateSetter(element);
-    } else {
-      throw new Exception('invalid accessor element');
-    }
+    if (element.isGetter) return generateGetter(element);
+    if (element.isSetter) return generateSetter(element);
   }
 
   @override
