@@ -20,7 +20,7 @@ class ASubParameter implements RmiTarget {
   @override
   Object invoke(Invocation invocation) =>
       _$ASubParameterInvoker.invoke(invocation, this);
-  factory ASubParameter.getRemote(Context context, String uuid) =>
+  static ASubParameter getRemote(Context context, String uuid) =>
       _$ASubParameterRmi.getRemote(context, uuid);
   Provision provideRemote(Context context) =>
       _$ASubParameterRmi.provideRemote(context, this);
@@ -43,7 +43,7 @@ class AParameter implements RmiTarget {
   @override
   Object invoke(Invocation invocation) =>
       _$AParameterInvoker.invoke(invocation, this);
-  factory AParameter.getRemote(Context context, String uuid) =>
+  static AParameter getRemote(Context context, String uuid) =>
       _$AParameterRmi.getRemote(context, uuid);
   Provision provideRemote(Context context) =>
       _$AParameterRmi.provideRemote(context, this);

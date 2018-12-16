@@ -47,7 +47,7 @@ class RmiGenerator extends Generator {
     StringBuffer stubTypeRegistrations = new StringBuffer();
     for (DartType type in visitor.remoteTargetTypes)
       stubTypeRegistrations.write(
-          "context.registerRemoteStubConstructor('${type.displayName}', _\$${type.displayName}Rmi.getRemote);");
+          "context.registerRemoteStubConstructor('${type.displayName}', ${type.displayName}.getRemote);");
 
     StringBuffer output = new StringBuffer();
     output.write('''

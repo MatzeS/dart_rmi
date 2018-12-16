@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/visitor.dart';
 import 'package:analyzer/dart/element/type.dart';
 
 import 'package:build/build.dart';
@@ -9,96 +8,100 @@ import 'package:source_gen/source_gen.dart';
 import 'package:rmi/proxy.dart';
 // import 'package:rmi/remote_method_invocation.dart';
 
-import 'package:source_gen_class_visitor/class_visitor.dart';
-import 'package:source_gen_class_visitor/output_visitor.dart';
-import 'package:source_gen_class_visitor/override_visitor.dart';
+import 'package:source_gen_helpers/class/class_visitor.dart';
+import 'package:source_gen_helpers/class/output_visitor.dart';
+import 'package:source_gen_helpers/class/override_visitor.dart';
+import 'package:source_gen_helpers/class/util.dart';
+import 'package:source_gen_helpers/util.dart';
+import 'package:source_gen_helpers/filter_generator.dart';
 
-class ProxyGenerator extends Generator {
-  BuilderOptions options;
-  ProxyGenerator(this.options);
-
-  // bool get isRmiActive => options.config.containsKey('rmi');
-
-  bool isAnnotatedWith<T>(Element element) {
-    return TypeChecker.fromRuntime(T).firstAnnotationOf(element) != null;
-  }
+class ProxyGenerator extends FilterGenerator {
+  ProxyGenerator(BuilderOptions options) : super(options);
 
   bool elementFilter(Element element) {
     if (element.name == 'RmiTarget')
       return false; // this removes generation from the root class
 
-    if (isAnnotatedWith<Proxy>(element)) return true;
+    if (isAnnotatedWithType<Proxy>(element)) return true;
     if (TypeChecker.fromRuntime(Proxy).isAssignableFrom(element)) return true;
 
     return false;
   }
 
-  @override
-  generate(LibraryReader library, BuildStep buildStep) async {
-    var futures = library.allElements
-        .where(elementFilter)
-        .map((e) async => await generateForElement(e))
-        .toList();
-    var result = await Future.wait(futures);
-    return result.join('\n\n');
-  }
-
-  generateForElement(Element element) async {
+  Future<String> generateForElement(Element element) async {
     if (element is! ClassElement) {
       log.severe('only classes can be proxies, $element is not a class');
     }
 
     ClassElement classElement = element as ClassElement;
 
-    ProxyClassVisitor classVisitor = new ProxyClassVisitor(classElement);
-    OverrideVisitor overrideVisitor = new OverrideVisitor(classVisitor);
-    ClassOutputVisitor outputVisitor = new ClassOutputVisitor(overrideVisitor);
+    ProxyClassVisitor classVisitor = new ProxyClassVisitor();
+    OverrideClassVisitor overrideVisitor =
+        new OverrideClassVisitor(classVisitor);
+    OutputClassVisitor outputVisitor = new OutputClassVisitor(overrideVisitor);
 
-    List<Element> elements = [];
-    elements.add(classElement);
-    elements.addAll(classElement.accessors);
-    elements.addAll(classElement.methods);
+    List<Element> member = allClassMember(classElement);
+    member = member.where((e) {
+      if (e.enclosingElement is! ClassElement) return true;
+      ClassElement c = e.enclosingElement as ClassElement;
+      return !c.type.isBottom;
+    }).toList();
 
-    void addElements(List<Element> mapper(InterfaceType e)) {
-      elements.addAll(classElement.allSupertypes
-          .map((e) => mapper(e))
-          .fold<List<Element>>([], (a, b) {
-        a.addAll(b);
-        return a;
-      }));
-    }
-
-    addElements((e) => e.accessors);
-    addElements((e) => e.methods);
-
-    await outputVisitor.visitElements(elements);
-
+    outputVisitor.visitClassElement(classElement);
+    await visitElements(outputVisitor, member);
     return await outputVisitor.output;
   }
 }
 
 class ProxyClassVisitor extends ClassVisitor {
-  ProxyClassVisitor(ClassElement element) : super(element);
+  List<String> _visited = [];
+  bool _visitOnce(Element element) {
+    String compare = element.displayName;
+    bool contained = _visited.contains(compare);
+    _visited.add(compare);
+    return contained;
+  }
 
   @override
   FutureOr<String> visitClassElement(ClassElement element) {
-    classDeclaration
+    super.visitClassElement(element);
+    classDeclarationCompleter
         .complete('class _\$${element.name}Proxy implements ${element.name}');
 
     return '''
       InvocationHandlerFunction _handle;
-      _\$${classElement.name}Proxy(this._handle) : super();    
+      _\$${element.name}Proxy(this._handle) : super();    
     ''';
   }
 
   @override
-  visitMethodElement(MethodElement element) {
+  FutureOr<String> visitConstructorElement(ConstructorElement element) {
+    return '';
+  }
+
+  @override
+  visitMethodElement(MethodElement element) async {
     if (element.isGenerator) return '';
     if (element.isStatic) return '';
     if (element.isOperator) return '';
+    if (_visitOnce(element)) return '';
 
-    // if (visited.contains(element.name)) return;
-    // visited.add(element.name);
+    // if (element.metadata
+    //     .map((e) => e.constantValue.toString())
+    //     .contains('NoProxy ()')) return '';
+
+    var list = (await classElement)
+        .metadata
+        .where((e) =>
+            e.constantValue.type.toString() ==
+            'NoProxy') //TODO better classCheck
+        .map((e) => e.constantValue.getField('methods').toListValue())
+        .fold([], (a, b) {
+      a.addAll(b);
+      return a;
+    }).map((e) => e.toStringValue());
+
+    if (list.contains(element.displayName)) return ''; //TODO check for symbols?
 
     bool hasNamedArgs = element.parameters.any((p) => p.isNamed);
     String argumentAdds = element.parameters
@@ -151,15 +154,12 @@ class ProxyClassVisitor extends ClassVisitor {
 
   @override
   visitPropertyAccessorElement(PropertyAccessorElement element) {
-    // if (visited.contains(element.name)) return;
-    // visited.add(element.name);
-
     if (element.isGetter) return generateGetter(element);
     if (element.isSetter) return generateSetter(element);
+    return '';
   }
 
+  // ignored since they are handled by property accessor with getter and setter implementation
   @override
-  visitFieldElement(FieldElement element) {
-    // ignored since they are handled by property accessor with getter and setter implementation
-  }
+  visitFieldElement(FieldElement element) => '';
 }

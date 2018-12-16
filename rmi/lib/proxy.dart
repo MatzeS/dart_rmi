@@ -11,5 +11,10 @@ class Proxy {
   const Proxy();
 }
 
+class NoProxy {
+  final List<String> methods;
+  const NoProxy([this.methods]);
+}
+
 /// Provide this function to handle the invocation
 typedef Object InvocationHandlerFunction(Invocation invocation);

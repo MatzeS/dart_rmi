@@ -8,7 +8,7 @@ builders:
   rmi:
     target: ":rmi_generator"
     import: "package:rmi_generator/builder.dart"
-    builder_factories: ["rmiBuilder", 'proxyBuilder', 'invokerBuilder']
+    builder_factories: ['rmiBuilder', 'proxyBuilder', 'invokerBuilder']
     build_extensions: {".dart": [".rmi.g.part"]}
     auto_apply: dependents
     build_to: cache

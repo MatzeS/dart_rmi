@@ -50,19 +50,48 @@ class _$TargetClassInvoker {
 // **************************************************************************
 
 class _$TargetClassProxy implements TargetClass {
-  InvocationHandlerFunction _handle;
-  _$TargetClassProxy(this._handle) : super();
+  String toString() {
+    List<Object> arguments = [];
 
-  num get value {
-    Invocation invocation = Invocation.getter(#value);
+    Map<Symbol, Object> namedArguments = {};
 
-    return _handle(invocation);
+    Invocation _$invocation =
+        Invocation.method(#toString, arguments, namedArguments);
+
+    return _handle(_$invocation);
   }
 
-  set value(num _value) {
-    Invocation invocation = Invocation.setter(#value, _value);
+  dynamic noSuchMethod(Invocation invocation) {
+    List<Object> arguments = [];
+    arguments.add(invocation);
+    Map<Symbol, Object> namedArguments = {};
 
-    _handle(invocation);
+    Invocation _$invocation =
+        Invocation.method(#noSuchMethod, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
+  Provision provideRemote(Context context) {
+    List<Object> arguments = [];
+    arguments.add(context);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#provideRemote, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
+  Object invoke(Invocation invocation) {
+    List<Object> arguments = [];
+    arguments.add(invocation);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#invoke, arguments, namedArguments);
+
+    return _handle(_$invocation);
   }
 
   void someMethod() {
@@ -87,27 +116,8 @@ class _$TargetClassProxy implements TargetClass {
     return await _handle(_$invocation);
   }
 
-  Object invoke(Invocation invocation) {
-    List<Object> arguments = [];
-    arguments.add(invocation);
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#invoke, arguments, namedArguments);
-
-    return _handle(_$invocation);
-  }
-
-  Provision provideRemote(Context context) {
-    List<Object> arguments = [];
-    arguments.add(context);
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#provideRemote, arguments, namedArguments);
-
-    return _handle(_$invocation);
-  }
+  InvocationHandlerFunction _handle;
+  _$TargetClassProxy(this._handle) : super();
 
   int get hashCode {
     Invocation invocation = Invocation.getter(#hashCode);
@@ -121,26 +131,16 @@ class _$TargetClassProxy implements TargetClass {
     return _handle(invocation);
   }
 
-  String toString() {
-    List<Object> arguments = [];
+  num get value {
+    Invocation invocation = Invocation.getter(#value);
 
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#toString, arguments, namedArguments);
-
-    return _handle(_$invocation);
+    return _handle(invocation);
   }
 
-  dynamic noSuchMethod(Invocation invocation) {
-    List<Object> arguments = [];
-    arguments.add(invocation);
-    Map<Symbol, Object> namedArguments = {};
+  set value(num _value) {
+    Invocation invocation = Invocation.setter(#value, _value);
 
-    Invocation _$invocation =
-        Invocation.method(#noSuchMethod, arguments, namedArguments);
-
-    return _handle(_$invocation);
+    _handle(invocation);
   }
 }
 
