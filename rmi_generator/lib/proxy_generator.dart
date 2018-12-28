@@ -53,7 +53,7 @@ class ProxyGenerator extends FilterGenerator {
   }
 }
 
-class ProxyClassVisitor extends ClassVisitor {
+class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
   List<String> _visited = [];
   bool _visitOnce(Element element) {
     String compare = element.displayName;
@@ -81,10 +81,10 @@ class ProxyClassVisitor extends ClassVisitor {
 
   @override
   visitMethodElement(MethodElement element) async {
-    if (element.isGenerator) return '';
-    if (element.isStatic) return '';
-    if (element.isOperator) return '';
-    if (_visitOnce(element)) return '';
+    if (element.isGenerator) return null;
+    if (element.isStatic) return null;
+    if (element.isOperator) return null;
+    if (_visitOnce(element)) return null;
 
     // if (element.metadata
     //     .map((e) => e.constantValue.toString())
@@ -101,7 +101,8 @@ class ProxyClassVisitor extends ClassVisitor {
       return a;
     }).map((e) => e.toStringValue());
 
-    if (list.contains(element.displayName)) return ''; //TODO check for symbols?
+    if (list.contains(element.displayName))
+      return null; //TODO check for symbols?
 
     bool hasNamedArgs = element.parameters.any((p) => p.isNamed);
     String argumentAdds = element.parameters
@@ -154,12 +155,13 @@ class ProxyClassVisitor extends ClassVisitor {
 
   @override
   visitPropertyAccessorElement(PropertyAccessorElement element) {
+    if (_visitOnce(element)) return null;
     if (element.isGetter) return generateGetter(element);
     if (element.isSetter) return generateSetter(element);
-    return '';
+    throw new Exception('unreachable');
   }
 
   // ignored since they are handled by property accessor with getter and setter implementation
   @override
-  visitFieldElement(FieldElement element) => '';
+  visitFieldElement(FieldElement element) => null;
 }

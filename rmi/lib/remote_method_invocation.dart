@@ -12,6 +12,8 @@ export 'src/serializable_invocation.dart';
 export 'src/symbol_serializer.dart';
 export 'src/implementation.dart';
 
+export 'src/implementation.dart';
+
 abstract class RmiTarget implements Invocable, Proxy {
   Provision provideRemote(Context context);
 }
