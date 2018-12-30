@@ -63,3 +63,5 @@ remoteObject.someMethod(); // prints 'some stuff' on the other machine
 - write doc
 - cleanup exports
 - write install script
+- if static getRemoteis not specified, do not write it for stub constructors simply put a waringing
+- STREAMS!!!!

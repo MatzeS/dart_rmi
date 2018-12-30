@@ -152,12 +152,6 @@ class _$TestClassProxy implements TestClass {
     return _handle(invocation);
   }
 
-  set aField(num _aField) {
-    Invocation invocation = Invocation.setter(#aField, _aField);
-
-    _handle(invocation);
-  }
-
   num get aGetter {
     Invocation invocation = Invocation.getter(#aGetter);
 

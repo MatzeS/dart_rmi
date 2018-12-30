@@ -95,6 +95,22 @@ class InvocableClassVisitor extends ThrowingElementVisitor {
     if (args.isNotEmpty) args += ', ';
     args += namedArgList.join(', ');
 
+    //TODO test operators
+    String methodCall;
+    if (element.isOperator) {
+      if (element.displayName == '[]=') {
+        String key = 'positionalArguments[0]';
+        String value = 'positionalArguments[1]';
+        methodCall = 'target[$key] = $value;';
+      } else {
+        String singleArg = 'positionalArguments[0]';
+
+        methodCall = 'return target ${element.displayName} $singleArg;';
+      }
+    } else {
+      methodCall = 'return target.${element.displayName}($args);';
+    }
+
     output.write('''
       if( 
         invocation.isMethod &&
@@ -104,7 +120,7 @@ class InvocableClassVisitor extends ThrowingElementVisitor {
         for(int i = invocation.positionalArguments.length; i < ${reqArgCount + optPosArgCount}; i++)
           positionalArguments.add(null);
 
-        return target.${element.displayName}($args);
+        $methodCall
       }
     ''');
   }

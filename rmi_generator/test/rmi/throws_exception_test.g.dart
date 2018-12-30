@@ -34,6 +34,39 @@ class _$TargetClassInvoker {
 // **************************************************************************
 
 class _$TargetClassProxy implements TargetClass {
+  Future<void> someMethod() async {
+    List<Object> arguments = [];
+
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#someMethod, arguments, namedArguments);
+
+    return await _handle(_$invocation);
+  }
+
+  Object invoke(Invocation invocation) {
+    List<Object> arguments = [];
+    arguments.add(invocation);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#invoke, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
+  Provision provideRemote(Context context) {
+    List<Object> arguments = [];
+    arguments.add(context);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#provideRemote, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
   String toString() {
     List<Object> arguments = [];
 
@@ -54,39 +87,6 @@ class _$TargetClassProxy implements TargetClass {
         Invocation.method(#noSuchMethod, arguments, namedArguments);
 
     return _handle(_$invocation);
-  }
-
-  Provision provideRemote(Context context) {
-    List<Object> arguments = [];
-    arguments.add(context);
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#provideRemote, arguments, namedArguments);
-
-    return _handle(_$invocation);
-  }
-
-  Object invoke(Invocation invocation) {
-    List<Object> arguments = [];
-    arguments.add(invocation);
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#invoke, arguments, namedArguments);
-
-    return _handle(_$invocation);
-  }
-
-  Future<void> someMethod() async {
-    List<Object> arguments = [];
-
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#someMethod, arguments, namedArguments);
-
-    return await _handle(_$invocation);
   }
 
   InvocationHandlerFunction _handle;
@@ -118,7 +118,10 @@ class _$TargetClassRmi {
     rmiRegisterSerializers([]);
   }
 
-  static void _registerStubConstructors(Context context) {}
+  static void _registerStubConstructors(Context context) {
+    context.registerRemoteStubConstructor('TargetClass', getRemote);
+  }
+
   static TargetClass getRemote(Context context, String uuid) {
     _registerSerializers();
     _registerStubConstructors(context);

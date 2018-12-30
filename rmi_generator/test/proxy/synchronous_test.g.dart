@@ -7,6 +7,17 @@ part of 'synchronous_test.dart';
 // **************************************************************************
 
 class _$TestClassProxy implements TestClass {
+  Future<num> someMethod() async {
+    List<Object> arguments = [];
+
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#someMethod, arguments, namedArguments);
+
+    return await _handle(_$invocation);
+  }
+
   String toString() {
     List<Object> arguments = [];
 
@@ -27,17 +38,6 @@ class _$TestClassProxy implements TestClass {
         Invocation.method(#noSuchMethod, arguments, namedArguments);
 
     return _handle(_$invocation);
-  }
-
-  Future<num> someMethod() async {
-    List<Object> arguments = [];
-
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#someMethod, arguments, namedArguments);
-
-    return await _handle(_$invocation);
   }
 
   InvocationHandlerFunction _handle;

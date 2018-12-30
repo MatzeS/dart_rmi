@@ -46,8 +46,13 @@ class RmiGenerator extends Generator {
 
     StringBuffer stubTypeRegistrations = new StringBuffer();
     for (DartType type in visitor.remoteTargetTypes)
-      stubTypeRegistrations.write(
-          "context.registerRemoteStubConstructor('${type.displayName}', ${type.displayName}.getRemote);");
+      if (type.displayName != classElement.displayName)
+        stubTypeRegistrations.write(
+            "context.registerRemoteStubConstructor('${type.displayName}', ${type.displayName}.getRemote);");
+
+    //TODO think about this, wheather this is a suitable workaround...
+    stubTypeRegistrations.write(
+        "context.registerRemoteStubConstructor('${classElement.displayName}', getRemote);");
 
     StringBuffer output = new StringBuffer();
     output.write('''

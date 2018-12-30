@@ -21,11 +21,12 @@ dependencies:
   build_runner: ^1.1.2
   
 dev_dependencies:
-  source_gen_helpers: 
-    path: ../../source_gen_helpers
+  source_gen_helpers: ^0.0.1
   built_value_generator: ^6.1.6
   test: ^1.5.1
 
 dependency_overrides:
   rmi:
     path: ../rmi
+  # source_gen_helpers: 
+  #   path: ../../source_gen_helpers

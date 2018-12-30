@@ -12,7 +12,6 @@ import 'package:source_gen_helpers/class/class_visitor.dart';
 import 'package:source_gen_helpers/class/output_visitor.dart';
 import 'package:source_gen_helpers/class/override_visitor.dart';
 import 'package:source_gen_helpers/class/util.dart';
-import 'package:source_gen_helpers/util.dart';
 import 'package:source_gen_helpers/filter_generator.dart';
 
 class ProxyGenerator extends FilterGenerator {
@@ -22,7 +21,8 @@ class ProxyGenerator extends FilterGenerator {
     if (element.name == 'RmiTarget')
       return false; // this removes generation from the root class
 
-    if (isAnnotatedWithType<Proxy>(element)) return true;
+    if (TypeChecker.fromRuntime(Proxy).annotationsOf(element).isNotEmpty)
+      return true;
     if (TypeChecker.fromRuntime(Proxy).isAssignableFrom(element)) return true;
 
     return false;

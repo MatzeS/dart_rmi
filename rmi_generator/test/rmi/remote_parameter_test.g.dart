@@ -125,6 +125,28 @@ class _$TargetClassInvoker {
 // **************************************************************************
 
 class _$ASubParameterProxy implements ASubParameter {
+  Object invoke(Invocation invocation) {
+    List<Object> arguments = [];
+    arguments.add(invocation);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#invoke, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
+  Provision provideRemote(Context context) {
+    List<Object> arguments = [];
+    arguments.add(context);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#provideRemote, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
   String toString() {
     List<Object> arguments = [];
 
@@ -147,30 +169,26 @@ class _$ASubParameterProxy implements ASubParameter {
     return _handle(_$invocation);
   }
 
-  Provision provideRemote(Context context) {
-    List<Object> arguments = [];
-    arguments.add(context);
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#provideRemote, arguments, namedArguments);
-
-    return _handle(_$invocation);
-  }
-
-  Object invoke(Invocation invocation) {
-    List<Object> arguments = [];
-    arguments.add(invocation);
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#invoke, arguments, namedArguments);
-
-    return _handle(_$invocation);
-  }
-
   InvocationHandlerFunction _handle;
   _$ASubParameterProxy(this._handle) : super();
+
+  bool get triggered {
+    Invocation invocation = Invocation.getter(#triggered);
+
+    return _handle(invocation);
+  }
+
+  String get aField {
+    Invocation invocation = Invocation.getter(#aField);
+
+    return _handle(invocation);
+  }
+
+  Future<String> get someStringGetter async {
+    Invocation invocation = Invocation.getter(#someStringGetter);
+
+    return await _handle(invocation);
+  }
 
   int get hashCode {
     Invocation invocation = Invocation.getter(#hashCode);
@@ -183,83 +201,9 @@ class _$ASubParameterProxy implements ASubParameter {
 
     return _handle(invocation);
   }
-
-  bool get triggered {
-    Invocation invocation = Invocation.getter(#triggered);
-
-    return _handle(invocation);
-  }
-
-  set triggered(bool _triggered) {
-    Invocation invocation = Invocation.setter(#triggered, _triggered);
-
-    _handle(invocation);
-  }
-
-  String get aField {
-    Invocation invocation = Invocation.getter(#aField);
-
-    return _handle(invocation);
-  }
-
-  set aField(String _aField) {
-    Invocation invocation = Invocation.setter(#aField, _aField);
-
-    _handle(invocation);
-  }
-
-  Future<String> get someStringGetter async {
-    Invocation invocation = Invocation.getter(#someStringGetter);
-
-    return await _handle(invocation);
-  }
 }
 
 class _$AParameterProxy implements AParameter {
-  String toString() {
-    List<Object> arguments = [];
-
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#toString, arguments, namedArguments);
-
-    return _handle(_$invocation);
-  }
-
-  dynamic noSuchMethod(Invocation invocation) {
-    List<Object> arguments = [];
-    arguments.add(invocation);
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#noSuchMethod, arguments, namedArguments);
-
-    return _handle(_$invocation);
-  }
-
-  Provision provideRemote(Context context) {
-    List<Object> arguments = [];
-    arguments.add(context);
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#provideRemote, arguments, namedArguments);
-
-    return _handle(_$invocation);
-  }
-
-  Object invoke(Invocation invocation) {
-    List<Object> arguments = [];
-    arguments.add(invocation);
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#invoke, arguments, namedArguments);
-
-    return _handle(_$invocation);
-  }
-
   Future<num> parameterMethod() async {
     List<Object> arguments = [];
 
@@ -271,65 +215,28 @@ class _$AParameterProxy implements AParameter {
     return await _handle(_$invocation);
   }
 
-  InvocationHandlerFunction _handle;
-  _$AParameterProxy(this._handle) : super();
+  Object invoke(Invocation invocation) {
+    List<Object> arguments = [];
+    arguments.add(invocation);
+    Map<Symbol, Object> namedArguments = {};
 
-  int get hashCode {
-    Invocation invocation = Invocation.getter(#hashCode);
+    Invocation _$invocation =
+        Invocation.method(#invoke, arguments, namedArguments);
 
-    return _handle(invocation);
+    return _handle(_$invocation);
   }
 
-  Type get runtimeType {
-    Invocation invocation = Invocation.getter(#runtimeType);
+  Provision provideRemote(Context context) {
+    List<Object> arguments = [];
+    arguments.add(context);
+    Map<Symbol, Object> namedArguments = {};
 
-    return _handle(invocation);
+    Invocation _$invocation =
+        Invocation.method(#provideRemote, arguments, namedArguments);
+
+    return _handle(_$invocation);
   }
 
-  num get value {
-    Invocation invocation = Invocation.getter(#value);
-
-    return _handle(invocation);
-  }
-
-  set value(num _value) {
-    Invocation invocation = Invocation.setter(#value, _value);
-
-    _handle(invocation);
-  }
-
-  bool get triggered {
-    Invocation invocation = Invocation.getter(#triggered);
-
-    return _handle(invocation);
-  }
-
-  set triggered(bool _triggered) {
-    Invocation invocation = Invocation.setter(#triggered, _triggered);
-
-    _handle(invocation);
-  }
-
-  ASubParameter get sub {
-    Invocation invocation = Invocation.getter(#sub);
-
-    return _handle(invocation);
-  }
-
-  set sub(ASubParameter _sub) {
-    Invocation invocation = Invocation.setter(#sub, _sub);
-
-    _handle(invocation);
-  }
-
-  Future<ASubParameter> get getSub async {
-    Invocation invocation = Invocation.getter(#getSub);
-
-    return await _handle(invocation);
-  }
-}
-
-class _$TargetClassProxy implements TargetClass {
   String toString() {
     List<Object> arguments = [];
 
@@ -352,28 +259,47 @@ class _$TargetClassProxy implements TargetClass {
     return _handle(_$invocation);
   }
 
-  Provision provideRemote(Context context) {
-    List<Object> arguments = [];
-    arguments.add(context);
-    Map<Symbol, Object> namedArguments = {};
+  InvocationHandlerFunction _handle;
+  _$AParameterProxy(this._handle) : super();
 
-    Invocation _$invocation =
-        Invocation.method(#provideRemote, arguments, namedArguments);
+  num get value {
+    Invocation invocation = Invocation.getter(#value);
 
-    return _handle(_$invocation);
+    return _handle(invocation);
   }
 
-  Object invoke(Invocation invocation) {
-    List<Object> arguments = [];
-    arguments.add(invocation);
-    Map<Symbol, Object> namedArguments = {};
+  bool get triggered {
+    Invocation invocation = Invocation.getter(#triggered);
 
-    Invocation _$invocation =
-        Invocation.method(#invoke, arguments, namedArguments);
-
-    return _handle(_$invocation);
+    return _handle(invocation);
   }
 
+  ASubParameter get sub {
+    Invocation invocation = Invocation.getter(#sub);
+
+    return _handle(invocation);
+  }
+
+  Future<ASubParameter> get getSub async {
+    Invocation invocation = Invocation.getter(#getSub);
+
+    return await _handle(invocation);
+  }
+
+  int get hashCode {
+    Invocation invocation = Invocation.getter(#hashCode);
+
+    return _handle(invocation);
+  }
+
+  Type get runtimeType {
+    Invocation invocation = Invocation.getter(#runtimeType);
+
+    return _handle(invocation);
+  }
+}
+
+class _$TargetClassProxy implements TargetClass {
   Future<num> someMethod(AParameter parameter) async {
     List<Object> arguments = [];
     arguments.add(parameter);
@@ -394,6 +320,50 @@ class _$TargetClassProxy implements TargetClass {
         Invocation.method(#subElementCheck, arguments, namedArguments);
 
     return await _handle(_$invocation);
+  }
+
+  Object invoke(Invocation invocation) {
+    List<Object> arguments = [];
+    arguments.add(invocation);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#invoke, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
+  Provision provideRemote(Context context) {
+    List<Object> arguments = [];
+    arguments.add(context);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#provideRemote, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
+  String toString() {
+    List<Object> arguments = [];
+
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#toString, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
+  dynamic noSuchMethod(Invocation invocation) {
+    List<Object> arguments = [];
+    arguments.add(invocation);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#noSuchMethod, arguments, namedArguments);
+
+    return _handle(_$invocation);
   }
 
   InvocationHandlerFunction _handle;
@@ -426,8 +396,7 @@ class _$ASubParameterRmi {
   }
 
   static void _registerStubConstructors(Context context) {
-    context.registerRemoteStubConstructor(
-        'ASubParameter', ASubParameter.getRemote);
+    context.registerRemoteStubConstructor('ASubParameter', getRemote);
   }
 
   static ASubParameter getRemote(Context context, String uuid) {
@@ -456,7 +425,7 @@ class _$AParameterRmi {
   static void _registerStubConstructors(Context context) {
     context.registerRemoteStubConstructor(
         'ASubParameter', ASubParameter.getRemote);
-    context.registerRemoteStubConstructor('AParameter', AParameter.getRemote);
+    context.registerRemoteStubConstructor('AParameter', getRemote);
   }
 
   static AParameter getRemote(Context context, String uuid) {
@@ -484,6 +453,7 @@ class _$TargetClassRmi {
 
   static void _registerStubConstructors(Context context) {
     context.registerRemoteStubConstructor('AParameter', AParameter.getRemote);
+    context.registerRemoteStubConstructor('TargetClass', getRemote);
   }
 
   static TargetClass getRemote(Context context, String uuid) {
