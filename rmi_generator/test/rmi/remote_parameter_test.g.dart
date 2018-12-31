@@ -147,6 +147,16 @@ class _$ASubParameterProxy implements ASubParameter {
     return _handle(_$invocation);
   }
 
+  bool operator ==(dynamic other) {
+    List<Object> arguments = [];
+    arguments.add(other);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation = Invocation.method(#==, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
   String toString() {
     List<Object> arguments = [];
 
@@ -233,6 +243,16 @@ class _$AParameterProxy implements AParameter {
 
     Invocation _$invocation =
         Invocation.method(#provideRemote, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
+  bool operator ==(dynamic other) {
+    List<Object> arguments = [];
+    arguments.add(other);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation = Invocation.method(#==, arguments, namedArguments);
 
     return _handle(_$invocation);
   }
@@ -340,6 +360,16 @@ class _$TargetClassProxy implements TargetClass {
 
     Invocation _$invocation =
         Invocation.method(#provideRemote, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
+  bool operator ==(dynamic other) {
+    List<Object> arguments = [];
+    arguments.add(other);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation = Invocation.method(#==, arguments, namedArguments);
 
     return _handle(_$invocation);
   }

@@ -83,7 +83,6 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
   visitMethodElement(MethodElement element) async {
     if (element.isGenerator) return null;
     if (element.isStatic) return null;
-    if (element.isOperator) return null;
     if (_visitOnce(element)) return null;
 
     // if (element.metadata

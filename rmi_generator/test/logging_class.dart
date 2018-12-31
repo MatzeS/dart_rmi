@@ -101,4 +101,9 @@ class LoggingClass implements BasicClass, Invocable {
     _log(#aField);
     _arg(aField);
   }
+
+  operator <(Object other) {
+    _log(#<);
+    _arg(other);
+  }
 }

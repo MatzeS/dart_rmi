@@ -174,5 +174,13 @@ class _$LoggingClassInvoker {
 
       return target.methodWithReturn();
     }
+    if (invocation.isMethod && #< == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
+
+      return target < positionalArguments[0];
+    }
   }
 }

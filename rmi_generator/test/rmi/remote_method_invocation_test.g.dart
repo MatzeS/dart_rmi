@@ -15,6 +15,13 @@ class _$TargetClassInvoker {
       target.value = invocation.positionalArguments[0];
       return null;
     }
+    if (invocation.isGetter && #triggered == invocation.memberName) {
+      return target.triggered;
+    }
+    if (invocation.isSetter && #triggered == invocation.memberName) {
+      target.triggered = invocation.positionalArguments[0];
+      return null;
+    }
     if (invocation.isMethod && #someMethod == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
@@ -31,6 +38,24 @@ class _$TargetClassInvoker {
         positionalArguments.add(null);
 
       return target.methodWithReturnValue();
+    }
+    if (invocation.isMethod && #returnParameter == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
+
+      return target.returnParameter(
+        positionalArguments[0],
+      );
+    }
+    if (invocation.isMethod && #< == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
+
+      return target < positionalArguments[0];
     }
     if (invocation.isMethod && #provideRemote == invocation.memberName) {
       List<Object> positionalArguments =
@@ -72,6 +97,27 @@ class _$TargetClassProxy implements TargetClass {
     return await _handle(_$invocation);
   }
 
+  Future<dynamic> returnParameter(dynamic input) async {
+    List<Object> arguments = [];
+    arguments.add(input);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#returnParameter, arguments, namedArguments);
+
+    return await _handle(_$invocation);
+  }
+
+  dynamic operator <(dynamic other) async {
+    List<Object> arguments = [];
+    arguments.add(other);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation = Invocation.method(#<, arguments, namedArguments);
+
+    return await _handle(_$invocation);
+  }
+
   Object invoke(Invocation invocation) {
     List<Object> arguments = [];
     arguments.add(invocation);
@@ -90,6 +136,16 @@ class _$TargetClassProxy implements TargetClass {
 
     Invocation _$invocation =
         Invocation.method(#provideRemote, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
+  bool operator ==(dynamic other) {
+    List<Object> arguments = [];
+    arguments.add(other);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation = Invocation.method(#==, arguments, namedArguments);
 
     return _handle(_$invocation);
   }
@@ -121,6 +177,12 @@ class _$TargetClassProxy implements TargetClass {
 
   num get value {
     Invocation invocation = Invocation.getter(#value);
+
+    return _handle(invocation);
+  }
+
+  bool get triggered {
+    Invocation invocation = Invocation.getter(#triggered);
 
     return _handle(invocation);
   }

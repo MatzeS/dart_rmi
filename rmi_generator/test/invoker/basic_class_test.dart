@@ -140,4 +140,13 @@ void main() {
       expect(testObject.arguments[0], significantNumber);
     });
   });
+
+  group('operators', () {
+    test('<', () {
+      testObject.invoke(Invocation.method(#<, [significantNumber]));
+      expect(testObject.triggeredOnce(#<), true);
+      expect(testObject.arguments.length, 1);
+      expect(testObject.arguments[0], significantNumber);
+    });
+  });
 }

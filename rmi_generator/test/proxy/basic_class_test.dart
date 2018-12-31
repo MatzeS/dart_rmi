@@ -275,4 +275,30 @@ void main() {
       }), throwsA(exception));
     });
   });
+
+  group('operators', () {
+    test('< return value', () {
+      ReturnValueHandler handler = new ReturnValueHandler(significantString);
+      testObject = TestClass.proxy(handler.handle);
+
+      dynamic result = testObject < significantNumber;
+
+      expect(result, significantString);
+    });
+    test('< invocation', () {
+      RecordingHandler handler = new RecordingHandler();
+      testObject = TestClass.proxy(handler.handle);
+
+      testObject < significantNumber;
+
+      expect(handler.invocations.length, 1);
+      expect(handler.invocations.first != null, true);
+      expect(handler.invocations.first.isMethod, true);
+      expect(handler.invocations.first.memberName, #<);
+      expect(handler.invocations.first.positionalArguments.length == 1, true);
+      expect(handler.invocations.first.positionalArguments.first,
+          significantNumber);
+      expect(handler.invocations.first.namedArguments.isEmpty, true);
+    });
+  });
 }

@@ -18,6 +18,16 @@ class _$TestClassProxy implements TestClass {
     return await _handle(_$invocation);
   }
 
+  bool operator ==(dynamic other) {
+    List<Object> arguments = [];
+    arguments.add(other);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation = Invocation.method(#==, arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
   String toString() {
     List<Object> arguments = [];
 

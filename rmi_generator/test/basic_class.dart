@@ -18,4 +18,6 @@ class BasicClass {
   set aSetter(num arg) {}
 
   num aField;
+
+  operator <(Object other) {}
 }

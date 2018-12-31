@@ -6,10 +6,10 @@ import 'dart:async';
 
 part 'remote_method_invocation_test.g.dart';
 
-bool triggered = false;
-
 class TargetClass implements RmiTarget {
   num value;
+  bool triggered = false;
+
   TargetClass(this.value);
 
   void someMethod() {
@@ -17,6 +17,12 @@ class TargetClass implements RmiTarget {
   }
 
   Future<num> methodWithReturnValue() async {
+    return value;
+  }
+
+  Future<dynamic> returnParameter(dynamic input) async => input;
+
+  operator <(dynamic other) async {
     return value;
   }
 
@@ -31,22 +37,34 @@ class TargetClass implements RmiTarget {
 
 main() {
   group('remote method invocation tests', () {
-    test('simple method call', () async {
+    TargetClass proxy;
+    TargetClass remoteTarget;
+    setUp(() {
       StreamController<String> exposeToGet = StreamController();
       StreamController<String> getToExpose = StreamController();
 
-      TargetClass remoteTarget = new TargetClass(1234);
+      remoteTarget = new TargetClass(1234);
       var provision = remoteTarget
           .provideRemote(new Context(getToExpose.stream, exposeToGet));
 
-      TargetClass proxy = TargetClass.getRemote(
+      proxy = TargetClass.getRemote(
           new Context(exposeToGet.stream, getToExpose), provision.uuid);
-
+    });
+    test('simple method call', () async {
       await proxy.someMethod();
-      expect(triggered, true);
+      expect(remoteTarget.triggered, true);
     });
 
     test('return value', () async {
+      num result = await proxy.methodWithReturnValue();
+      expect(result, 1234);
+    });
+    test('passing null', () async {
+      num result = await proxy.returnParameter(null);
+      expect(result, isNull);
+    });
+
+    test('operator', () async {
       StreamController<String> exposeToGet = StreamController();
       StreamController<String> getToExpose = StreamController();
 
@@ -56,7 +74,7 @@ main() {
 
       TargetClass proxy = TargetClass.getRemote(
           new Context(exposeToGet.stream, getToExpose), provision.uuid);
-      num result = await proxy.methodWithReturnValue();
+      num result = await (proxy < null);
 
       expect(result, 1234);
     });
