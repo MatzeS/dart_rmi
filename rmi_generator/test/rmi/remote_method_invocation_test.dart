@@ -12,7 +12,7 @@ class TargetClass implements RmiTarget {
 
   TargetClass(this.value);
 
-  void someMethod() {
+  Future<void> someMethod() async {
     triggered = true;
   }
 
@@ -52,11 +52,15 @@ main() {
     });
     test('simple method call', () async {
       await proxy.someMethod();
+      //TODO remove
+      await Future.delayed(Duration(seconds: 4));
       expect(remoteTarget.triggered, true);
     });
 
     test('return value', () async {
       num result = await proxy.methodWithReturnValue();
+      //TODO remove
+      await Future.delayed(Duration(seconds: 4));
       expect(result, 1234);
     });
     test('passing null', () async {

@@ -422,7 +422,7 @@ class _$ASubParameterRmi {
     if (_registered) return;
     _registered = true;
 
-    rmiRegisterSerializers([]);
+    rmiRegisterSerializers({});
   }
 
   static void _registerStubConstructors(Context context) {
@@ -449,7 +449,7 @@ class _$AParameterRmi {
     if (_registered) return;
     _registered = true;
 
-    rmiRegisterSerializers([]);
+    rmiRegisterSerializers({});
   }
 
   static void _registerStubConstructors(Context context) {
@@ -478,7 +478,7 @@ class _$TargetClassRmi {
     if (_registered) return;
     _registered = true;
 
-    rmiRegisterSerializers([]);
+    rmiRegisterSerializers({});
   }
 
   static void _registerStubConstructors(Context context) {

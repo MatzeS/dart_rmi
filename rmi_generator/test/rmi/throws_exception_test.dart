@@ -48,6 +48,8 @@ main() {
         exception = true;
       }
 
+      //TODO remove
+      await Future.delayed(Duration(seconds: 3));
       expect(exception, true);
     });
     test('simple method call with future syntax', () async {

@@ -1,19 +1,20 @@
 import 'package:test/test.dart';
-import 'package:built_value/serializer.dart';
 import 'package:rmi/remote_method_invocation.dart';
 import 'package:rmi/proxy.dart';
-import 'package:built_value/built_value.dart';
-
+import 'package:json_annotation/json_annotation.dart';
 import 'dart:async';
 
 part 'serialize_parameters_test.g.dart';
 
-abstract class SomeParameter
-    implements Built<SomeParameter, SomeParameterBuilder> {
-  num get wrapped;
-  static Serializer<SomeParameter> get serializer => _$someParameterSerializer;
-  SomeParameter._();
-  factory SomeParameter([updates(SomeParameterBuilder b)]) = _$SomeParameter;
+@JsonSerializable()
+class SomeParameter {
+  num wrapped;
+
+  SomeParameter({this.wrapped});
+
+  Map<String, dynamic> toJson() => _$SomeParameterToJson(this);
+  static SomeParameter fromJson(Map<String, dynamic> json) =>
+      _$SomeParameterFromJson(json);
 }
 
 class TargetClass implements RmiTarget {
@@ -24,7 +25,9 @@ class TargetClass implements RmiTarget {
   }
 
   Future<SomeParameter> get aGetter async {
-    return new SomeParameter((b) => b.wrapped = 123456789);
+    var x = new SomeParameter();
+    x.wrapped = 123456789;
+    return x;
   }
 
   TargetClass();
@@ -38,7 +41,7 @@ class TargetClass implements RmiTarget {
 }
 
 main() {
-  group('remote method invocation tests', () {
+  group('serializable parameter/', () {
     test('simple method call', () async {
       StreamController<String> exposeToGet = StreamController();
       StreamController<String> getToExpose = StreamController();
@@ -49,7 +52,7 @@ main() {
 
       TargetClass proxy = TargetClass.getRemote(
           new Context(exposeToGet.stream, getToExpose), provision.uuid);
-      SomeParameter parameter = SomeParameter((b) => b.wrapped = 1234);
+      SomeParameter parameter = SomeParameter(wrapped: 1234);
       await proxy.someMethod(parameter);
     });
 
@@ -63,7 +66,7 @@ main() {
 
       TargetClass proxy = TargetClass.getRemote(
           new Context(exposeToGet.stream, getToExpose), provision.uuid);
-      SomeParameter parameter = SomeParameter((b) => b.wrapped = 1234);
+      SomeParameter parameter = SomeParameter(wrapped: 1234);
       num result = await proxy.methodWithReturnValue(parameter);
 
       expect(result, 1234);

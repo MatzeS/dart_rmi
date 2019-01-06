@@ -14,8 +14,10 @@ dependencies:
   uuid: ^1.0.3
   built_value: ^6.1.6
   built_collection: ^4.1.0
+  json_annotation:
   
 dev_dependencies:
+  json_serializable:
   built_value_generator: ^6.1.6
   build_runner: ^1.1.2
 

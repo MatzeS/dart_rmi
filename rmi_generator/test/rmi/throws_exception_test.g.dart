@@ -125,7 +125,7 @@ class _$TargetClassRmi {
     if (_registered) return;
     _registered = true;
 
-    rmiRegisterSerializers([]);
+    rmiRegisterSerializers({});
   }
 
   static void _registerStubConstructors(Context context) {

@@ -8,8 +8,6 @@ import 'dart:async';
 
 import 'src/implementation.dart';
 
-export 'src/serializable_invocation.dart';
-export 'src/symbol_serializer.dart';
 export 'src/implementation.dart';
 
 export 'src/implementation.dart';
@@ -43,5 +41,5 @@ class Provision {
 Provision rmiProvideRemote(Context context, Invocable target) =>
     internalProvideRemote(context, target);
 
-void rmiRegisterSerializers(List<Serializer> serializers) =>
-    internalRegisterSerializers(serializers);
+void rmiRegisterSerializers(Map<String, FromJson> deserializers) =>
+    internalRegisterSerializers(deserializers);

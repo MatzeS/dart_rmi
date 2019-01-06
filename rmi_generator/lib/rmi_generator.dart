@@ -6,7 +6,7 @@ import 'package:analyzer/dart/element/visitor.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:rmi/remote_method_invocation.dart';
-import 'package:built_value/built_value.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 class RmiGenerator extends Generator {
   BuilderOptions options;
@@ -41,8 +41,9 @@ class RmiGenerator extends Generator {
     RmiClassVisitor visitor = new RmiClassVisitor();
     classElement.visitChildren(visitor);
 
-    String serializerList =
-        visitor.serializableTypes.map((t) => t.name + '.serializer').join(',');
+    String serializerList = visitor.serializableTypes
+        .map((t) => '"${t.name}": ${t.name}.fromJson')
+        .join(',');
 
     StringBuffer stubTypeRegistrations = new StringBuffer();
     for (DartType type in visitor.remoteTargetTypes)
@@ -62,7 +63,7 @@ class RmiGenerator extends Generator {
             if (_registered) return;
             _registered = true;
 
-            rmiRegisterSerializers([$serializerList]);
+            rmiRegisterSerializers({$serializerList});
           }
           static void _registerStubConstructors(Context context){
             $stubTypeRegistrations
@@ -93,8 +94,9 @@ class RmiClassVisitor extends ThrowingElementVisitor {
     if (type.isObject) return;
     if (type.isVoid) return;
 
-    if (TypeChecker.fromRuntime(Built)
-        .isAssignableFromType(type)) if (!serializableTypes.contains(type))
+    if (TypeChecker.fromRuntime(JsonSerializable)
+        .annotationsOf(type.element)
+        .isNotEmpty) if (!serializableTypes.contains(type))
       serializableTypes.add(type);
 
     if (TypeChecker.fromRuntime(RmiTarget)

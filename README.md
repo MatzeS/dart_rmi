@@ -65,3 +65,4 @@ remoteObject.someMethod(); // prints 'some stuff' on the other machine
 - write install script
 - if static getRemoteis not specified, do not write it for stub constructors simply put a waringing
 - STREAMS!!!!
+- thorw exceptions from invoke

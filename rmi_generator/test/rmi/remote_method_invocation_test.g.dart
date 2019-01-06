@@ -75,7 +75,7 @@ class _$TargetClassInvoker {
 // **************************************************************************
 
 class _$TargetClassProxy implements TargetClass {
-  void someMethod() {
+  Future<void> someMethod() async {
     List<Object> arguments = [];
 
     Map<Symbol, Object> namedArguments = {};
@@ -83,7 +83,7 @@ class _$TargetClassProxy implements TargetClass {
     Invocation _$invocation =
         Invocation.method(#someMethod, arguments, namedArguments);
 
-    _handle(_$invocation);
+    return await _handle(_$invocation);
   }
 
   Future<num> methodWithReturnValue() async {
@@ -210,7 +210,7 @@ class _$TargetClassRmi {
     if (_registered) return;
     _registered = true;
 
-    rmiRegisterSerializers([]);
+    rmiRegisterSerializers({});
   }
 
   static void _registerStubConstructors(Context context) {
