@@ -53,6 +53,12 @@ class _$TestClassProxy implements TestClass {
   InvocationHandlerFunction _handle;
   _$TestClassProxy(this._handle) : super();
 
+  Future<num> get someGetter async {
+    Invocation invocation = Invocation.getter(#someGetter);
+
+    return await _handle(invocation);
+  }
+
   int get hashCode {
     Invocation invocation = Invocation.getter(#hashCode);
 

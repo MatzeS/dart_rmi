@@ -51,7 +51,7 @@ class AParameter implements RmiTarget {
 
 class TargetClass implements RmiTarget {
   Future<num> someMethod(AParameter parameter) async {
-    return await parameter.parameterMethod(); // AWAIT???? TODO !!!!!!
+    return await parameter.parameterMethod();
   }
 
   Future<String> subElementCheck(AParameter parameter) async {

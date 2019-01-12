@@ -17,8 +17,14 @@ class RmiGenerator extends Generator {
   }
 
   bool elementFilter(Element element) {
-    if (TypeChecker.fromRuntime(RmiTarget).isAssignableFrom(element))
+    if (element is ClassElement &&
+        TypeChecker.fromRuntime(RmiTarget).isExactlyType(element.type)) {
+      return false;
+    }
+
+    if (TypeChecker.fromRuntime(RmiTarget).isAssignableFrom(element)) {
       return true;
+    }
 
     return false;
   }

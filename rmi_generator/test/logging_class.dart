@@ -106,4 +106,21 @@ class LoggingClass implements BasicClass, Invocable {
     _log(#<);
     _arg(other);
   }
+
+  operator [](Object key) {
+    _log(#[]);
+    _arg(key);
+  }
+
+  operator []=(Object key, Object value) {
+    _log(#[]=);
+    _arg(key);
+    _arg(value);
+  }
+
+  @override
+  int basicNoProxyMethod() {}
+
+  @override
+  int basicNoProxyMethod2() {}
 }

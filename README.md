@@ -66,3 +66,7 @@ remoteObject.someMethod(); // prints 'some stuff' on the other machine
 - if static getRemoteis not specified, do not write it for stub constructors simply put a waringing
 - STREAMS!!!!
 - thorw exceptions from invoke
+- Proxy does implement, extend should be possible
+- sosuchmethod...
+- reduce tests to a minimum code
+- warn on rmi non future method

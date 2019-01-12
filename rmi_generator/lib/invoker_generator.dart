@@ -5,6 +5,7 @@ import 'package:analyzer/dart/element/visitor.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:rmi/invoker.dart';
+import 'package:rmi/remote_method_invocation.dart';
 
 class InvokerGenerator extends Generator {
   BuilderOptions options;
@@ -15,7 +16,10 @@ class InvokerGenerator extends Generator {
   }
 
   bool elementFilter(Element element) {
-    if (element.name == 'RmiTarget') return false; //TODO
+    if (element is ClassElement &&
+        TypeChecker.fromRuntime(RmiTarget).isExactlyType(element.type)) {
+      return false;
+    }
 
     if (isAnnotatedWith<NotInvocable>(element)) return false;
     if (TypeChecker.fromRuntime(NotInvocable).isAssignableFrom(element))
@@ -95,16 +99,17 @@ class InvocableClassVisitor extends ThrowingElementVisitor {
     if (args.isNotEmpty) args += ', ';
     args += namedArgList.join(', ');
 
-    //TODO test operators
     String methodCall;
     if (element.isOperator) {
       if (element.displayName == '[]=') {
         String key = 'positionalArguments[0]';
         String value = 'positionalArguments[1]';
         methodCall = 'target[$key] = $value;';
+      } else if (element.displayName == '[]') {
+        String key = 'positionalArguments[0]';
+        methodCall = 'target[$key];';
       } else {
         String singleArg = 'positionalArguments[0]';
-
         methodCall = 'return target ${element.displayName} $singleArg;';
       }
     } else {

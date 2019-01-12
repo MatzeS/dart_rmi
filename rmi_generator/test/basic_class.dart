@@ -1,6 +1,9 @@
+import 'package:rmi/proxy.dart';
+
 const int significantNumber = 123456789;
 const String significantString = 'asdf';
 
+@NoProxy([#basicNoProxyMethod])
 class BasicClass {
   void simpleMethod() {}
   void methodWithArg(num numArg) {}
@@ -20,4 +23,11 @@ class BasicClass {
   num aField;
 
   operator <(Object other) {}
+
+  operator [](Object key) {}
+  operator []=(Object key, Object value) {}
+
+  int basicNoProxyMethod() => 42;
+  @NoProxy()
+  int basicNoProxyMethod2() => 42;
 }

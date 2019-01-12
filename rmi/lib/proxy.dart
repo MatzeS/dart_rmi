@@ -12,7 +12,7 @@ class Proxy {
 }
 
 class NoProxy {
-  final List<String> methods;
+  final List<Symbol> methods;
   const NoProxy([this.methods]);
 }
 

@@ -182,5 +182,37 @@ class _$LoggingClassInvoker {
 
       return target < positionalArguments[0];
     }
+    if (invocation.isMethod && #[] == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
+
+      target[positionalArguments[0]];
+    }
+    if (invocation.isMethod && #[]= == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 2; i++)
+        positionalArguments.add(null);
+
+      target[positionalArguments[0]] = positionalArguments[1];
+    }
+    if (invocation.isMethod && #basicNoProxyMethod == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 0; i++)
+        positionalArguments.add(null);
+
+      return target.basicNoProxyMethod();
+    }
+    if (invocation.isMethod && #basicNoProxyMethod2 == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 0; i++)
+        positionalArguments.add(null);
+
+      return target.basicNoProxyMethod2();
+    }
   }
 }

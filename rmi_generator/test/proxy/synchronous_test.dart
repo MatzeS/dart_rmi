@@ -16,7 +16,13 @@ class SynchronousHandler {
 }
 
 class TestClass implements Proxy {
+  TestClass();
+
   Future<num> someMethod() async {
+    return 1;
+  }
+
+  Future<num> get someGetter async {
     return 1;
   }
 
@@ -43,7 +49,16 @@ void main() {
       expect(handler.invocations.first.memberName, #someMethod);
       expect(handler.invocations.first.positionalArguments.length, 0);
     });
+
+    test('simple method', () async {
+      var val = testObject.someGetter;
+      await val;
+
+      expect(handler.invocations.length, 1);
+      expect(handler.invocations.first != null, true);
+      expect(handler.invocations.first.isGetter, true);
+      expect(handler.invocations.first.memberName, #someGetter);
+      expect(handler.invocations.first.positionalArguments.length, 0);
+    });
   });
 }
-
-// todo synchronous setter and getter

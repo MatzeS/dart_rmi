@@ -131,6 +131,28 @@ class _$TestClassProxy implements TestClass {
     return _handle(_$invocation);
   }
 
+  dynamic operator [](Object key) {
+    List<Object> arguments = [];
+    arguments.add(key);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation = Invocation.method(#[], arguments, namedArguments);
+
+    return _handle(_$invocation);
+  }
+
+  void operator []=(Object key, Object value) {
+    List<Object> arguments = [];
+    arguments.add(key);
+    arguments.add(value);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#[]=, arguments, namedArguments);
+
+    _handle(_$invocation);
+  }
+
   bool operator ==(dynamic other) {
     List<Object> arguments = [];
     arguments.add(other);

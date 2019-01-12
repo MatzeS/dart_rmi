@@ -22,6 +22,8 @@ class ReturnValueHandler {
   List<Invocation> invocations = [];
 
   Object handle(Invocation invocation) {
+    if (invocation.memberName == #noSuchMethod) return null;
+
     invocations.add(invocation);
     return returnValue;
   }
@@ -38,7 +40,14 @@ class ExceptionHandler {
   }
 }
 
+@NoProxy([#noProxyMethod])
 class TestClass extends BasicClass implements Proxy {
+  TestClass();
+
+  int noProxyMethod() => 42;
+  @NoProxy()
+  int noProxyMethod2() => 42;
+
   factory TestClass.proxy(InvocationHandlerFunction handler) =>
       _$TestClassProxy(handler);
 }
@@ -299,6 +308,63 @@ void main() {
       expect(handler.invocations.first.positionalArguments.first,
           significantNumber);
       expect(handler.invocations.first.namedArguments.isEmpty, true);
+    });
+
+    test('[] return Value', () {
+      ReturnValueHandler handler = new ReturnValueHandler(significantString);
+      testObject = TestClass.proxy(handler.handle);
+
+      dynamic result = testObject[null];
+
+      expect(result, significantString);
+    });
+
+    test('[] invocation', () {
+      RecordingHandler handler = new RecordingHandler();
+      testObject = TestClass.proxy(handler.handle);
+
+      testObject[significantNumber];
+
+      expect(handler.invocations.length, 1);
+      expect(handler.invocations.first != null, true);
+      expect(handler.invocations.first.isMethod, true);
+      expect(handler.invocations.first.memberName, #[]);
+      expect(handler.invocations.first.positionalArguments.length == 1, true);
+      expect(handler.invocations.first.positionalArguments.first,
+          significantNumber);
+      expect(handler.invocations.first.namedArguments.isEmpty, true);
+    });
+
+    test('[]= invocation', () {
+      RecordingHandler handler = new RecordingHandler();
+      testObject = TestClass.proxy(handler.handle);
+
+      testObject[significantNumber] = significantString;
+
+      expect(handler.invocations.length, 1);
+      expect(handler.invocations.first != null, true);
+      expect(handler.invocations.first.isMethod, true);
+      expect(handler.invocations.first.memberName, #[]=);
+      expect(handler.invocations.first.positionalArguments.length, 2);
+      expect(
+          handler.invocations.first.positionalArguments[0], significantNumber);
+      expect(
+          handler.invocations.first.positionalArguments[1], significantString);
+      expect(handler.invocations.first.namedArguments.isEmpty, true);
+    });
+  });
+  group('misc', () {
+    test('NoProxy', () {
+      ReturnValueHandler handler = new ReturnValueHandler(significantNumber);
+      testObject = TestClass.proxy(handler.handle);
+
+      // This method call should not be intercepted and thereby not return significantNumber
+      expect(testObject.noProxyMethod(), null, reason: 'noProxyMethod');
+      expect(testObject.noProxyMethod2(), null, reason: 'noProxyMethod2');
+      expect(testObject.basicNoProxyMethod(), null,
+          reason: 'basicNoProxyMethod');
+      expect(testObject.basicNoProxyMethod2(), null,
+          reason: 'basicNoProxyMethod2');
     });
   });
 }

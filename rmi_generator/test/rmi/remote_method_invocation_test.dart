@@ -29,7 +29,7 @@ class TargetClass implements RmiTarget {
   @override
   Object invoke(Invocation invocation) =>
       _$TargetClassInvoker.invoke(invocation, this);
-  factory TargetClass.getRemote(Context context, String uuid) =>
+  static TargetClass getRemote(Context context, String uuid) =>
       _$TargetClassRmi.getRemote(context, uuid);
   Provision provideRemote(Context context) =>
       _$TargetClassRmi.provideRemote(context, this);
@@ -52,15 +52,11 @@ main() {
     });
     test('simple method call', () async {
       await proxy.someMethod();
-      //TODO remove
-      await Future.delayed(Duration(seconds: 4));
       expect(remoteTarget.triggered, true);
     });
 
     test('return value', () async {
       num result = await proxy.methodWithReturnValue();
-      //TODO remove
-      await Future.delayed(Duration(seconds: 4));
       expect(result, 1234);
     });
     test('passing null', () async {

@@ -6,7 +6,7 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:rmi/proxy.dart';
-// import 'package:rmi/remote_method_invocation.dart';
+import 'package:rmi/remote_method_invocation.dart';
 
 import 'package:source_gen_helpers/class/class_visitor.dart';
 import 'package:source_gen_helpers/class/output_visitor.dart';
@@ -18,8 +18,10 @@ class ProxyGenerator extends FilterGenerator {
   ProxyGenerator(BuilderOptions options) : super(options);
 
   bool elementFilter(Element element) {
-    if (element.name == 'RmiTarget')
-      return false; // this removes generation from the root class
+    if (element is ClassElement &&
+        TypeChecker.fromRuntime(RmiTarget).isExactlyType(element.type)) {
+      return false;
+    }
 
     if (TypeChecker.fromRuntime(Proxy).annotationsOf(element).isNotEmpty)
       return true;
@@ -85,23 +87,26 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
     if (element.isStatic) return null;
     if (_visitOnce(element)) return null;
 
-    // if (element.metadata
-    //     .map((e) => e.constantValue.toString())
-    //     .contains('NoProxy ()')) return '';
-
-    var list = (await classElement)
-        .metadata
+    var metadata = classHierarchyMetadata(await classElement)
+        .map((e) => e.constantValue)
+        .where((e) => e != null)
         .where((e) =>
-            e.constantValue.type.toString() ==
-            'NoProxy') //TODO better classCheck
-        .map((e) => e.constantValue.getField('methods').toListValue())
-        .fold([], (a, b) {
-      a.addAll(b);
-      return a;
-    }).map((e) => e.toStringValue());
+            TypeChecker.fromRuntime(NoProxy).isAssignableFromType(e.type));
+    if (metadata.isNotEmpty) {
+      var list = metadata
+          .map((e) => e.getField('methods').toListValue())
+          .fold([], (a, b) {
+        a.addAll(b);
+        return a;
+      }).map((e) => e.toSymbolValue());
 
-    if (list.contains(element.displayName))
-      return null; //TODO check for symbols?
+      if (list.contains(element.displayName)) {
+        return null;
+      }
+    }
+
+    if (TypeChecker.fromRuntime(NoProxy).annotationsOf(element).isNotEmpty)
+      return null;
 
     bool hasNamedArgs = element.parameters.any((p) => p.isNamed);
     String argumentAdds = element.parameters
