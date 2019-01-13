@@ -8,14 +8,19 @@ part of 'packets.dart';
 
 TransferredObject _$TransferredObjectFromJson(Map<String, dynamic> json) {
   return TransferredObject()
-    ..json = json['json'] as String
+    ..serialized = json['serialized'] as String
     ..stub = json['stub'] == null
         ? null
         : RemoteStub.fromJson(json['stub'] as Map<String, dynamic>);
 }
 
 Map<String, dynamic> _$TransferredObjectToJson(TransferredObject instance) =>
-    <String, dynamic>{'json': instance.json, 'stub': instance.stub};
+    <String, dynamic>{
+      'serialized': instance.serialized,
+      'stub': instance.stub,
+      'json_serializable.className':
+          "asset:rmi/lib/src/packets.dart#TransferredObject",
+    };
 
 Query _$QueryFromJson(Map<String, dynamic> json) {
   return Query()
@@ -48,7 +53,8 @@ Map<String, dynamic> _$QueryToJson(Query instance) => <String, dynamic>{
       'isGetter': instance.isGetter,
       'isSetter': instance.isSetter,
       'positionalArguments': instance.positionalArguments,
-      'namedArguments': instance.namedArguments
+      'namedArguments': instance.namedArguments,
+      'json_serializable.className': "asset:rmi/lib/src/packets.dart#Query",
     };
 
 Response _$ResponseFromJson(Map<String, dynamic> json) {
@@ -66,7 +72,8 @@ Map<String, dynamic> _$ResponseToJson(Response instance) => <String, dynamic>{
       'query': instance.query,
       'returnedNull': instance.returnedNull,
       'returnValue': instance.returnValue,
-      'exception': instance.exception
+      'exception': instance.exception,
+      'json_serializable.className': "asset:rmi/lib/src/packets.dart#Response",
     };
 
 RemoteStub _$RemoteStubFromJson(Map<String, dynamic> json) {
@@ -74,4 +81,9 @@ RemoteStub _$RemoteStubFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$RemoteStubToJson(RemoteStub instance) =>
-    <String, dynamic>{'uuid': instance.uuid, 'type': instance.type};
+    <String, dynamic>{
+      'uuid': instance.uuid,
+      'type': instance.type,
+      'json_serializable.className':
+          "asset:rmi/lib/src/packets.dart#RemoteStub",
+    };

@@ -1,8 +1,7 @@
-name: rmi_generator
-version: 0.0.3
+name: rmi_tests
+version: 0.0.0
 description: >
-  Remote Method Invocation without reflection but basd on code generation.
-  This is the dev dependency.
+  TODO, do not publish, update presubmit
 authors:
 - Matthias Sokolowski <matthias.sokolowski@googlemail.com>
 homepage: https://github.com/MatzeS/dart_rmi
@@ -18,9 +17,13 @@ dependencies:
   built_value: ^6.1.6
   built_collection: ^4.1.0
   build_runner: ^1.1.2
+  rmi:
+    path: ../rmi
   
 dev_dependencies:
   json_serializable:
+  rmi_generator:
+    path: ../rmi_generator
   source_gen_helpers: ^0.0.1
   test: ^1.5.1
 
@@ -29,3 +32,5 @@ dependency_overrides:
     path: ../../source_gen_helpers
   json_serializable:
     path: ../../json_serializable/json_serializable
+  json_annotation:
+    path: ../../json_serializable/json_annotation

@@ -1,54 +1,10 @@
-import 'package:built_value/serializer.dart';
-import 'package:built_value/standard_json_plugin.dart';
-import 'package:built_collection/built_collection.dart';
 import 'dart:async';
 import 'dart:convert';
 import '../remote_method_invocation.dart';
 import 'package:uuid/uuid.dart';
 import 'packets.dart';
 import '../invoker.dart';
-
-String _serialize(Object object) {
-  String objectString = const JsonEncoder.withIndent(' ').convert(object);
-
-  Map<String, String> result = {};
-  result['object'] = objectString;
-  result['class'] = object.runtimeType.toString();
-  return json.encode(result);
-}
-
-typedef Object FromJson(Map<String, dynamic> json);
-Map<String, FromJson> fromJsonFunctions = {
-  'Query': Query.fromJson,
-  'Response': Response.fromJson,
-  'RemoteStub': RemoteStub.fromJson,
-  'TransferredObject': TransferredObject.fromJson,
-};
-
-Object _deserialize(dynamic serialized) {
-  if (serialized is! String)
-    throw new Exception('seririalized $serialized is not a string');
-
-// TODO restrict to string
-  Map<String, dynamic> result = json.decode(serialized);
-  String className = result['class'];
-  String objectString = result['object'];
-
-  if (className == 'Null') return null;
-
-  Object decoded = json.decode(objectString);
-  if (decoded is Map) {
-    Map<String, dynamic> objectMap = decoded;
-    return fromJsonFunctions[className](objectMap);
-  } else {
-    //TODO cleanup
-    return decoded;
-  }
-}
-
-void addDeserialize(String className, FromJson deserialize) {
-  fromJsonFunctions.putIfAbsent(className, () => deserialize);
-}
+import 'json_serialization.dart';
 
 String generateUUID() => new Uuid().v1();
 
@@ -58,38 +14,43 @@ class RmiProxyHandler {
   RmiProxyHandler(this.context, this.targetUuid);
 
   Object handle(Invocation invocation) async {
-    List<TransferredObject> positionalArguments = [];
-    for (int i = 0; i < invocation.positionalArguments.length; i++) {
-      Object arg = invocation.positionalArguments[i];
-      if (arg is RmiTarget) {
-        Provision argumentProvision = arg.provideRemote(this.context);
-        RemoteStub stub = RemoteStub(argumentProvision.uuid,
-            arg.runtimeType.toString()); //TODO type? suspicious
-        positionalArguments.add(TransferredObject.forStub(stub));
-      } else {
-        positionalArguments.add(TransferredObject.forJson(_serialize(arg)));
-      }
-    }
-
     Query query = Query();
     query.uuid = generateUUID();
     query.targetUuid = targetUuid;
     query.memberName = invocation.memberName;
     query.isGetter = invocation.isGetter;
     query.isSetter = invocation.isSetter;
+
+    List<TransferredObject> positionalArguments = [];
+    for (int i = 0; i < invocation.positionalArguments.length; i++) {
+      Object arg = invocation.positionalArguments[i];
+      TransferredObject transfer;
+
+      if (arg is RmiTarget) {
+        Provision argumentProvision = arg.provideRemote(this.context);
+        RemoteStub stub = RemoteStub(argumentProvision.uuid,
+            argumentProvision.classAssetPath); //TODO type? suspicious
+        transfer = TransferredObject.forStub(stub);
+      } else {
+        String serialized = context.serialization.serialize(arg);
+        transfer = TransferredObject.forSerialized(serialized);
+      }
+
+      positionalArguments.add(transfer);
+    }
     query.positionalArguments = positionalArguments;
+
     //TODO named
 
-    String serializedJson = _serialize(query);
+    String serializedQuery = context.serialization.serialize(query);
 
     Future answer = context.input
-        .map((data) => _deserialize(data))
+        .map((data) => context.serialization.deserialize(data))
         .where((p) => p is Response)
         .map((p) => p as Response)
         .where((r) => r.query == query.uuid)
         .first;
-
-    context.output.add(serializedJson);
+    context.output.add(serializedQuery);
 
     Response response = await answer;
     if (response.exception != null) {
@@ -99,9 +60,9 @@ class RmiProxyHandler {
 
       if (returnValue.isStub) {
         return context.getRemote(returnValue.stub);
+      } else {
+        return context.serialization.deserialize(returnValue.serialized);
       }
-
-      return _deserialize(returnValue.json);
     } else {
       throw new Exception(
           'response contains no exception or return value'); //TODO
@@ -109,18 +70,19 @@ class RmiProxyHandler {
   }
 }
 
-Provision internalProvideRemote(Context context, Invocable target) {
+Provision internalProvideRemote(
+    Context context, Invocable target, String classAssetPath) {
   Provision provision = new Provision();
   provision.context = context;
+  provision.classAssetPath = classAssetPath;
   provision.uuid = generateUUID();
 
   context.input.listen((onData) async {
-    Object packet = _deserialize(onData);
+    Object packet = context.serialization.deserialize(onData);
     if (packet is! Query) return;
     Query query = packet;
     if (query.targetUuid != provision.uuid) return;
 
-    // TODO Named arguments
     List<Object> positionalArguments = [];
     for (int i = 0; i < query.positionalArguments.length; i++) {
       TransferredObject arg = query.positionalArguments[i];
@@ -131,9 +93,11 @@ Provision internalProvideRemote(Context context, Invocable target) {
         Object proxy = context.getRemote(stub);
         positionalArguments.add(proxy);
       } else {
-        positionalArguments.add(_deserialize(arg.json));
+        Object deserialized = context.serialization.deserialize(arg.serialized);
+        positionalArguments.add(deserialized);
       }
     }
+    // TODO Named arguments
 
     //TODO replace with function
     Invocation invocation;
@@ -156,47 +120,47 @@ Provision internalProvideRemote(Context context, Invocable target) {
         returnValue = await returnValue;
       }
 
+      TransferredObject transfer;
       if (returnValue is RmiTarget) {
-        // rename
-        Provision argumentProvision =
-            (returnValue as RmiTarget).provideRemote(context);
+        Provision returnValueProvision = returnValue.provideRemote(context);
         RemoteStub stub = new RemoteStub(
-            argumentProvision.uuid, returnValue.runtimeType.toString());
-        returnValue = TransferredObject.forStub(stub);
+            returnValueProvision.uuid, returnValueProvision.classAssetPath);
+
+        transfer = TransferredObject.forStub(stub);
       } else {
-        //TODO new variable
-        returnValue = TransferredObject.forJson(_serialize(returnValue));
+        String serialized = context.serialization.serialize(returnValue);
+        transfer = TransferredObject.forSerialized(serialized);
       }
 
-      response.returnValue = returnValue;
+      response.returnValue = transfer;
       response.returnedNull = returnValue == null;
     } catch (exception, stack) {
       response.exception = exception.toString();
       response.returnedNull = true;
     }
-    context.output.add(_serialize(response));
+    context.output.add(context.serialization.serialize(response));
   });
 
   return provision;
 }
 
-void internalRegisterSerializers(Map<String, FromJson> deserializer) {
-  fromJsonFunctions.addAll(deserializer);
-}
+// void internalRegisterSerializers(Map<String, Deserializer> deserializer) {
+//   fromJsonFunctions.addAll(deserializer);
+// }
 
 Object internalGetRemoteFromStub(RemoteStub stub, Context context) {
   RemoteStubConstructor constructor = context.remoteStubConstructors[stub.type];
   return constructor(context, stub.uuid);
 }
 
-Invocation _replaceInvocationArguments(
-    Invocation invocation, List<Object> positionalArguments) {
-  if (invocation.isGetter) {
-    return new Invocation.getter(invocation.memberName);
-  } else if (invocation.isSetter) {
-    return new Invocation.setter(
-        invocation.memberName, positionalArguments.first);
-  } else {
-    return new Invocation.method(invocation.memberName, positionalArguments);
-  }
-}
+// Invocation _replaceInvocationArguments(
+//     Invocation invocation, List<Object> positionalArguments) {
+//   if (invocation.isGetter) {
+//     return new Invocation.getter(invocation.memberName);
+//   } else if (invocation.isSetter) {
+//     return new Invocation.setter(
+//         invocation.memberName, positionalArguments.first);
+//   } else {
+//     return new Invocation.method(invocation.memberName, positionalArguments);
+//   }
+// }

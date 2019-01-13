@@ -3,7 +3,7 @@ part 'packets.g.dart';
 
 @JsonSerializable()
 class TransferredObject {
-  String json;
+  String serialized;
 
   RemoteStub stub;
 
@@ -12,8 +12,8 @@ class TransferredObject {
   TransferredObject();
   factory TransferredObject.forStub(RemoteStub stub) =>
       new TransferredObject()..stub = stub;
-  factory TransferredObject.forJson(String json) =>
-      new TransferredObject()..json = json;
+  factory TransferredObject.forSerialized(String serialized) =>
+      new TransferredObject()..serialized = serialized;
 
   Map<String, dynamic> toJson() => _$TransferredObjectToJson(this);
   static TransferredObject fromJson(Map<String, dynamic> json) =>
@@ -73,45 +73,6 @@ class RemoteStub {
   Map<String, dynamic> toJson() => _$RemoteStubToJson(this);
   static RemoteStub fromJson(Map<String, dynamic> json) =>
       _$RemoteStubFromJson(json);
-}
-
-class InvocationConverter
-    implements JsonConverter<Invocation, Map<String, dynamic>> {
-  const InvocationConverter();
-
-  static SymbolConverter _symbolConverter = new SymbolConverter();
-
-  @override
-  Invocation fromJson(Map<String, dynamic> json) {
-    Symbol memberName = _symbolConverter.fromJson(json['memberName']);
-    if (json['isGetter']) {
-      return new Invocation.getter(memberName);
-    } else if (json['isSetter']) {
-      return new Invocation.setter(
-          memberName, json['positionalArguments'].first);
-    } else {
-      Map<Symbol, Object> namedArguments = {};
-      (json['namedArguments'] as Map<String, dynamic>).forEach((k, v) {
-        namedArguments[_symbolConverter.fromJson(k)] = v as Object;
-      });
-
-      return new Invocation.method(
-          memberName, json['positionalArguments'], namedArguments);
-    }
-  }
-
-  @override
-  Map<String, dynamic> toJson(Invocation object) {
-    Map<String, dynamic> result = {};
-
-    result['memberName'] = _symbolConverter.toJson(object.memberName);
-    result['positionalArguments'] = object.positionalArguments;
-    result['namedArguments'] = object.namedArguments;
-    result['isGetter'] = object.isGetter;
-    result['isSetter'] = object.isSetter;
-
-    return result;
-  }
 }
 
 class SymbolConverter implements JsonConverter<Symbol, String> {

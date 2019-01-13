@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'throws_exception_test.dart';
+part of 'serialize_parameters_test.dart';
 
 // **************************************************************************
 // InvokerGenerator
@@ -8,13 +8,29 @@ part of 'throws_exception_test.dart';
 
 class _$TargetClassInvoker {
   static dynamic invoke(Invocation invocation, TargetClass target) {
+    if (invocation.isGetter && #aGetter == invocation.memberName) {
+      return target.aGetter;
+    }
     if (invocation.isMethod && #someMethod == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
-      for (int i = invocation.positionalArguments.length; i < 0; i++)
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
         positionalArguments.add(null);
 
-      return target.someMethod();
+      return target.someMethod(
+        positionalArguments[0],
+      );
+    }
+    if (invocation.isMethod &&
+        #methodWithReturnValue == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
+
+      return target.methodWithReturnValue(
+        positionalArguments[0],
+      );
     }
     if (invocation.isMethod && #provideRemote == invocation.memberName) {
       List<Object> positionalArguments =
@@ -30,17 +46,43 @@ class _$TargetClassInvoker {
 }
 
 // **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+SomeParameter _$SomeParameterFromJson(Map<String, dynamic> json) {
+  return SomeParameter(wrapped: json['wrapped'] as num);
+}
+
+Map<String, dynamic> _$SomeParameterToJson(SomeParameter instance) =>
+    <String, dynamic>{
+      'wrapped': instance.wrapped,
+      'json_serializable.className':
+          "asset:rmi_tests/test/rmi/serialize_parameters_test.dart#SomeParameter",
+    };
+
+// **************************************************************************
 // ProxyGenerator
 // **************************************************************************
 
 class _$TargetClassProxy implements TargetClass {
-  Future<void> someMethod() async {
+  void someMethod(SomeParameter parameter) async {
     List<Object> arguments = [];
-
+    arguments.add(parameter);
     Map<Symbol, Object> namedArguments = {};
 
     Invocation _$invocation =
         Invocation.method(#someMethod, arguments, namedArguments);
+
+    await _handle(_$invocation);
+  }
+
+  Future<num> methodWithReturnValue(SomeParameter parameter) async {
+    List<Object> arguments = [];
+    arguments.add(parameter);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#methodWithReturnValue, arguments, namedArguments);
 
     return await _handle(_$invocation);
   }
@@ -102,6 +144,12 @@ class _$TargetClassProxy implements TargetClass {
   InvocationHandlerFunction _handle;
   _$TargetClassProxy(this._handle) : super();
 
+  Future<SomeParameter> get aGetter async {
+    Invocation invocation = Invocation.getter(#aGetter);
+
+    return await _handle(invocation);
+  }
+
   int get hashCode {
     Invocation invocation = Invocation.getter(#hashCode);
 
@@ -120,28 +168,29 @@ class _$TargetClassProxy implements TargetClass {
 // **************************************************************************
 
 class _$TargetClassRmi {
-  static bool _registered = false;
-  static void _registerSerializers() {
-    if (_registered) return;
-    _registered = true;
-
-    rmiRegisterSerializers({});
+  static void _registerSerializers(Context context) {
+    context.registerDeserializer(
+        "asset:rmi_tests/test/rmi/serialize_parameters_test.dart#SomeParameter",
+        (d) => SomeParameter.fromJson(d));
   }
 
   static void _registerStubConstructors(Context context) {
-    context.registerRemoteStubConstructor('TargetClass', getRemote);
+    context.registerRemoteStubConstructor(
+        'asset:rmi_tests/test/rmi/serialize_parameters_test.dart#TargetClass',
+        getRemote);
   }
 
   static TargetClass getRemote(Context context, String uuid) {
-    _registerSerializers();
+    _registerSerializers(context);
     _registerStubConstructors(context);
     RmiProxyHandler handler = RmiProxyHandler(context, uuid);
     return _$TargetClassProxy(handler.handle);
   }
 
   static Provision provideRemote(Context context, TargetClass target) {
-    _registerSerializers();
+    _registerSerializers(context);
     _registerStubConstructors(context);
-    return rmiProvideRemote(context, target);
+    return rmiProvideRemote(context, target,
+        'asset:rmi_tests/test/rmi/serialize_parameters_test.dart#TargetClass');
   }
 }

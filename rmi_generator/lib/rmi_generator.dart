@@ -5,7 +5,6 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/dart/element/visitor.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
-import 'package:rmi/remote_method_invocation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 class RmiGenerator extends Generator {
@@ -18,11 +17,15 @@ class RmiGenerator extends Generator {
 
   bool elementFilter(Element element) {
     if (element is ClassElement &&
-        TypeChecker.fromRuntime(RmiTarget).isExactlyType(element.type)) {
+        TypeChecker.fromUrl(
+                'asset:rmi/lib/remote_method_invocation.dart#RmiTarget')
+            .isExactlyType(element.type)) {
       return false;
     }
 
-    if (TypeChecker.fromRuntime(RmiTarget).isAssignableFrom(element)) {
+    if (TypeChecker.fromUrl(
+            'asset:rmi/lib/remote_method_invocation.dart#RmiTarget')
+        .isAssignableFrom(element)) {
       return true;
     }
 
@@ -47,43 +50,40 @@ class RmiGenerator extends Generator {
     RmiClassVisitor visitor = new RmiClassVisitor();
     classElement.visitChildren(visitor);
 
-    String serializerList = visitor.serializableTypes
-        .map((t) => '"${t.name}": ${t.name}.fromJson')
-        .join(',');
+    String deserializerList = visitor.serializableTypes
+        .map((t) =>
+            'context.registerDeserializer("${TypeChecker.fromStatic(t).toString()}", (d) => ${t.name}.fromJson(d));')
+        .join('\n');
 
     StringBuffer stubTypeRegistrations = new StringBuffer();
     for (DartType type in visitor.remoteTargetTypes)
       if (type.displayName != classElement.displayName)
         stubTypeRegistrations.write(
-            "context.registerRemoteStubConstructor('${type.displayName}', ${type.displayName}.getRemote);");
+            "context.registerRemoteStubConstructor('${TypeChecker.fromStatic(type).toString()}', ${type.displayName}.getRemote);");
 
     //TODO think about this, wheather this is a suitable workaround...
     stubTypeRegistrations.write(
-        "context.registerRemoteStubConstructor('${classElement.displayName}', getRemote);");
+        "context.registerRemoteStubConstructor('${TypeChecker.fromStatic(classElement.type).toString()}', getRemote);");
 
     StringBuffer output = new StringBuffer();
     output.write('''
         class _\$${classElement.name}Rmi {
-          static bool _registered = false;
-          static void _registerSerializers() {
-            if (_registered) return;
-            _registered = true;
-
-            rmiRegisterSerializers({$serializerList});
+          static void _registerSerializers(Context context) {
+            $deserializerList
           }
           static void _registerStubConstructors(Context context){
             $stubTypeRegistrations
           }
           static ${classElement.name} getRemote(Context context, String uuid) {
-            _registerSerializers();
+            _registerSerializers(context);
             _registerStubConstructors(context);
             RmiProxyHandler handler = RmiProxyHandler(context, uuid);
             return _\$${classElement.name}Proxy(handler.handle);
           }
           static Provision provideRemote(Context context, ${classElement.name} target) {
-            _registerSerializers();
+            _registerSerializers(context);
             _registerStubConstructors(context);
-            return rmiProvideRemote(context, target);
+            return rmiProvideRemote(context, target, '${TypeChecker.fromStatic(classElement.type).toString()}');
           }
         }
       ''');
@@ -105,7 +105,8 @@ class RmiClassVisitor extends ThrowingElementVisitor {
         .isNotEmpty) if (!serializableTypes.contains(type))
       serializableTypes.add(type);
 
-    if (TypeChecker.fromRuntime(RmiTarget)
+    if (TypeChecker.fromUrl(
+            'asset:rmi/lib/remote_method_invocation.dart#RmiTarget')
         .isAssignableFromType(type)) if (!remoteTargetTypes.contains(type))
       remoteTargetTypes.add(type);
   }

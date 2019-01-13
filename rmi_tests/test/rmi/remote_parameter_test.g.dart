@@ -417,85 +417,76 @@ class _$TargetClassProxy implements TargetClass {
 // **************************************************************************
 
 class _$ASubParameterRmi {
-  static bool _registered = false;
-  static void _registerSerializers() {
-    if (_registered) return;
-    _registered = true;
-
-    rmiRegisterSerializers({});
-  }
-
+  static void _registerSerializers(Context context) {}
   static void _registerStubConstructors(Context context) {
-    context.registerRemoteStubConstructor('ASubParameter', getRemote);
+    context.registerRemoteStubConstructor(
+        'asset:rmi_tests/test/rmi/remote_parameter_test.dart#ASubParameter',
+        getRemote);
   }
 
   static ASubParameter getRemote(Context context, String uuid) {
-    _registerSerializers();
+    _registerSerializers(context);
     _registerStubConstructors(context);
     RmiProxyHandler handler = RmiProxyHandler(context, uuid);
     return _$ASubParameterProxy(handler.handle);
   }
 
   static Provision provideRemote(Context context, ASubParameter target) {
-    _registerSerializers();
+    _registerSerializers(context);
     _registerStubConstructors(context);
-    return rmiProvideRemote(context, target);
+    return rmiProvideRemote(context, target,
+        'asset:rmi_tests/test/rmi/remote_parameter_test.dart#ASubParameter');
   }
 }
 
 class _$AParameterRmi {
-  static bool _registered = false;
-  static void _registerSerializers() {
-    if (_registered) return;
-    _registered = true;
-
-    rmiRegisterSerializers({});
-  }
-
+  static void _registerSerializers(Context context) {}
   static void _registerStubConstructors(Context context) {
     context.registerRemoteStubConstructor(
-        'ASubParameter', ASubParameter.getRemote);
-    context.registerRemoteStubConstructor('AParameter', getRemote);
+        'asset:rmi_tests/test/rmi/remote_parameter_test.dart#ASubParameter',
+        ASubParameter.getRemote);
+    context.registerRemoteStubConstructor(
+        'asset:rmi_tests/test/rmi/remote_parameter_test.dart#AParameter',
+        getRemote);
   }
 
   static AParameter getRemote(Context context, String uuid) {
-    _registerSerializers();
+    _registerSerializers(context);
     _registerStubConstructors(context);
     RmiProxyHandler handler = RmiProxyHandler(context, uuid);
     return _$AParameterProxy(handler.handle);
   }
 
   static Provision provideRemote(Context context, AParameter target) {
-    _registerSerializers();
+    _registerSerializers(context);
     _registerStubConstructors(context);
-    return rmiProvideRemote(context, target);
+    return rmiProvideRemote(context, target,
+        'asset:rmi_tests/test/rmi/remote_parameter_test.dart#AParameter');
   }
 }
 
 class _$TargetClassRmi {
-  static bool _registered = false;
-  static void _registerSerializers() {
-    if (_registered) return;
-    _registered = true;
-
-    rmiRegisterSerializers({});
-  }
-
+  static void _registerSerializers(Context context) {}
   static void _registerStubConstructors(Context context) {
-    context.registerRemoteStubConstructor('AParameter', AParameter.getRemote);
-    context.registerRemoteStubConstructor('TargetClass', getRemote);
+    context.registerRemoteStubConstructor(
+        'asset:rmi_tests/test/rmi/remote_parameter_test.dart#AParameter',
+        AParameter.getRemote);
+    context.registerRemoteStubConstructor(
+        'asset:rmi_tests/test/rmi/remote_parameter_test.dart#TargetClass',
+        getRemote);
   }
 
   static TargetClass getRemote(Context context, String uuid) {
-    _registerSerializers();
+    _registerSerializers(context);
     _registerStubConstructors(context);
     RmiProxyHandler handler = RmiProxyHandler(context, uuid);
     return _$TargetClassProxy(handler.handle);
   }
 
   static Provision provideRemote(Context context, TargetClass target) {
-    _registerSerializers();
+    _registerSerializers(context);
     _registerStubConstructors(context);
-    return rmiProvideRemote(context, target);
+    return rmiProvideRemote(context, target,
+        'asset:rmi_tests/test/rmi/remote_parameter_test.dart#TargetClass');
   }
 }

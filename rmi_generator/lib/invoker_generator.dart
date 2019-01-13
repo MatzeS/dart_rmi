@@ -4,8 +4,6 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/visitor.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
-import 'package:rmi/invoker.dart';
-import 'package:rmi/remote_method_invocation.dart';
 
 class InvokerGenerator extends Generator {
   BuilderOptions options;
@@ -15,18 +13,26 @@ class InvokerGenerator extends Generator {
     return TypeChecker.fromRuntime(T).firstAnnotationOf(element) != null;
   }
 
+  //TODO cleanup
+  bool isAnnotatedWithUrl(Element element, String url) {
+    return TypeChecker.fromUrl(url).firstAnnotationOf(element) != null;
+  }
+
   bool elementFilter(Element element) {
     if (element is ClassElement &&
-        TypeChecker.fromRuntime(RmiTarget).isExactlyType(element.type)) {
+        TypeChecker.fromUrl(
+                'asset:rmi/lib/remote_method_invocation.dart#RmiTarget')
+            .isExactlyType(element.type)) {
       return false;
     }
 
-    if (isAnnotatedWith<NotInvocable>(element)) return false;
-    if (TypeChecker.fromRuntime(NotInvocable).isAssignableFrom(element))
+    if (isAnnotatedWithUrl(element, 'asset:rmi/lib/invoker.dart#NotInvocable'))
       return false;
+    if (TypeChecker.fromUrl('asset:rmi/lib/invoker.dart#NotInvocable')
+        .isAssignableFrom(element)) return false;
 
-    if (TypeChecker.fromRuntime(Invocable).isAssignableFrom(element))
-      return true;
+    if (TypeChecker.fromUrl('asset:rmi/lib/invoker.dart#Invocable')
+        .isAssignableFrom(element)) return true;
 
     return false;
   }

@@ -5,8 +5,6 @@ import 'package:analyzer/dart/element/type.dart';
 
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
-import 'package:rmi/proxy.dart';
-import 'package:rmi/remote_method_invocation.dart';
 
 import 'package:source_gen_helpers/class/class_visitor.dart';
 import 'package:source_gen_helpers/class/output_visitor.dart';
@@ -19,13 +17,17 @@ class ProxyGenerator extends FilterGenerator {
 
   bool elementFilter(Element element) {
     if (element is ClassElement &&
-        TypeChecker.fromRuntime(RmiTarget).isExactlyType(element.type)) {
+        TypeChecker.fromUrl(
+                'asset:rmi/lib/remote_method_invocation.dart#RmiTarget')
+            .isExactlyType(element.type)) {
       return false;
     }
 
-    if (TypeChecker.fromRuntime(Proxy).annotationsOf(element).isNotEmpty)
-      return true;
-    if (TypeChecker.fromRuntime(Proxy).isAssignableFrom(element)) return true;
+    if (TypeChecker.fromUrl('asset:rmi/lib/proxy.dart#Proxy')
+        .annotationsOf(element)
+        .isNotEmpty) return true;
+    if (TypeChecker.fromUrl('asset:rmi/lib/proxy.dart#Proxy')
+        .isAssignableFrom(element)) return true;
 
     return false;
   }
@@ -90,8 +92,8 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
     var metadata = classHierarchyMetadata(await classElement)
         .map((e) => e.constantValue)
         .where((e) => e != null)
-        .where((e) =>
-            TypeChecker.fromRuntime(NoProxy).isAssignableFromType(e.type));
+        .where((e) => TypeChecker.fromUrl('asset:rmi/lib/proxy.dart#NoProxy')
+            .isAssignableFromType(e.type));
     if (metadata.isNotEmpty) {
       var list = metadata
           .map((e) => e.getField('methods').toListValue())
@@ -105,8 +107,10 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
       }
     }
 
-    if (TypeChecker.fromRuntime(NoProxy).annotationsOf(element).isNotEmpty)
-      return null;
+//TODO cleanup all typecheckers
+    if (TypeChecker.fromUrl('asset:rmi/lib/proxy.dart#NoProxy')
+        .annotationsOf(element)
+        .isNotEmpty) return null;
 
     bool hasNamedArgs = element.parameters.any((p) => p.isNamed);
     String argumentAdds = element.parameters
