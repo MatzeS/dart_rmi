@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import 'packets.dart';
 import '../invoker.dart';
 import 'package:json_serialization/json_serialization.dart';
+import 'package:rmi/proxy.dart';
 
 String generateUUID() => new Uuid().v1();
 
@@ -13,7 +14,7 @@ class RmiProxyHandler {
   String targetUuid;
   RmiProxyHandler(this.context, this.targetUuid);
 
-  Object handle(Invocation invocation) async {
+  Object handle(Invocation invocation, MetaFlags meta) async {
     Query query = Query();
     query.uuid = generateUUID();
     query.targetUuid = targetUuid;
@@ -26,8 +27,15 @@ class RmiProxyHandler {
       Object arg = invocation.positionalArguments[i];
       TransferredObject transfer;
 
-      if (arg is RmiTarget) {
-        Provision argumentProvision = arg.provideRemote(this.context);
+      bool serialize = meta.positionalArgumentSerialize.contains(i);
+      bool implement = meta.positionalArgumentImplement.contains(i);
+
+      if (!serialize && !implement) implement = arg is RmiTarget;
+
+      if (implement) {
+        //TODO unsafe
+        Provision argumentProvision =
+            (arg as RmiTarget).provideRemote(this.context);
         RemoteStub stub = RemoteStub(argumentProvision.uuid,
             argumentProvision.classAssetPath); //TODO type? suspicious
         transfer = TransferredObject.forStub(stub);
@@ -135,6 +143,7 @@ Provision internalProvideRemote(
       response.returnValue = transfer;
       response.returnedNull = returnValue == null;
     } catch (exception, stack) {
+      print(stack);
       response.exception = exception.toString();
       response.returnedNull = true;
     }

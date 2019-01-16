@@ -125,6 +125,22 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
               'namedArguments.putIfAbsent(#${p.name}, () =>  ${p.name});')
           .join('\n');
     }
+
+    // class hierarchy metadata
+    String metaflags = '';
+    for (var p in element.parameters.where((p) => p.isPositional)) {
+      if (p.metadata.isEmpty) continue;
+      String annotation = p.metadata.first.toString();
+      print(annotation);
+      //TODO not necessarily connrect
+      if (annotation.contains('AsDevice'))
+        metaflags +=
+            'meta.positionalArgumentSerialize.add(${element.parameters.indexOf(p)});';
+      else if (annotation.contains('AsImplementation'))
+        metaflags +=
+            'meta.positionalArgumentImplement.add(${element.parameters.indexOf(p)});';
+    }
+
     return '''
     {
       List<Object> arguments =  [];
@@ -134,7 +150,12 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
       Invocation _\$invocation = Invocation
         .method(#${element.name}, arguments, namedArguments);
 
-      ${!element.returnType.isVoid ? 'return' : ''} ${element.isAsynchronous ? 'await' : ''} _handle(_\$invocation);      
+      MetaFlags meta = new MetaFlags();
+      $metaflags 
+
+      ${!element.returnType.isVoid ? 'return' : ''} 
+      ${element.isAsynchronous ? 'await' : ''} 
+      _handle(_\$invocation, meta);      
     }
     ''';
   }
@@ -144,7 +165,7 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
     {
       Invocation invocation = Invocation.getter(#${element.name});
 
-      return ${element.isAsynchronous ? 'await' : ''} _handle(invocation);
+      return ${element.isAsynchronous ? 'await' : ''} _handle(invocation, null); //TODO
     }
     ''';
   }
@@ -156,7 +177,7 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
       Invocation invocation = Invocation.setter(
         #${element.displayName}, ${element.parameters.first.displayName});
 
-      _handle(invocation);
+      _handle(invocation, null); //TODO
     }
     ''';
   }

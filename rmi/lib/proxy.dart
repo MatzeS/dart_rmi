@@ -17,4 +17,10 @@ class NoProxy {
 }
 
 /// Provide this function to handle the invocation
-typedef Object InvocationHandlerFunction(Invocation invocation);
+typedef Object InvocationHandlerFunction(Invocation invocation, MetaFlags meta);
+
+//TODO review
+class MetaFlags {
+  List<int> positionalArgumentSerialize = [];
+  List<int> positionalArgumentImplement = [];
+}
