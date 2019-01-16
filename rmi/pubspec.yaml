@@ -15,6 +15,8 @@ dependencies:
   built_value: ^6.1.6
   built_collection: ^4.1.0
   json_annotation:
+  json_serialization:
+    path: ../../json_serializable/json_serialization
   
 dev_dependencies:
   json_serializable:
@@ -23,5 +25,7 @@ dev_dependencies:
 
 
 dependency_overrides:
+  json_annotation:
+    path: ../../json_serializable/json_annotation
   json_serializable:
     path: ../../json_serializable/json_serializable

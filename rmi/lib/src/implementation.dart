@@ -4,7 +4,7 @@ import '../remote_method_invocation.dart';
 import 'package:uuid/uuid.dart';
 import 'packets.dart';
 import '../invoker.dart';
-import 'json_serialization.dart';
+import 'package:json_serialization/json_serialization.dart';
 
 String generateUUID() => new Uuid().v1();
 

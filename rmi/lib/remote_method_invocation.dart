@@ -4,7 +4,7 @@ import 'proxy.dart';
 import 'invoker.dart';
 import 'src/packets.dart';
 import 'dart:async';
-import 'src/json_serialization.dart';
+import 'package:json_serialization/json_serialization.dart';
 
 import 'src/implementation.dart';
 
@@ -17,25 +17,29 @@ abstract class RmiTarget implements Invocable, Proxy {
   ///     getRemote(Context context, String uuid);
 }
 
-/// Translates a serializable object from string to object
-typedef Object Deserializer(dynamic serialized);
-
 /// Acquires a remote object
 typedef Object RemoteStubConstructor(Context context, String uuid);
 
-abstract class Serialization {
-  dynamic serialize(Object object);
-  Object deserialize(dynamic data);
-  void registerDeserializer(String key, Deserializer deserializers);
-}
+typedef Object FromJson(Map<String, dynamic> json);
+Map<String, FromJson> _fromJsonFunctions = {
+  'asset:rmi/lib/src/packets.dart#Query': Query.fromJson,
+  'asset:rmi/lib/src/packets.dart#Response': Response.fromJson,
+  'asset:rmi/lib/src/packets.dart#RemoteStub': RemoteStub.fromJson,
+  'asset:rmi/lib/src/packets.dart#TransferredObject':
+      TransferredObject.fromJson,
+};
 
 class Context {
-  Serialization serialization = new JsonSerialization();
+  JsonSerialization serialization = new JsonSerialization();
   Map<String, RemoteStubConstructor> remoteStubConstructors = {};
+
+  Context(this.input, this.output) {
+    _fromJsonFunctions
+        .forEach((k, v) => serialization.registerDeserializer(k, (x) => v(x)));
+  }
 
   Stream<String> input;
   StreamSink<String> output;
-  Context(this.input, this.output);
 
   Object getRemote(RemoteStub stub) => internalGetRemoteFromStub(stub, this);
 
