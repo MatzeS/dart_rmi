@@ -10,7 +10,7 @@ const String significantString = 'asdf';
 class RecordingHandler {
   List<Invocation> invocations = [];
 
-  Object handle(Invocation invocation) {
+  Object handle(Invocation invocation, InvocationMetadata meta) {
     invocations.add(invocation);
     return null;
   }
@@ -21,7 +21,7 @@ class ReturnValueHandler {
   ReturnValueHandler(this.returnValue);
   List<Invocation> invocations = [];
 
-  Object handle(Invocation invocation) {
+  Object handle(Invocation invocation, InvocationMetadata meta) {
     if (invocation.memberName == #noSuchMethod) return null;
 
     invocations.add(invocation);
@@ -34,7 +34,7 @@ class ExceptionHandler {
   Exception toThrow;
   ExceptionHandler(this.toThrow);
 
-  Object handle(Invocation invocation) {
+  Object handle(Invocation invocation, InvocationMetadata meta) {
     invocations.add(invocation);
     throw toThrow;
   }

@@ -73,7 +73,10 @@ class _$TargetClassProxy implements TargetClass {
     Invocation _$invocation =
         Invocation.method(#someMethod, arguments, namedArguments);
 
-    await _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+
+    await _handle(_$invocation, metadata);
   }
 
   Future<num> methodWithReturnValue(SomeParameter parameter) async {
@@ -84,7 +87,10 @@ class _$TargetClassProxy implements TargetClass {
     Invocation _$invocation =
         Invocation.method(#methodWithReturnValue, arguments, namedArguments);
 
-    return await _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+
+    return await _handle(_$invocation, metadata);
   }
 
   Object invoke(Invocation invocation) {
@@ -95,7 +101,11 @@ class _$TargetClassProxy implements TargetClass {
     Invocation _$invocation =
         Invocation.method(#invoke, arguments, namedArguments);
 
-    return _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+    metadata.elementMetadata.add(override);
+
+    return _handle(_$invocation, metadata);
   }
 
   Provision provideRemote(Context context) {
@@ -106,7 +116,10 @@ class _$TargetClassProxy implements TargetClass {
     Invocation _$invocation =
         Invocation.method(#provideRemote, arguments, namedArguments);
 
-    return _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+
+    return _handle(_$invocation, metadata);
   }
 
   bool operator ==(dynamic other) {
@@ -116,7 +129,10 @@ class _$TargetClassProxy implements TargetClass {
 
     Invocation _$invocation = Invocation.method(#==, arguments, namedArguments);
 
-    return _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+
+    return _handle(_$invocation, metadata);
   }
 
   String toString() {
@@ -127,7 +143,9 @@ class _$TargetClassProxy implements TargetClass {
     Invocation _$invocation =
         Invocation.method(#toString, arguments, namedArguments);
 
-    return _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+
+    return _handle(_$invocation, metadata);
   }
 
   dynamic noSuchMethod(Invocation invocation) {
@@ -138,7 +156,11 @@ class _$TargetClassProxy implements TargetClass {
     Invocation _$invocation =
         Invocation.method(#noSuchMethod, arguments, namedArguments);
 
-    return _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+    metadata.elementMetadata.add(pragma('vm:entry-point'));
+
+    return _handle(_$invocation, metadata);
   }
 
   InvocationHandlerFunction _handle;
@@ -147,19 +169,25 @@ class _$TargetClassProxy implements TargetClass {
   Future<SomeParameter> get aGetter async {
     Invocation invocation = Invocation.getter(#aGetter);
 
-    return await _handle(invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+
+    return await _handle(invocation, metadata);
   }
 
   int get hashCode {
     Invocation invocation = Invocation.getter(#hashCode);
 
-    return _handle(invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+
+    return _handle(invocation, metadata);
   }
 
   Type get runtimeType {
     Invocation invocation = Invocation.getter(#runtimeType);
 
-    return _handle(invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+
+    return _handle(invocation, metadata);
   }
 }
 

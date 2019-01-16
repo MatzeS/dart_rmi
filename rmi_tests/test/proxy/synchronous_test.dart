@@ -8,7 +8,7 @@ class SynchronousHandler {
   SynchronousHandler(this.returnValue);
   List<Invocation> invocations = [];
 
-  Object handle(Invocation invocation) async {
+  Object handle(Invocation invocation, InvocationMetadata meta) async {
     await Future.delayed(Duration(seconds: 1));
     invocations.add(invocation);
     return returnValue;

@@ -15,7 +15,9 @@ class _$TestClassProxy implements TestClass {
     Invocation _$invocation =
         Invocation.method(#simpleMethod, arguments, namedArguments);
 
-    _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+
+    _handle(_$invocation, metadata);
   }
 
   void methodWithArg(num numArg) {
@@ -26,7 +28,10 @@ class _$TestClassProxy implements TestClass {
     Invocation _$invocation =
         Invocation.method(#methodWithArg, arguments, namedArguments);
 
-    _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+
+    _handle(_$invocation, metadata);
   }
 
   void methodWithArgs(num numArg, String second) {
@@ -38,7 +43,11 @@ class _$TestClassProxy implements TestClass {
     Invocation _$invocation =
         Invocation.method(#methodWithArgs, arguments, namedArguments);
 
-    _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+    metadata.positionalArgumentMetadata.add([]);
+
+    _handle(_$invocation, metadata);
   }
 
   void methodWithNamedArg({num namedArg}) {
@@ -49,7 +58,9 @@ class _$TestClassProxy implements TestClass {
     Invocation _$invocation =
         Invocation.method(#methodWithNamedArg, arguments, namedArguments);
 
-    _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+
+    _handle(_$invocation, metadata);
   }
 
   void methodWithNamedArgs({num namedArg, String namedArg2}) {
@@ -61,7 +72,9 @@ class _$TestClassProxy implements TestClass {
     Invocation _$invocation =
         Invocation.method(#methodWithNamedArgs, arguments, namedArguments);
 
-    _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+
+    _handle(_$invocation, metadata);
   }
 
   void methodWithPosArg([num arg]) {
@@ -72,7 +85,10 @@ class _$TestClassProxy implements TestClass {
     Invocation _$invocation =
         Invocation.method(#methodWithPosArg, arguments, namedArguments);
 
-    _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+
+    _handle(_$invocation, metadata);
   }
 
   void methodWithPosArgs([num arg1, String arg2]) {
@@ -84,7 +100,11 @@ class _$TestClassProxy implements TestClass {
     Invocation _$invocation =
         Invocation.method(#methodWithPosArgs, arguments, namedArguments);
 
-    _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+    metadata.positionalArgumentMetadata.add([]);
+
+    _handle(_$invocation, metadata);
   }
 
   void methodWithMixedPositional(num required, [num positional]) {
@@ -96,7 +116,11 @@ class _$TestClassProxy implements TestClass {
     Invocation _$invocation = Invocation.method(
         #methodWithMixedPositional, arguments, namedArguments);
 
-    _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+    metadata.positionalArgumentMetadata.add([]);
+
+    _handle(_$invocation, metadata);
   }
 
   void methodWithMixedNamed(num required, {num named}) {
@@ -107,7 +131,10 @@ class _$TestClassProxy implements TestClass {
     Invocation _$invocation =
         Invocation.method(#methodWithMixedNamed, arguments, namedArguments);
 
-    _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+
+    _handle(_$invocation, metadata);
   }
 
   num methodWithReturn() {
@@ -118,7 +145,9 @@ class _$TestClassProxy implements TestClass {
     Invocation _$invocation =
         Invocation.method(#methodWithReturn, arguments, namedArguments);
 
-    return _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+
+    return _handle(_$invocation, metadata);
   }
 
   dynamic operator <(Object other) {
@@ -128,7 +157,10 @@ class _$TestClassProxy implements TestClass {
 
     Invocation _$invocation = Invocation.method(#<, arguments, namedArguments);
 
-    return _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+
+    return _handle(_$invocation, metadata);
   }
 
   dynamic operator [](Object key) {
@@ -138,7 +170,10 @@ class _$TestClassProxy implements TestClass {
 
     Invocation _$invocation = Invocation.method(#[], arguments, namedArguments);
 
-    return _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+
+    return _handle(_$invocation, metadata);
   }
 
   void operator []=(Object key, Object value) {
@@ -150,7 +185,11 @@ class _$TestClassProxy implements TestClass {
     Invocation _$invocation =
         Invocation.method(#[]=, arguments, namedArguments);
 
-    _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+    metadata.positionalArgumentMetadata.add([]);
+
+    _handle(_$invocation, metadata);
   }
 
   bool operator ==(dynamic other) {
@@ -160,7 +199,10 @@ class _$TestClassProxy implements TestClass {
 
     Invocation _$invocation = Invocation.method(#==, arguments, namedArguments);
 
-    return _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+
+    return _handle(_$invocation, metadata);
   }
 
   String toString() {
@@ -171,7 +213,9 @@ class _$TestClassProxy implements TestClass {
     Invocation _$invocation =
         Invocation.method(#toString, arguments, namedArguments);
 
-    return _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+
+    return _handle(_$invocation, metadata);
   }
 
   dynamic noSuchMethod(Invocation invocation) {
@@ -182,7 +226,11 @@ class _$TestClassProxy implements TestClass {
     Invocation _$invocation =
         Invocation.method(#noSuchMethod, arguments, namedArguments);
 
-    return _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+    metadata.elementMetadata.add(pragma('vm:entry-point'));
+
+    return _handle(_$invocation, metadata);
   }
 
   InvocationHandlerFunction _handle;
@@ -191,30 +239,41 @@ class _$TestClassProxy implements TestClass {
   num get aField {
     Invocation invocation = Invocation.getter(#aField);
 
-    return _handle(invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+
+    return _handle(invocation, metadata);
   }
 
   num get aGetter {
     Invocation invocation = Invocation.getter(#aGetter);
 
-    return _handle(invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+
+    return _handle(invocation, metadata);
   }
 
   set aSetter(num arg) {
     Invocation invocation = Invocation.setter(#aSetter, arg);
 
-    _handle(invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+
+    _handle(invocation, metadata);
   }
 
   int get hashCode {
     Invocation invocation = Invocation.getter(#hashCode);
 
-    return _handle(invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+
+    return _handle(invocation, metadata);
   }
 
   Type get runtimeType {
     Invocation invocation = Invocation.getter(#runtimeType);
 
-    return _handle(invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+
+    return _handle(invocation, metadata);
   }
 }

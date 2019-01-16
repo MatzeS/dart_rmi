@@ -15,7 +15,9 @@ class _$TestClassProxy implements TestClass {
     Invocation _$invocation =
         Invocation.method(#someMethod, arguments, namedArguments);
 
-    return await _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+
+    return await _handle(_$invocation, metadata);
   }
 
   bool operator ==(dynamic other) {
@@ -25,7 +27,10 @@ class _$TestClassProxy implements TestClass {
 
     Invocation _$invocation = Invocation.method(#==, arguments, namedArguments);
 
-    return _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+
+    return _handle(_$invocation, metadata);
   }
 
   String toString() {
@@ -36,7 +41,9 @@ class _$TestClassProxy implements TestClass {
     Invocation _$invocation =
         Invocation.method(#toString, arguments, namedArguments);
 
-    return _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+
+    return _handle(_$invocation, metadata);
   }
 
   dynamic noSuchMethod(Invocation invocation) {
@@ -47,7 +54,11 @@ class _$TestClassProxy implements TestClass {
     Invocation _$invocation =
         Invocation.method(#noSuchMethod, arguments, namedArguments);
 
-    return _handle(_$invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+    metadata.elementMetadata.add(pragma('vm:entry-point'));
+
+    return _handle(_$invocation, metadata);
   }
 
   InvocationHandlerFunction _handle;
@@ -56,18 +67,24 @@ class _$TestClassProxy implements TestClass {
   Future<num> get someGetter async {
     Invocation invocation = Invocation.getter(#someGetter);
 
-    return await _handle(invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+
+    return await _handle(invocation, metadata);
   }
 
   int get hashCode {
     Invocation invocation = Invocation.getter(#hashCode);
 
-    return _handle(invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+
+    return _handle(invocation, metadata);
   }
 
   Type get runtimeType {
     Invocation invocation = Invocation.getter(#runtimeType);
 
-    return _handle(invocation);
+    InvocationMetadata metadata = new InvocationMetadata();
+
+    return _handle(invocation, metadata);
   }
 }
