@@ -8,6 +8,16 @@ part of 'remote_parameter_test.dart';
 
 class _$ASubParameterInvoker {
   static dynamic invoke(Invocation invocation, ASubParameter target) {
+    if (invocation.isMethod && #provideRemote == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
+
+      return target.provideRemote(
+        positionalArguments[0],
+      );
+    }
     if (invocation.isGetter && #triggered == invocation.memberName) {
       return target.triggered;
     }
@@ -25,6 +35,51 @@ class _$ASubParameterInvoker {
     if (invocation.isGetter && #someStringGetter == invocation.memberName) {
       return target.someStringGetter;
     }
+    if (invocation.isGetter && #hashCode == invocation.memberName) {
+      return target.hashCode;
+    }
+    if (invocation.isGetter && #runtimeType == invocation.memberName) {
+      return target.runtimeType;
+    }
+    if (invocation.isMethod && #== == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
+
+      return target == positionalArguments[0];
+    }
+    if (invocation.isMethod && #toString == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 0; i++)
+        positionalArguments.add(null);
+
+      return target.toString();
+    }
+    if (invocation.isMethod && #noSuchMethod == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
+
+      return target.noSuchMethod(
+        positionalArguments[0],
+      );
+    }
+  }
+}
+
+class _$AParameterInvoker {
+  static dynamic invoke(Invocation invocation, AParameter target) {
+    if (invocation.isMethod && #parameterMethod == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 0; i++)
+        positionalArguments.add(null);
+
+      return target.parameterMethod();
+    }
     if (invocation.isMethod && #provideRemote == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
@@ -35,11 +90,6 @@ class _$ASubParameterInvoker {
         positionalArguments[0],
       );
     }
-  }
-}
-
-class _$AParameterInvoker {
-  static dynamic invoke(Invocation invocation, AParameter target) {
     if (invocation.isGetter && #value == invocation.memberName) {
       return target.value;
     }
@@ -64,21 +114,35 @@ class _$AParameterInvoker {
     if (invocation.isGetter && #getSub == invocation.memberName) {
       return target.getSub;
     }
-    if (invocation.isMethod && #parameterMethod == invocation.memberName) {
-      List<Object> positionalArguments =
-          List.from(invocation.positionalArguments);
-      for (int i = invocation.positionalArguments.length; i < 0; i++)
-        positionalArguments.add(null);
-
-      return target.parameterMethod();
+    if (invocation.isGetter && #hashCode == invocation.memberName) {
+      return target.hashCode;
     }
-    if (invocation.isMethod && #provideRemote == invocation.memberName) {
+    if (invocation.isGetter && #runtimeType == invocation.memberName) {
+      return target.runtimeType;
+    }
+    if (invocation.isMethod && #== == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
       for (int i = invocation.positionalArguments.length; i < 1; i++)
         positionalArguments.add(null);
 
-      return target.provideRemote(
+      return target == positionalArguments[0];
+    }
+    if (invocation.isMethod && #toString == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 0; i++)
+        positionalArguments.add(null);
+
+      return target.toString();
+    }
+    if (invocation.isMethod && #noSuchMethod == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
+
+      return target.noSuchMethod(
         positionalArguments[0],
       );
     }
@@ -114,6 +178,38 @@ class _$TargetClassInvoker {
         positionalArguments.add(null);
 
       return target.provideRemote(
+        positionalArguments[0],
+      );
+    }
+    if (invocation.isGetter && #hashCode == invocation.memberName) {
+      return target.hashCode;
+    }
+    if (invocation.isGetter && #runtimeType == invocation.memberName) {
+      return target.runtimeType;
+    }
+    if (invocation.isMethod && #== == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
+
+      return target == positionalArguments[0];
+    }
+    if (invocation.isMethod && #toString == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 0; i++)
+        positionalArguments.add(null);
+
+      return target.toString();
+    }
+    if (invocation.isMethod && #noSuchMethod == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
+
+      return target.noSuchMethod(
         positionalArguments[0],
       );
     }

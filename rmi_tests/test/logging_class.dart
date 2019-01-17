@@ -3,6 +3,9 @@ import 'package:rmi/invoker.dart';
 
 part 'logging_class.g.dart';
 
+const int significantNumber = 123456789;
+const String significantString = 'asdf';
+
 class LoggingClass implements BasicClass, Invocable {
   @override
   Object invoke(Invocation invocation) =>
@@ -123,4 +126,105 @@ class LoggingClass implements BasicClass, Invocable {
 
   @override
   int basicNoProxyMethod2() {}
+}
+
+class AsyncLoggingClass implements BasicAsyncClass, Invocable {
+  @override
+  Object invoke(Invocation invocation) =>
+      _$AsyncLoggingClassInvoker.invoke(invocation, this);
+
+  Map<Symbol, int> log = {};
+  List<Object> arguments = [];
+  void _log(Symbol key) {
+    if (log.containsKey(key)) {
+      int count = log[key];
+      log.remove(key);
+      log.putIfAbsent(key, () => count + 1);
+    } else {
+      log.putIfAbsent(key, () => 1);
+    }
+  }
+
+  void _arg(Object arg) {
+    arguments.add(arg);
+  }
+
+  int triggered(Symbol key) => log[key] ?? 0;
+
+  bool triggeredOnce(Symbol key) => triggered(key) == 1;
+
+  simpleMethod() async {
+    _log(#simpleMethod);
+  }
+
+  methodWithArg(num numArg) async {
+    _log(#methodWithArg);
+    _arg(numArg);
+  }
+
+  methodWithArgs(num numArg, String second) async {
+    _log(#methodWithArgs);
+    _arg(numArg);
+    _arg(second);
+  }
+
+  methodWithNamedArg({num namedArg}) async {
+    _log(#methodWithNamedArg);
+    _arg(namedArg);
+  }
+
+  methodWithNamedArgs({num namedArg, String namedArg2}) async {
+    _log(#methodWithNamedArgs);
+    _arg(namedArg);
+    _arg(namedArg2);
+  }
+
+  methodWithPosArg([num arg]) async {
+    _log(#methodWithPosArg);
+    _arg(arg);
+  }
+
+  methodWithPosArgs([num arg1, String arg2]) async {
+    _log(#methodWithPosArgs);
+    _arg(arg1);
+    _arg(arg2);
+  }
+
+  methodWithMixedPositional(num required, [num positional]) async {
+    _log(#methodWithMixedPositional);
+    _arg(required);
+    _arg(positional);
+  }
+
+  methodWithMixedNamed(num required, {num named}) async {
+    _log(#methodWithMixedNamed);
+    _arg(required);
+    _arg(named);
+  }
+
+  methodWithReturn() async {
+    _log(#methodWithReturn);
+    return -1;
+  }
+
+  get aGetter async {
+    _log(#aGetter);
+    return significantNumber;
+  }
+
+  operator <(Object other) async {
+    _log(#<);
+    _arg(other);
+  }
+
+  operator [](Object key) async {
+    _log(#[]);
+    _arg(key);
+  }
+
+  operator []=(Object key, Object value) async {
+    _log(#[]=);
+    _arg(key);
+    _arg(value);
+  }
 }

@@ -7,28 +7,15 @@ import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import 'type_checkers.dart';
+
 class RmiGenerator extends Generator {
   BuilderOptions options;
   RmiGenerator(this.options);
 
-  bool isAnnotatedWith<T>(Element element) {
-    return TypeChecker.fromRuntime(T).firstAnnotationOf(element) != null;
-  }
-
   bool elementFilter(Element element) {
-    if (element is ClassElement &&
-        TypeChecker.fromUrl(
-                'asset:rmi/lib/remote_method_invocation.dart#RmiTarget')
-            .isExactlyType(element.type)) {
-      return false;
-    }
-
-    if (TypeChecker.fromUrl(
-            'asset:rmi/lib/remote_method_invocation.dart#RmiTarget')
-        .isAssignableFrom(element)) {
-      return true;
-    }
-
+    if (RmiTargetChecker.isExactly(element)) return false;
+    if (RmiTargetChecker.isAssignableFrom(element)) return true;
     return false;
   }
 
@@ -61,7 +48,6 @@ class RmiGenerator extends Generator {
         stubTypeRegistrations.write(
             "context.registerRemoteStubConstructor('${TypeChecker.fromStatic(type).toString()}', ${type.displayName}.getRemote);");
 
-    //TODO think about this, wheather this is a suitable workaround...
     stubTypeRegistrations.write(
         "context.registerRemoteStubConstructor('${TypeChecker.fromStatic(classElement.type).toString()}', getRemote);");
 
@@ -105,10 +91,8 @@ class RmiClassVisitor extends ThrowingElementVisitor {
         .isNotEmpty) if (!serializableTypes.contains(type))
       serializableTypes.add(type);
 
-    if (TypeChecker.fromUrl(
-            'asset:rmi/lib/remote_method_invocation.dart#RmiTarget')
-        .isAssignableFromType(type)) if (!remoteTargetTypes.contains(type))
-      remoteTargetTypes.add(type);
+    if (RmiTargetChecker.isAssignableFromType(type)) if (!remoteTargetTypes
+        .contains(type)) remoteTargetTypes.add(type);
   }
 
   @override

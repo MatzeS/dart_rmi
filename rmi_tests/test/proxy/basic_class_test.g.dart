@@ -59,6 +59,7 @@ class _$TestClassProxy implements TestClass {
         Invocation.method(#methodWithNamedArg, arguments, namedArguments);
 
     InvocationMetadata metadata = new InvocationMetadata();
+    metadata.namedArgumentMetadata[#namedArg] = [];
 
     _handle(_$invocation, metadata);
   }
@@ -73,6 +74,8 @@ class _$TestClassProxy implements TestClass {
         Invocation.method(#methodWithNamedArgs, arguments, namedArguments);
 
     InvocationMetadata metadata = new InvocationMetadata();
+    metadata.namedArgumentMetadata[#namedArg] = [];
+    metadata.namedArgumentMetadata[#namedArg2] = [];
 
     _handle(_$invocation, metadata);
   }
@@ -133,6 +136,7 @@ class _$TestClassProxy implements TestClass {
 
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
+    metadata.namedArgumentMetadata[#named] = [];
 
     _handle(_$invocation, metadata);
   }

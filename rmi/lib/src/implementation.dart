@@ -14,7 +14,7 @@ class RmiProxyHandler {
   String targetUuid;
   RmiProxyHandler(this.context, this.targetUuid);
 
-  Object handle(Invocation invocation, MetaFlags meta) async {
+  Object handle(Invocation invocation, InvocationMetadata meta) async {
     Query query = Query();
     query.uuid = generateUUID();
     query.targetUuid = targetUuid;
@@ -27,28 +27,50 @@ class RmiProxyHandler {
       Object arg = invocation.positionalArguments[i];
       TransferredObject transfer;
 
-      bool serialize = meta.positionalArgumentSerialize.contains(i);
-      bool implement = meta.positionalArgumentImplement.contains(i);
+      bool serialize = !(arg is RmiTarget);
+      if (meta.positionalArgumentMetadata[i].any((e) => e is NotAsRmi))
+        serialize = true;
 
-      if (!serialize && !implement) implement = arg is RmiTarget;
-
-      if (implement) {
+      if (serialize) {
+        String serialized = context.serialization.serialize(arg);
+        transfer = TransferredObject.forSerialized(serialized);
+      } else {
         //TODO unsafe
         Provision argumentProvision =
             (arg as RmiTarget).provideRemote(this.context);
         RemoteStub stub = RemoteStub(argumentProvision.uuid,
             argumentProvision.classAssetPath); //TODO type? suspicious
         transfer = TransferredObject.forStub(stub);
-      } else {
-        String serialized = context.serialization.serialize(arg);
-        transfer = TransferredObject.forSerialized(serialized);
       }
 
       positionalArguments.add(transfer);
     }
     query.positionalArguments = positionalArguments;
 
-    //TODO named
+    Map<String, TransferredObject> namedArguments = {};
+    invocation.namedArguments.forEach((k, v) {
+      Object arg = v;
+      TransferredObject transfer;
+
+      bool serialize = !(arg is RmiTarget);
+      if (meta.namedArgumentMetadata[k].any((e) => e is NotAsRmi))
+        serialize = true;
+
+      if (serialize) {
+        String serialized = context.serialization.serialize(arg);
+        transfer = TransferredObject.forSerialized(serialized);
+      } else {
+        //TODO unsafe
+        Provision argumentProvision =
+            (arg as RmiTarget).provideRemote(this.context);
+        RemoteStub stub = RemoteStub(argumentProvision.uuid,
+            argumentProvision.classAssetPath); //TODO type? suspicious
+        transfer = TransferredObject.forStub(stub);
+      }
+
+      namedArguments[SymbolConverter().toJson(k)] = transfer;
+    });
+    query.namedArguments = namedArguments;
 
     String serializedQuery = context.serialization.serialize(query);
 
@@ -66,6 +88,7 @@ class RmiProxyHandler {
     } else if (response.returnedNull || response.returnValue != null) {
       var returnValue = response.returnValue;
 
+      // return value serialization TODO
       if (returnValue.isStub) {
         return context.getRemote(returnValue.stub);
       } else {
@@ -105,21 +128,35 @@ Provision internalProvideRemote(
         positionalArguments.add(deserialized);
       }
     }
-    // TODO Named arguments
+    Map<Symbol, Object> namedArguments = {};
+    query.namedArguments.forEach((k, v) {
+      TransferredObject arg = v;
+      Symbol symbol = SymbolConverter().fromJson(k);
 
-    //TODO replace with function
+      if (arg.isStub) {
+        // not very safe
+        RemoteStub stub = arg.stub;
+        Object proxy = context.getRemote(stub);
+        namedArguments[symbol] = proxy;
+      } else {
+        Object deserialized = context.serialization.deserialize(arg.serialized);
+        namedArguments[symbol] = deserialized;
+      }
+    });
+
+    Response response = Response();
+    response.query = query.uuid;
+
     Invocation invocation;
-    if (!query.isGetter && !query.isSetter) {
-      invocation = Invocation.method(query.memberName, positionalArguments);
-    } else if (query.isGetter) {
+    if (query.isGetter) {
       invocation = Invocation.getter(query.memberName);
     } else if (query.isSetter) {
       invocation =
           Invocation.setter(query.memberName, positionalArguments.first);
+    } else {
+      invocation = Invocation.method(
+          query.memberName, positionalArguments, namedArguments);
     }
-
-    Response response = Response();
-    response.query = query.uuid;
 
     try {
       var returnValue = target.invoke(invocation);
@@ -143,7 +180,7 @@ Provision internalProvideRemote(
       response.returnValue = transfer;
       response.returnedNull = returnValue == null;
     } catch (exception, stack) {
-      print(stack);
+      // print(stack);
       response.exception = exception.toString();
       response.returnedNull = true;
     }

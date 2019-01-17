@@ -4,36 +4,18 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/visitor.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
+import 'type_checkers.dart';
+import 'package:source_gen_helpers/class/util.dart';
 
 class InvokerGenerator extends Generator {
   BuilderOptions options;
   InvokerGenerator(this.options);
 
-  bool isAnnotatedWith<T>(Element element) {
-    return TypeChecker.fromRuntime(T).firstAnnotationOf(element) != null;
-  }
-
-  //TODO cleanup
-  bool isAnnotatedWithUrl(Element element, String url) {
-    return TypeChecker.fromUrl(url).firstAnnotationOf(element) != null;
-  }
-
   bool elementFilter(Element element) {
-    if (element is ClassElement &&
-        TypeChecker.fromUrl(
-                'asset:rmi/lib/remote_method_invocation.dart#RmiTarget')
-            .isExactlyType(element.type)) {
-      return false;
-    }
-
-    if (isAnnotatedWithUrl(element, 'asset:rmi/lib/invoker.dart#NotInvocable'))
-      return false;
-    if (TypeChecker.fromUrl('asset:rmi/lib/invoker.dart#NotInvocable')
-        .isAssignableFrom(element)) return false;
-
-    if (TypeChecker.fromUrl('asset:rmi/lib/invoker.dart#Invocable')
-        .isAssignableFrom(element)) return true;
-
+    if (RmiTargetChecker.isExactly(element)) return false;
+    if (NotInvocableChecker.hasAnnotationOf(element)) return false;
+    if (NotInvocableChecker.isAssignableFrom(element)) return false;
+    if (InvocableChecker.isAssignableFrom(element)) return true;
     return false;
   }
 
@@ -51,8 +33,20 @@ class InvokerGenerator extends Generator {
     }
     ClassElement classElement = element as ClassElement;
 
+    //TODO cleanup this with new source gen helpers
+
     InvocableClassVisitor visitor = new InvocableClassVisitor(classElement);
-    classElement.visitChildren(visitor);
+    // classElement.visitChildren(visitor);
+    List<Element> member = allClassMember(classElement);
+    member = member.where((e) {
+      if (e.enclosingElement is! ClassElement) return true;
+      ClassElement c = e.enclosingElement as ClassElement;
+      return !c.type.isBottom;
+    }).toList();
+
+    member = filterConcreteElements(classElement, member);
+    member.forEach((e) => e.accept(visitor));
+
     return '''
         class _\$${classElement.name}Invoker {
           static dynamic invoke(Invocation invocation, ${classElement.name} target){
@@ -78,8 +72,9 @@ class InvocableClassVisitor extends ThrowingElementVisitor {
   @override
   visitMethodElement(MethodElement element) {
     if (element.isStatic) return;
+    if (element.isPrivate) return;
     if (element.name == 'invoke' &&
-        element.parameters.length == 1 &&
+        element.parameters.length == 1 && //TODO cleanup
         element.parameters[0].type.name == 'Invocation') return;
 
     List<String> namedArgList = [];
@@ -138,6 +133,7 @@ class InvocableClassVisitor extends ThrowingElementVisitor {
 
   @override
   visitPropertyAccessorElement(PropertyAccessorElement element) {
+    if (element.isPrivate) return;
     if (element.isSetter) {
       output.write('''
       if( 

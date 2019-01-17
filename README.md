@@ -70,3 +70,5 @@ remoteObject.someMethod(); // prints 'some stuff' on the other machine
 - sosuchmethod...
 - reduce tests to a minimum code
 - warn on rmi non future method
+- warn for contrast metadata
+- class hierarchy metadata

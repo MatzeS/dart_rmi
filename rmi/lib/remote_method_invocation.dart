@@ -17,6 +17,10 @@ abstract class RmiTarget implements Invocable, Proxy {
   ///     getRemote(Context context, String uuid);
 }
 
+class NotAsRmi {
+  const NotAsRmi();
+}
+
 /// Acquires a remote object
 typedef Object RemoteStubConstructor(Context context, String uuid);
 

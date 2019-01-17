@@ -1,8 +1,5 @@
 import 'package:rmi/proxy.dart';
 
-const int significantNumber = 123456789;
-const String significantString = 'asdf';
-
 @NoProxy([#basicNoProxyMethod])
 class BasicClass {
   void simpleMethod() {}
@@ -30,4 +27,25 @@ class BasicClass {
   int basicNoProxyMethod() => 42;
   @NoProxy()
   int basicNoProxyMethod2() => 42;
+}
+
+class BasicAsyncClass {
+  Future<void> simpleMethod() async {}
+  Future<void> methodWithArg(num numArg) async {}
+  Future<void> methodWithArgs(num numArg, String second) async {}
+  Future<void> methodWithNamedArg({num namedArg}) async {}
+  Future<void> methodWithNamedArgs({num namedArg, String namedArg2}) async {}
+  Future<void> methodWithPosArg([num arg]) async {}
+  Future<void> methodWithPosArgs([num arg1, String arg2]) async {}
+  Future<void> methodWithMixedPositional(num required,
+      [num positional]) async {}
+  Future<void> methodWithMixedNamed(num required, {num named}) async {}
+  Future<num> methodWithReturn() async => -1;
+
+  Future<num> get aGetter async => -1;
+
+  operator <(Object other) async {}
+
+  operator [](Object key) async {}
+  operator []=(Object key, Object value) async {}
 }

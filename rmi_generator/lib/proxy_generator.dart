@@ -11,24 +11,15 @@ import 'package:source_gen_helpers/class/output_visitor.dart';
 import 'package:source_gen_helpers/class/override_visitor.dart';
 import 'package:source_gen_helpers/class/util.dart';
 import 'package:source_gen_helpers/filter_generator.dart';
+import 'type_checkers.dart';
 
 class ProxyGenerator extends FilterGenerator {
   ProxyGenerator(BuilderOptions options) : super(options);
 
   bool elementFilter(Element element) {
-    if (element is ClassElement &&
-        TypeChecker.fromUrl(
-                'asset:rmi/lib/remote_method_invocation.dart#RmiTarget')
-            .isExactlyType(element.type)) {
-      return false;
-    }
-
-    if (TypeChecker.fromUrl('asset:rmi/lib/proxy.dart#Proxy')
-        .annotationsOf(element)
-        .isNotEmpty) return true;
-    if (TypeChecker.fromUrl('asset:rmi/lib/proxy.dart#Proxy')
-        .isAssignableFrom(element)) return true;
-
+    if (RmiTargetChecker.isExactly(element)) return false;
+    if (ProxyChecker.hasAnnotationOf(element)) return true;
+    if (ProxyChecker.isAssignableFrom(element)) return true;
     return false;
   }
 
@@ -92,8 +83,7 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
     var metadata = classHierarchyMetadata(await classElement)
         .map((e) => e.constantValue)
         .where((e) => e != null)
-        .where((e) => TypeChecker.fromUrl('asset:rmi/lib/proxy.dart#NoProxy')
-            .isAssignableFromType(e.type));
+        .where((e) => NoProxyChecker.isAssignableFromType(e.type));
     if (metadata.isNotEmpty) {
       var list = metadata
           .map((e) => e.getField('methods').toListValue())
@@ -107,10 +97,7 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
       }
     }
 
-//TODO cleanup all typecheckers
-    if (TypeChecker.fromUrl('asset:rmi/lib/proxy.dart#NoProxy')
-        .annotationsOf(element)
-        .isNotEmpty) return null;
+    if (NoProxyChecker.hasAnnotationOf(element)) return null;
 
     bool hasNamedArgs = element.parameters.any((p) => p.isNamed);
     String argumentAdds = element.parameters
@@ -126,21 +113,6 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
           .join('\n');
     }
 
-    // class hierarchy metadata
-    String metaflags = '';
-    for (var p in element.parameters.where((p) => p.isPositional)) {
-      if (p.metadata.isEmpty) continue;
-      String annotation = p.metadata.first.toString();
-      print(annotation);
-      //TODO not necessarily connrect
-      if (annotation.contains('AsDevice'))
-        metaflags +=
-            'meta.positionalArgumentSerialize.add(${element.parameters.indexOf(p)});';
-      else if (annotation.contains('AsImplementation'))
-        metaflags +=
-            'meta.positionalArgumentImplement.add(${element.parameters.indexOf(p)});';
-    }
-
     return '''
     {
       List<Object> arguments =  [];
@@ -150,12 +122,11 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
       Invocation _\$invocation = Invocation
         .method(#${element.name}, arguments, namedArguments);
 
-      MetaFlags meta = new MetaFlags();
-      $metaflags 
+      ${_metadata(element)}
 
       ${!element.returnType.isVoid ? 'return' : ''} 
       ${element.isAsynchronous ? 'await' : ''} 
-      _handle(_\$invocation, meta);      
+      _handle(_\$invocation, metadata);      
     }
     ''';
   }
@@ -164,8 +135,10 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
     return '''
     {
       Invocation invocation = Invocation.getter(#${element.name});
+      
+      ${_metadata(element)}
 
-      return ${element.isAsynchronous ? 'await' : ''} _handle(invocation, null); //TODO
+      return ${element.isAsynchronous ? 'await' : ''} _handle(invocation, metadata); 
     }
     ''';
   }
@@ -173,11 +146,12 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
   generateSetter(PropertyAccessorElement element) {
     return '''
     {
-
       Invocation invocation = Invocation.setter(
         #${element.displayName}, ${element.parameters.first.displayName});
 
-      _handle(invocation, null); //TODO
+      ${_metadata(element)}
+
+      _handle(invocation, metadata);
     }
     ''';
   }
@@ -193,4 +167,29 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
   // ignored since they are handled by property accessor with getter and setter implementation
   @override
   visitFieldElement(FieldElement element) => null;
+
+  String _metadata(ExecutableElement element) {
+    String metadata = 'InvocationMetadata metadata = new InvocationMetadata();';
+    for (var p in element.parameters.where((p) => p.isPositional)) {
+      metadata += 'metadata.positionalArgumentMetadata.add([]);';
+      for (var m in p.metadata) {
+        metadata +=
+            'metadata.positionalArgumentMetadata[${element.parameters.indexOf(p)}].add(${m.toSource().substring(1)});';
+      }
+    }
+
+    for (var p in element.parameters.where((p) => p.isNamed)) {
+      metadata += 'metadata.namedArgumentMetadata[#${p.displayName}] = [];';
+      for (var m in p.metadata) {
+        metadata +=
+            'metadata.namedArgumentMetadata[#${p.displayName}].add(${m.toSource().substring(1)});';
+      }
+    }
+
+    for (var m in element.metadata) {
+      metadata += 'metadata.elementMetadata.add(${m.toSource().substring(1)});';
+    }
+
+    return metadata;
+  }
 }

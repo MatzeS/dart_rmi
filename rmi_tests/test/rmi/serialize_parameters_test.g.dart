@@ -8,9 +8,6 @@ part of 'serialize_parameters_test.dart';
 
 class _$TargetClassInvoker {
   static dynamic invoke(Invocation invocation, TargetClass target) {
-    if (invocation.isGetter && #aGetter == invocation.memberName) {
-      return target.aGetter;
-    }
     if (invocation.isMethod && #someMethod == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
@@ -39,6 +36,41 @@ class _$TargetClassInvoker {
         positionalArguments.add(null);
 
       return target.provideRemote(
+        positionalArguments[0],
+      );
+    }
+    if (invocation.isGetter && #aGetter == invocation.memberName) {
+      return target.aGetter;
+    }
+    if (invocation.isGetter && #hashCode == invocation.memberName) {
+      return target.hashCode;
+    }
+    if (invocation.isGetter && #runtimeType == invocation.memberName) {
+      return target.runtimeType;
+    }
+    if (invocation.isMethod && #== == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
+
+      return target == positionalArguments[0];
+    }
+    if (invocation.isMethod && #toString == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 0; i++)
+        positionalArguments.add(null);
+
+      return target.toString();
+    }
+    if (invocation.isMethod && #noSuchMethod == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
+
+      return target.noSuchMethod(
         positionalArguments[0],
       );
     }
