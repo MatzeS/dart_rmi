@@ -278,7 +278,9 @@ class _$TestClassProxy implements TestClass {
     metadata.elementMetadata.add(override);
     metadata.isStream = true;
 
-    return (_handle(_$invocation, metadata) as Stream).cast();
+    var result = _handle(_$invocation, metadata);
+    if (result == null) return null;
+    return (result as Stream).cast();
   }
 
   int triggered(Symbol key) {

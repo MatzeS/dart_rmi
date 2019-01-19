@@ -220,7 +220,9 @@ class _$TestClassProxy implements TestClass {
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.isStream = true;
 
-    return _handle(_$invocation, metadata);
+    var result = _handle(_$invocation, metadata);
+    if (result == null) return null;
+    return (result as Stream).cast();
   }
 
   bool operator ==(dynamic other) {

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/visitor.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 import 'type_checkers.dart';
@@ -92,9 +93,26 @@ class InvocableClassVisitor extends ThrowingElementVisitor {
         .toList()
         .length;
 
+//TODO named
+    var positionalArguments =
+        element.parameters.where((p) => p.isPositional).toList();
+
     List<String> posArgList = [];
-    for (int i = 0; i < reqArgCount + optPosArgCount; i++)
-      posArgList.add('positionalArguments[$i]');
+    for (int i = 0; i < reqArgCount + optPosArgCount; i++) {
+      String argumentReference = 'positionalArguments[$i]';
+      if (positionalArguments[i].type.isDartAsyncFuture) {
+        String type = (positionalArguments[i].type as ParameterizedType)
+            .typeArguments
+            .first
+            .displayName;
+        argumentReference =
+            '($argumentReference as Future).then((v) => v as ${type})';
+      } else if (TypeChecker.fromRuntime(Stream)
+          .isAssignableFromType(positionalArguments[i].type)) {
+        argumentReference = '($argumentReference as Stream).cast()';
+      }
+      posArgList.add(argumentReference);
+    }
 
     String args = posArgList.join(', ');
     if (args.isNotEmpty) args += ', ';

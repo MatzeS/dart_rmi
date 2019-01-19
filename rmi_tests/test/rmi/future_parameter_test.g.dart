@@ -1,45 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'throws_exception_test.dart';
+part of 'future_parameter_test.dart';
 
 // **************************************************************************
 // InvokerGenerator
 // **************************************************************************
 
-class _$TargetClassInvoker {
-  static dynamic invoke(Invocation invocation, TargetClass target) {
-    if (invocation.isMethod && #method1 == invocation.memberName) {
-      List<Object> positionalArguments =
-          List.from(invocation.positionalArguments);
-      for (int i = invocation.positionalArguments.length; i < 0; i++)
-        positionalArguments.add(null);
-
-      return target.method1();
-    }
-    if (invocation.isMethod && #method2 == invocation.memberName) {
-      List<Object> positionalArguments =
-          List.from(invocation.positionalArguments);
-      for (int i = invocation.positionalArguments.length; i < 0; i++)
-        positionalArguments.add(null);
-
-      return target.method2();
-    }
-    if (invocation.isMethod && #method3 == invocation.memberName) {
-      List<Object> positionalArguments =
-          List.from(invocation.positionalArguments);
-      for (int i = invocation.positionalArguments.length; i < 0; i++)
-        positionalArguments.add(null);
-
-      return target.method3();
-    }
-    if (invocation.isMethod && #method4 == invocation.memberName) {
-      List<Object> positionalArguments =
-          List.from(invocation.positionalArguments);
-      for (int i = invocation.positionalArguments.length; i < 0; i++)
-        positionalArguments.add(null);
-
-      return target.method4();
-    }
+class _$TestClassInvoker {
+  static dynamic invoke(Invocation invocation, TestClass target) {
     if (invocation.isMethod && #provideRemote == invocation.memberName) {
       List<Object> positionalArguments =
           List.from(invocation.positionalArguments);
@@ -50,12 +18,26 @@ class _$TargetClassInvoker {
         positionalArguments[0],
       );
     }
-    if (invocation.isGetter && #sampleException == invocation.memberName) {
-      return target.sampleException;
+    if (invocation.isMethod && #futureMethod == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
+
+      return target.futureMethod(
+        (positionalArguments[0] as Future).then((v) => v as String),
+      );
     }
-    if (invocation.isSetter && #sampleException == invocation.memberName) {
-      target.sampleException = invocation.positionalArguments[0];
-      return null;
+    if (invocation.isMethod && #streamMethod == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 1; i++)
+        positionalArguments.add(null);
+
+      return target.streamMethod(positionalArguments[0] != null
+          ? ((positionalArguments[0] as Stream).cast())
+          : null);
+      return 3;
     }
     if (invocation.isGetter && #hashCode == invocation.memberName) {
       return target.hashCode;
@@ -96,58 +78,17 @@ class _$TargetClassInvoker {
 // ProxyGenerator
 // **************************************************************************
 
-class _$TargetClassProxy implements TargetClass {
-  Future<void> method1() {
+class _$TestClassProxy implements TestClass {
+  Provision provideRemote(Context context) {
     List<Object> arguments = [];
-
+    arguments.add(context);
     Map<Symbol, Object> namedArguments = {};
 
     Invocation _$invocation =
-        Invocation.method(#method1, arguments, namedArguments);
+        Invocation.method(#provideRemote, arguments, namedArguments);
 
     InvocationMetadata metadata = new InvocationMetadata();
-    metadata.isStream = false;
-
-    return _handle(_$invocation, metadata);
-  }
-
-  Future<void> method2() async {
-    List<Object> arguments = [];
-
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#method2, arguments, namedArguments);
-
-    InvocationMetadata metadata = new InvocationMetadata();
-    metadata.isStream = false;
-
-    return await _handle(_$invocation, metadata);
-  }
-
-  Future<void> method3() {
-    List<Object> arguments = [];
-
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#method3, arguments, namedArguments);
-
-    InvocationMetadata metadata = new InvocationMetadata();
-    metadata.isStream = false;
-
-    return _handle(_$invocation, metadata);
-  }
-
-  Future<void> method4() {
-    List<Object> arguments = [];
-
-    Map<Symbol, Object> namedArguments = {};
-
-    Invocation _$invocation =
-        Invocation.method(#method4, arguments, namedArguments);
-
-    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
     metadata.isStream = false;
 
     return _handle(_$invocation, metadata);
@@ -169,19 +110,34 @@ class _$TargetClassProxy implements TargetClass {
     return _handle(_$invocation, metadata);
   }
 
-  Provision provideRemote(Context context) {
+  Future<num> futureMethod(Future aParameter) async {
     List<Object> arguments = [];
-    arguments.add(context);
+    arguments.add(aParameter);
     Map<Symbol, Object> namedArguments = {};
 
     Invocation _$invocation =
-        Invocation.method(#provideRemote, arguments, namedArguments);
+        Invocation.method(#futureMethod, arguments, namedArguments);
 
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
     metadata.isStream = false;
 
-    return _handle(_$invocation, metadata);
+    return await _handle(_$invocation, metadata);
+  }
+
+  Future<num> streamMethod(Stream aParameter) async {
+    List<Object> arguments = [];
+    arguments.add(aParameter);
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#streamMethod, arguments, namedArguments);
+
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.positionalArgumentMetadata.add([]);
+    metadata.isStream = false;
+
+    return await _handle(_$invocation, metadata);
   }
 
   bool operator ==(dynamic other) {
@@ -229,16 +185,7 @@ class _$TargetClassProxy implements TargetClass {
   }
 
   InvocationHandlerFunction _handle;
-  _$TargetClassProxy(this._handle) : super();
-
-  Exception get sampleException {
-    Invocation invocation = Invocation.getter(#sampleException);
-
-    InvocationMetadata metadata = new InvocationMetadata();
-    metadata.isStream = false;
-
-    return _handle(invocation, metadata);
-  }
+  _$TestClassProxy(this._handle) : super();
 
   int get hashCode {
     Invocation invocation = Invocation.getter(#hashCode);
@@ -263,25 +210,25 @@ class _$TargetClassProxy implements TargetClass {
 // RmiGenerator
 // **************************************************************************
 
-class _$TargetClassRmi {
+class _$TestClassRmi {
   static void _registerSerializers(Context context) {}
   static void _registerStubConstructors(Context context) {
     context.registerRemoteStubConstructor(
-        'asset:rmi_tests/test/rmi/throws_exception_test.dart#TargetClass',
+        'asset:rmi_tests/test/rmi/future_parameter_test.dart#TestClass',
         getRemote);
   }
 
-  static TargetClass getRemote(Context context, String uuid) {
+  static TestClass getRemote(Context context, String uuid) {
     _registerSerializers(context);
     _registerStubConstructors(context);
     RmiProxyHandler handler = RmiProxyHandler(context, uuid);
-    return _$TargetClassProxy(handler.handle);
+    return _$TestClassProxy(handler.handle);
   }
 
-  static Provision provideRemote(Context context, TargetClass target) {
+  static Provision provideRemote(Context context, TestClass target) {
     _registerSerializers(context);
     _registerStubConstructors(context);
     return rmiProvideRemote(context, target,
-        'asset:rmi_tests/test/rmi/throws_exception_test.dart#TargetClass');
+        'asset:rmi_tests/test/rmi/future_parameter_test.dart#TestClass');
   }
 }

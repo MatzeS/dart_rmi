@@ -349,15 +349,13 @@ void main() {
       expect(handler.invocations.first.namedArguments.isEmpty, true);
     });
 
-    test('return Value', () async {
+    test('value passing', () async {
       var sc = new StreamController<num>();
       Stream<num> stream = sc.stream;
       ReturnValueHandler handler = new ReturnValueHandler(stream);
       testObject = TestClass.proxy(handler.handle);
 
       Stream<num> result = testObject.someGenerator();
-
-      expect(result, stream);
 
       var first = result.first;
       sc.sink.add(significantNumber);

@@ -6,7 +6,6 @@ import 'packets.dart';
 import '../invoker.dart';
 import 'package:json_serialization/json_serialization.dart';
 import 'package:rmi/proxy.dart';
-import 'standard_object.dart';
 
 String generateUUID() => new Uuid().v1();
 
@@ -74,7 +73,6 @@ class RmiProxyHandler {
     } else {
       return answer.then((response) {
         if (response.resolution.isException) {
-          print('>>>>>>>>>>>>>>>>.remote exceptoin raised');
           throw new Exception('REMOTE EXCEPTOIN RAISED' +
               response.resolution.exception.message);
         } else if (response.resolution != null) {
@@ -133,13 +131,11 @@ Provision internalProvideRemote(
     }
 
     try {
-      print('invoking ${invocation.memberName}');
       var returnValue = await target.invoke(invocation);
       response.resolution =
           Resolution(object: _generateTransferable(returnValue, null, context));
     } catch (exception, stack) {
       // print(stack);
-      //TODO test
       response.resolution =
           Resolution(exception: TransferredException.fromException(exception));
     }
@@ -187,23 +183,13 @@ TransferredObject _generateTransferable(
     // RemoteFuture remote = new RemoteFuture(object);
     // var provision = remote.provideRemote(context);
     var uuid = generateUUID();
-    object
-      ..then((value) {
-        var resolution = new FutureResolution();
-        resolution.uuid = uuid;
-        resolution.resolution =
-            Resolution(object: _generateTransferable(value, null, context));
-        context.output.add(context.serialization.serialize(resolution));
-      })
-      ..catchError((error) {
-        //TOOD check if necessary
-        print('>>>>>>>>>>>>>>>>>>>>>>>>>catched error $error');
-        var resolution = new FutureResolution();
-        resolution.uuid = uuid;
-        resolution.resolution =
-            Resolution(exception: TransferredException.fromException(error));
-        context.output.add(context.serialization.serialize(resolution));
-      });
+    object.then((value) {
+      var resolution = new FutureResolution();
+      resolution.uuid = uuid;
+      resolution.resolution =
+          Resolution(object: _generateTransferable(value, null, context));
+      context.output.add(context.serialization.serialize(resolution));
+    });
     return TransferredObject.forFuture(uuid);
   } else if (object is RmiTarget &&
       (metadata == null || !metadata.any((e) => e is NotAsRmi))) {
@@ -223,14 +209,16 @@ Object _reconstructTransferredObject(
     var future = FutureImplementation();
     future.context = context;
     future.uuid = transferred.future;
-    print('well');
     return future;
     // return RemoteFuture.getRemote(context, transferred.future);
   } else if (transferred.isStream) {
+    print('stream reconstructed');
     var stream = StreamImplementation();
     stream.uuid = transferred.stream;
     stream.context = context;
-    return stream;
+    var sc = new StreamController();
+    stream.listen((d) => sc.sink.add(d));
+    return sc.stream;
   } else if (transferred.isRemote) {
     RemoteStub stub = transferred.remote;
     Object proxy = context.getRemote(stub);
@@ -274,7 +262,7 @@ class FutureImplementation implements Future<dynamic> {
       if (fr.resolution.isException) {
         onError(new Exception(fr.resolution.exception.message));
       } else
-        return onValue(
+        return onValue(//TODO
             _reconstructTransferredObject(fr.resolution.object, context));
 
       return null;
@@ -317,15 +305,14 @@ class StreamImplementation extends Stream {
   @override
   StreamSubscription listen(void Function(dynamic event) onData,
       {Function onError, void Function() onDone, bool cancelOnError}) {
-    context.input
+    return context.input
         .map((data) => context.serialization.deserialize(data))
         .where((p) => p is FutureResolution)
         .map((p) => p as FutureResolution)
         .where((r) => r.uuid == uuid)
-        .listen((fr) {
+        .listen((fr) async {
       var object = _reconstructTransferredObject(fr.resolution.object, context);
       onData(object);
     });
-    return null; //TODO
   }
 }

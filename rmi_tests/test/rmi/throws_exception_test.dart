@@ -7,15 +7,24 @@ import 'dart:async';
 part 'throws_exception_test.g.dart';
 
 class TargetClass implements RmiTarget {
-  Future<void> someMethod() {
+  Exception sampleException = new Exception('sample exception');
+  Future<void> method1() {
+    return Future.error(sampleException);
+  }
+
+  Future<void> method2() async {
+    throw sampleException;
+  }
+
+  Future<void> method3() {
     return Future.delayed(Duration(seconds: 1)).then((empty) {
-      throw new Exception('some exception');
+      throw sampleException;
     });
   }
 
-  // Future<void> someMethod() async {
-  //   throw new Exception('some exception');
-  // }
+  Future<void> method4() {
+    throw sampleException;
+  }
 
   TargetClass();
   @override
@@ -34,6 +43,8 @@ main() {
   TargetClass remoteTarget;
   TargetClass proxy;
   group('exception', () {
+    List methods;
+
     setUp(() {
       exposeToGet = StreamController();
       getToExpose = StreamController();
@@ -44,27 +55,35 @@ main() {
 
       proxy = TargetClass.getRemote(
           new Context(exposeToGet.stream, getToExpose), provision.uuid);
+      methods = [proxy.method1, proxy.method2, proxy.method3, proxy.method4];
     });
-    test('simple method call with await', () async {
-      bool exception = false;
 
+    Future<void> asyncErrorAwait(Function call) async {
+      bool exception = false;
       try {
-        await proxy.someMethod();
+        await call();
       } on Exception {
         exception = true;
       }
-
       expect(exception, true);
+    }
+
+    test('async error from await', () async {
+      await Future.wait(
+          methods.map((m) async => await asyncErrorAwait(m)).toList());
     });
-    test('simple method call with future syntax', () async {
-      bool exception = false;
-      proxy.someMethod().catchError((Object e) {
-        print('this occours in catch $e');
-        exception = true;
+    Future<void> asyncErrorFromFuture(Function call) async {
+      var completed = new Completer();
+      call().catchError((e) => completed.complete());
+      // this will throw if not completed, failing the test
+      await completed.future.timeout(Duration(seconds: 5), onTimeout: () {
+        fail('error not thrown');
       });
-      await Future.delayed(Duration(seconds: 3)); //TODO remove
+    }
 
-      expect(exception, true);
+    test('async error from future', () async {
+      await Future.wait(
+          methods.map((m) async => await asyncErrorFromFuture(m)).toList());
     });
   });
 }

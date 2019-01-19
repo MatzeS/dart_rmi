@@ -22,7 +22,6 @@ class TestClass extends AsyncLoggingClass implements RmiTarget {
   Stream<num> someGenerator() {
     super.someGenerator().listen(
         (x) {}); // without listen, the super generator method is actually not executed
-    print('some generator called');
     return returnStream;
   }
 }
@@ -185,6 +184,6 @@ main() {
       });
       sink.add(1);
       await triggered.future;
-    }, tags: 'current');
+    });
   });
 }

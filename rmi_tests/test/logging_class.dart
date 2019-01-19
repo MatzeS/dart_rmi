@@ -237,7 +237,7 @@ class AsyncLoggingClass implements BasicAsyncClass, Invocable {
   }
 
   Stream<num> someGenerator() async* {
-    print('some generator logged');
+    // note this method is not actually executed, until the streamed is subscribed
     _log(#someGenerator);
   }
 

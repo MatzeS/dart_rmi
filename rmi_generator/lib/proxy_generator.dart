@@ -88,9 +88,11 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
       var list = metadata
           .map((e) => e.getField('methods').toListValue())
           .fold([], (a, b) {
-        a.addAll(b);
-        return a;
-      }).map((e) => e.toSymbolValue());
+            a.addAll(b);
+            return a;
+          })
+          .map((e) => e.toSymbolValue())
+          .toList();
 
       if (list.contains(element.displayName)) {
         return null;
@@ -116,6 +118,22 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
     String awaitText = '';
     if (element.isAsynchronous && !element.isGenerator) awaitText = 'await';
 
+    //TODO
+    bool isStream = false;
+    if (!element.name.contains("noSuchMethod") &&
+        element.returnType != null &&
+        !element.returnType.isDynamic &&
+        !element.returnType.isVoid)
+      isStream = TypeChecker.fromRuntime(Stream)
+          .isAssignableFromType(element.returnType);
+
+    String handle =
+        '${!element.returnType.isVoid ? 'return' : ''} ${awaitText} _handle(_\$invocation, metadata);';
+    if (isStream) {
+      handle =
+          'var result = _handle(_\$invocation, metadata); if(result == null) return null; return (result as Stream).cast();';
+    }
+
     return '''
     {
       List<Object> arguments =  [];
@@ -127,9 +145,8 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
 
       ${_metadata(element)}
 
-      ${!element.returnType.isVoid ? 'return' : ''} 
-      ${awaitText} 
-      _handle(_\$invocation, metadata);      
+      
+      ${handle}   
     }
     ''';
   }

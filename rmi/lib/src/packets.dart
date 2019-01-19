@@ -60,7 +60,7 @@ class TransferredException {
   String message;
 
   TransferredException();
-  factory TransferredException.fromException(Exception exception) =>
+  factory TransferredException.fromException(Object exception) =>
       new TransferredException()..message = exception.toString();
 
   Map<String, dynamic> toJson() => _$TransferredExceptionToJson(this);
