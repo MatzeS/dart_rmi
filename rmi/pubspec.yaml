@@ -15,21 +15,11 @@ dependencies:
   built_value: ^6.1.6
   built_collection: ^4.1.0
   json_annotation:
+    path: ../dependencies/json_serializable/json_annotation
   json_serialization:
-    path: ../../json_serializable/json_serialization
+    path: ../dependencies/json_serializable/json_serialization
   
 dev_dependencies:
-  json_serializable:
-  built_value_generator: ^6.1.6
   build_runner: ^1.1.2
-  rmi_generator:
-    path: ../rmi_generator
-  source_gen_helpers: ^0.0.1
-
-dependency_overrides:
-  source_gen_helpers: 
-    path: ../../source_gen_helpers
-  json_annotation:
-    path: ../../json_serializable/json_annotation
   json_serializable:
-    path: ../../json_serializable/json_serializable
+    path: ../dependencies/json_serializable/json_serializable
