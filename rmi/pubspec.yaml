@@ -22,9 +22,13 @@ dev_dependencies:
   json_serializable:
   built_value_generator: ^6.1.6
   build_runner: ^1.1.2
-
+  rmi_generator:
+    path: ../rmi_generator
+  source_gen_helpers: ^0.0.1
 
 dependency_overrides:
+  source_gen_helpers: 
+    path: ../../source_gen_helpers
   json_annotation:
     path: ../../json_serializable/json_annotation
   json_serializable:

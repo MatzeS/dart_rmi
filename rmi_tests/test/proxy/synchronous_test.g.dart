@@ -16,6 +16,7 @@ class _$TestClassProxy implements TestClass {
         Invocation.method(#someMethod, arguments, namedArguments);
 
     InvocationMetadata metadata = new InvocationMetadata();
+    metadata.isStream = false;
 
     return await _handle(_$invocation, metadata);
   }
@@ -29,6 +30,7 @@ class _$TestClassProxy implements TestClass {
 
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
+    metadata.isStream = false;
 
     return _handle(_$invocation, metadata);
   }
@@ -42,6 +44,7 @@ class _$TestClassProxy implements TestClass {
         Invocation.method(#toString, arguments, namedArguments);
 
     InvocationMetadata metadata = new InvocationMetadata();
+    metadata.isStream = false;
 
     return _handle(_$invocation, metadata);
   }
@@ -57,6 +60,7 @@ class _$TestClassProxy implements TestClass {
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
     metadata.elementMetadata.add(pragma('vm:entry-point'));
+    metadata.isStream = false;
 
     return _handle(_$invocation, metadata);
   }
@@ -68,6 +72,7 @@ class _$TestClassProxy implements TestClass {
     Invocation invocation = Invocation.getter(#someGetter);
 
     InvocationMetadata metadata = new InvocationMetadata();
+    metadata.isStream = false;
 
     return await _handle(invocation, metadata);
   }
@@ -76,6 +81,7 @@ class _$TestClassProxy implements TestClass {
     Invocation invocation = Invocation.getter(#hashCode);
 
     InvocationMetadata metadata = new InvocationMetadata();
+    metadata.isStream = false;
 
     return _handle(invocation, metadata);
   }
@@ -84,6 +90,7 @@ class _$TestClassProxy implements TestClass {
     Invocation invocation = Invocation.getter(#runtimeType);
 
     InvocationMetadata metadata = new InvocationMetadata();
+    metadata.isStream = false;
 
     return _handle(invocation, metadata);
   }

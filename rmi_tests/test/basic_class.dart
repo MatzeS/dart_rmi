@@ -1,4 +1,5 @@
 import 'package:rmi/proxy.dart';
+import 'dart:async';
 
 @NoProxy([#basicNoProxyMethod])
 class BasicClass {
@@ -27,6 +28,9 @@ class BasicClass {
   int basicNoProxyMethod() => 42;
   @NoProxy()
   int basicNoProxyMethod2() => 42;
+
+  Stream<num> someGenerator() {}
+  Stream<num> get someGetterGenerator {}
 }
 
 class BasicAsyncClass {
@@ -48,4 +52,7 @@ class BasicAsyncClass {
 
   operator [](Object key) async {}
   operator []=(Object key, Object value) async {}
+
+  Stream<num> someGenerator() async* {}
+  Stream<num> get someGetterGenerator async* {}
 }

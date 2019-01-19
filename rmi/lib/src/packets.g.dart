@@ -8,18 +8,69 @@ part of 'packets.dart';
 
 TransferredObject _$TransferredObjectFromJson(Map<String, dynamic> json) {
   return TransferredObject()
-    ..serialized = json['serialized'] as String
-    ..stub = json['stub'] == null
+    ..serializedObject = json['serializedObject'] as String
+    ..remote = json['remote'] == null
         ? null
-        : RemoteStub.fromJson(json['stub'] as Map<String, dynamic>);
+        : RemoteStub.fromJson(json['remote'] as Map<String, dynamic>)
+    ..future = json['future'] as String
+    ..stream = json['stream'] as String;
 }
 
 Map<String, dynamic> _$TransferredObjectToJson(TransferredObject instance) =>
     <String, dynamic>{
-      'serialized': instance.serialized,
-      'stub': instance.stub,
+      'serializedObject': instance.serializedObject,
+      'remote': instance.remote,
+      'future': instance.future,
+      'stream': instance.stream,
       'json_serializable.className':
           "asset:rmi/lib/src/packets.dart#TransferredObject",
+    };
+
+Resolution _$ResolutionFromJson(Map<String, dynamic> json) {
+  return Resolution(
+      object: json['object'] == null
+          ? null
+          : TransferredObject.fromJson(json['object'] as Map<String, dynamic>),
+      exception: json['exception'] == null
+          ? null
+          : TransferredException.fromJson(
+              json['exception'] as Map<String, dynamic>));
+}
+
+Map<String, dynamic> _$ResolutionToJson(Resolution instance) =>
+    <String, dynamic>{
+      'object': instance.object,
+      'exception': instance.exception,
+      'json_serializable.className':
+          "asset:rmi/lib/src/packets.dart#Resolution",
+    };
+
+FutureResolution _$FutureResolutionFromJson(Map<String, dynamic> json) {
+  return FutureResolution()
+    ..uuid = json['uuid'] as String
+    ..resolution = json['resolution'] == null
+        ? null
+        : Resolution.fromJson(json['resolution'] as Map<String, dynamic>);
+}
+
+Map<String, dynamic> _$FutureResolutionToJson(FutureResolution instance) =>
+    <String, dynamic>{
+      'uuid': instance.uuid,
+      'resolution': instance.resolution,
+      'json_serializable.className':
+          "asset:rmi/lib/src/packets.dart#FutureResolution",
+    };
+
+TransferredException _$TransferredExceptionFromJson(Map<String, dynamic> json) {
+  return TransferredException()..message = json['message'] as String;
+}
+
+Map<String, dynamic> _$TransferredExceptionToJson(
+        TransferredException instance) =>
+    <String, dynamic>{
+      'message': instance.message,
+      'json_serializable.className':
+          "asset:rmi/lib/src/packets.dart#TransferredException",
     };
 
 Query _$QueryFromJson(Map<String, dynamic> json) {
@@ -58,21 +109,15 @@ Map<String, dynamic> _$QueryToJson(Query instance) => <String, dynamic>{
     };
 
 Response _$ResponseFromJson(Map<String, dynamic> json) {
-  return Response(
-      json['query'] as String,
-      json['returnValue'] == null
-          ? null
-          : TransferredObject.fromJson(
-              json['returnValue'] as Map<String, dynamic>),
-      json['returnedNull'] as bool,
-      json['exception'] as String);
+  return Response(json['query'] as String)
+    ..resolution = json['resolution'] == null
+        ? null
+        : Resolution.fromJson(json['resolution'] as Map<String, dynamic>);
 }
 
 Map<String, dynamic> _$ResponseToJson(Response instance) => <String, dynamic>{
       'query': instance.query,
-      'returnedNull': instance.returnedNull,
-      'returnValue': instance.returnValue,
-      'exception': instance.exception,
+      'resolution': instance.resolution,
       'json_serializable.className': "asset:rmi/lib/src/packets.dart#Response",
     };
 

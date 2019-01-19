@@ -2,6 +2,7 @@ import 'package:test/test.dart';
 import 'package:rmi/proxy.dart';
 import '../basic_class.dart';
 import '../handlers.dart';
+import 'dart:async';
 part 'basic_class_test.g.dart';
 
 const num significantNumber = 123456789;
@@ -318,6 +319,50 @@ void main() {
       expect(
           handler.invocations.first.positionalArguments[1], significantString);
       expect(handler.invocations.first.namedArguments.isEmpty, true);
+    });
+  });
+  group('generators', () {
+    test('method invocation', () {
+      RecordingHandler handler = new RecordingHandler();
+      testObject = TestClass.proxy(handler.handle);
+
+      testObject.someGenerator();
+
+      expect(handler.invocations.length, 1);
+      expect(handler.invocations.first != null, true);
+      expect(handler.invocations.first.isMethod, true);
+      expect(handler.invocations.first.memberName, #someGenerator);
+      expect(handler.invocations.first.positionalArguments.length, 0);
+      expect(handler.invocations.first.namedArguments.isEmpty, true);
+    });
+    test('getter invocation', () {
+      RecordingHandler handler = new RecordingHandler();
+      testObject = TestClass.proxy(handler.handle);
+
+      testObject.someGetterGenerator;
+
+      expect(handler.invocations.length, 1);
+      expect(handler.invocations.first != null, true);
+      expect(handler.invocations.first.isGetter, true);
+      expect(handler.invocations.first.memberName, #someGetterGenerator);
+      expect(handler.invocations.first.positionalArguments.length, 0);
+      expect(handler.invocations.first.namedArguments.isEmpty, true);
+    });
+
+    test('return Value', () async {
+      var sc = new StreamController<num>();
+      Stream<num> stream = sc.stream;
+      ReturnValueHandler handler = new ReturnValueHandler(stream);
+      testObject = TestClass.proxy(handler.handle);
+
+      Stream<num> result = testObject.someGenerator();
+
+      expect(result, stream);
+
+      var first = result.first;
+      sc.sink.add(significantNumber);
+      var number = await first;
+      expect(number, significantNumber);
     });
   });
   group('misc', () {

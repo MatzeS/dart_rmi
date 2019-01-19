@@ -16,6 +16,7 @@ class _$TestClassProxy implements TestClass {
         Invocation.method(#simpleMethod, arguments, namedArguments);
 
     InvocationMetadata metadata = new InvocationMetadata();
+    metadata.isStream = false;
 
     _handle(_$invocation, metadata);
   }
@@ -30,6 +31,7 @@ class _$TestClassProxy implements TestClass {
 
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
+    metadata.isStream = false;
 
     _handle(_$invocation, metadata);
   }
@@ -46,6 +48,7 @@ class _$TestClassProxy implements TestClass {
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
     metadata.positionalArgumentMetadata.add([]);
+    metadata.isStream = false;
 
     _handle(_$invocation, metadata);
   }
@@ -60,6 +63,7 @@ class _$TestClassProxy implements TestClass {
 
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.namedArgumentMetadata[#namedArg] = [];
+    metadata.isStream = false;
 
     _handle(_$invocation, metadata);
   }
@@ -76,6 +80,7 @@ class _$TestClassProxy implements TestClass {
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.namedArgumentMetadata[#namedArg] = [];
     metadata.namedArgumentMetadata[#namedArg2] = [];
+    metadata.isStream = false;
 
     _handle(_$invocation, metadata);
   }
@@ -90,6 +95,7 @@ class _$TestClassProxy implements TestClass {
 
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
+    metadata.isStream = false;
 
     _handle(_$invocation, metadata);
   }
@@ -106,6 +112,7 @@ class _$TestClassProxy implements TestClass {
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
     metadata.positionalArgumentMetadata.add([]);
+    metadata.isStream = false;
 
     _handle(_$invocation, metadata);
   }
@@ -122,6 +129,7 @@ class _$TestClassProxy implements TestClass {
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
     metadata.positionalArgumentMetadata.add([]);
+    metadata.isStream = false;
 
     _handle(_$invocation, metadata);
   }
@@ -137,6 +145,7 @@ class _$TestClassProxy implements TestClass {
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
     metadata.namedArgumentMetadata[#named] = [];
+    metadata.isStream = false;
 
     _handle(_$invocation, metadata);
   }
@@ -150,6 +159,7 @@ class _$TestClassProxy implements TestClass {
         Invocation.method(#methodWithReturn, arguments, namedArguments);
 
     InvocationMetadata metadata = new InvocationMetadata();
+    metadata.isStream = false;
 
     return _handle(_$invocation, metadata);
   }
@@ -163,6 +173,7 @@ class _$TestClassProxy implements TestClass {
 
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
+    metadata.isStream = false;
 
     return _handle(_$invocation, metadata);
   }
@@ -176,6 +187,7 @@ class _$TestClassProxy implements TestClass {
 
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
+    metadata.isStream = false;
 
     return _handle(_$invocation, metadata);
   }
@@ -192,8 +204,23 @@ class _$TestClassProxy implements TestClass {
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
     metadata.positionalArgumentMetadata.add([]);
+    metadata.isStream = false;
 
     _handle(_$invocation, metadata);
+  }
+
+  Stream<num> someGenerator() {
+    List<Object> arguments = [];
+
+    Map<Symbol, Object> namedArguments = {};
+
+    Invocation _$invocation =
+        Invocation.method(#someGenerator, arguments, namedArguments);
+
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.isStream = true;
+
+    return _handle(_$invocation, metadata);
   }
 
   bool operator ==(dynamic other) {
@@ -205,6 +232,7 @@ class _$TestClassProxy implements TestClass {
 
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
+    metadata.isStream = false;
 
     return _handle(_$invocation, metadata);
   }
@@ -218,6 +246,7 @@ class _$TestClassProxy implements TestClass {
         Invocation.method(#toString, arguments, namedArguments);
 
     InvocationMetadata metadata = new InvocationMetadata();
+    metadata.isStream = false;
 
     return _handle(_$invocation, metadata);
   }
@@ -233,6 +262,7 @@ class _$TestClassProxy implements TestClass {
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
     metadata.elementMetadata.add(pragma('vm:entry-point'));
+    metadata.isStream = false;
 
     return _handle(_$invocation, metadata);
   }
@@ -244,6 +274,7 @@ class _$TestClassProxy implements TestClass {
     Invocation invocation = Invocation.getter(#aField);
 
     InvocationMetadata metadata = new InvocationMetadata();
+    metadata.isStream = false;
 
     return _handle(invocation, metadata);
   }
@@ -252,6 +283,7 @@ class _$TestClassProxy implements TestClass {
     Invocation invocation = Invocation.getter(#aGetter);
 
     InvocationMetadata metadata = new InvocationMetadata();
+    metadata.isStream = false;
 
     return _handle(invocation, metadata);
   }
@@ -261,14 +293,25 @@ class _$TestClassProxy implements TestClass {
 
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
+    metadata.isStream = false;
 
     _handle(invocation, metadata);
+  }
+
+  Stream<num> get someGetterGenerator {
+    Invocation invocation = Invocation.getter(#someGetterGenerator);
+
+    InvocationMetadata metadata = new InvocationMetadata();
+    metadata.isStream = true;
+
+    return _handle(invocation, metadata);
   }
 
   int get hashCode {
     Invocation invocation = Invocation.getter(#hashCode);
 
     InvocationMetadata metadata = new InvocationMetadata();
+    metadata.isStream = false;
 
     return _handle(invocation, metadata);
   }
@@ -277,6 +320,7 @@ class _$TestClassProxy implements TestClass {
     Invocation invocation = Invocation.getter(#runtimeType);
 
     InvocationMetadata metadata = new InvocationMetadata();
+    metadata.isStream = false;
 
     return _handle(invocation, metadata);
   }

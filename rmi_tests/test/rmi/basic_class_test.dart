@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
 import '../logging_class.dart';
+import 'dart:async';
 import 'package:rmi/rmi.dart';
 import '../bound_context.dart';
 part 'basic_class_test.g.dart';
@@ -14,6 +15,16 @@ class TestClass extends AsyncLoggingClass implements RmiTarget {
   @override
   Object invoke(Invocation invocation) =>
       _$TestClassInvoker.invoke(invocation, this);
+
+  Stream<num> returnStream;
+
+  @override
+  Stream<num> someGenerator() {
+    super.someGenerator().listen(
+        (x) {}); // without listen, the super generator method is actually not executed
+    print('some generator called');
+    return returnStream;
+  }
 }
 
 main() {
@@ -151,5 +162,29 @@ main() {
       expect(target.arguments[0], significantNumber);
       expect(target.arguments[1], significantString);
     });
+  });
+  group('generator', () {
+    test('invocation', () async {
+      // TODO rename generator to stream
+      testObject.someGenerator();
+      await Future.delayed(Duration(seconds: 1));
+      expect(target.triggeredOnce(#someGenerator), true);
+    });
+    test('value passing', () async {
+      var sc = new StreamController<num>();
+
+      target.returnStream = sc.stream;
+
+      var sink = sc.sink;
+      var stream = testObject.someGenerator();
+
+      Completer<void> triggered = new Completer<void>();
+      stream.listen((e) {
+        expect(e, 1);
+        triggered.complete();
+      });
+      sink.add(1);
+      await triggered.future;
+    }, tags: 'current');
   });
 }

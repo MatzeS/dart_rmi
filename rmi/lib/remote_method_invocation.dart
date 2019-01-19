@@ -31,13 +31,15 @@ Map<String, FromJson> _fromJsonFunctions = {
   'asset:rmi/lib/src/packets.dart#RemoteStub': RemoteStub.fromJson,
   'asset:rmi/lib/src/packets.dart#TransferredObject':
       TransferredObject.fromJson,
+  'asset:rmi/lib/src/packets.dart#FutureResolution': FutureResolution.fromJson,
 };
 
 class Context {
   JsonSerialization serialization = new JsonSerialization();
   Map<String, RemoteStubConstructor> remoteStubConstructors = {};
 
-  Context(this.input, this.output) {
+  Context(Stream<String> input, this.output) {
+    this.input = input.asBroadcastStream();
     _fromJsonFunctions
         .forEach((k, v) => serialization.registerDeserializer(k, (x) => v(x)));
   }

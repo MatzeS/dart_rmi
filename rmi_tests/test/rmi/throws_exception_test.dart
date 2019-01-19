@@ -7,9 +7,15 @@ import 'dart:async';
 part 'throws_exception_test.g.dart';
 
 class TargetClass implements RmiTarget {
-  Future<void> someMethod() async {
-    throw new Exception('some exception');
+  Future<void> someMethod() {
+    return Future.delayed(Duration(seconds: 1)).then((empty) {
+      throw new Exception('some exception');
+    });
   }
+
+  // Future<void> someMethod() async {
+  //   throw new Exception('some exception');
+  // }
 
   TargetClass();
   @override
@@ -52,11 +58,11 @@ main() {
     });
     test('simple method call with future syntax', () async {
       bool exception = false;
-
       proxy.someMethod().catchError((Object e) {
+        print('this occours in catch $e');
         exception = true;
       });
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(Duration(seconds: 3)); //TODO remove
 
       expect(exception, true);
     });

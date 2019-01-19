@@ -166,6 +166,14 @@ class _$LoggingClassInvoker {
 
       return target.basicNoProxyMethod2();
     }
+    if (invocation.isMethod && #someGenerator == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 0; i++)
+        positionalArguments.add(null);
+
+      return target.someGenerator();
+    }
     if (invocation.isGetter && #log == invocation.memberName) {
       return target.log;
     }
@@ -193,6 +201,9 @@ class _$LoggingClassInvoker {
     if (invocation.isSetter && #aField == invocation.memberName) {
       target.aField = invocation.positionalArguments[0];
       return null;
+    }
+    if (invocation.isGetter && #someGetterGenerator == invocation.memberName) {
+      return target.someGetterGenerator;
     }
     if (invocation.isGetter && #hashCode == invocation.memberName) {
       return target.hashCode;
@@ -377,6 +388,14 @@ class _$AsyncLoggingClassInvoker {
 
       target[positionalArguments[0]] = positionalArguments[1];
     }
+    if (invocation.isMethod && #someGenerator == invocation.memberName) {
+      List<Object> positionalArguments =
+          List.from(invocation.positionalArguments);
+      for (int i = invocation.positionalArguments.length; i < 0; i++)
+        positionalArguments.add(null);
+
+      return target.someGenerator();
+    }
     if (invocation.isGetter && #log == invocation.memberName) {
       return target.log;
     }
@@ -393,6 +412,9 @@ class _$AsyncLoggingClassInvoker {
     }
     if (invocation.isGetter && #aGetter == invocation.memberName) {
       return target.aGetter;
+    }
+    if (invocation.isGetter && #someGetterGenerator == invocation.memberName) {
+      return target.someGetterGenerator;
     }
     if (invocation.isGetter && #hashCode == invocation.memberName) {
       return target.hashCode;

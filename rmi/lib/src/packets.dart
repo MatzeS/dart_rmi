@@ -3,21 +3,69 @@ part 'packets.g.dart';
 
 @JsonSerializable()
 class TransferredObject {
-  String serialized;
+  String serializedObject;
 
-  RemoteStub stub;
+  RemoteStub remote;
 
-  bool get isStub => stub != null;
+  String future;
+
+  String stream;
+
+  bool get isObject => serializedObject != null;
+  bool get isRemote => remote != null;
+  bool get isFuture => future != null;
+  bool get isStream => stream != null;
 
   TransferredObject();
-  factory TransferredObject.forStub(RemoteStub stub) =>
-      new TransferredObject()..stub = stub;
-  factory TransferredObject.forSerialized(String serialized) =>
-      new TransferredObject()..serialized = serialized;
+  factory TransferredObject.forRemote(RemoteStub remote) =>
+      new TransferredObject()..remote = remote;
+  factory TransferredObject.forObject(String serializedObject) =>
+      new TransferredObject()..serializedObject = serializedObject;
+  factory TransferredObject.forStream(String stream) =>
+      new TransferredObject()..stream = stream;
+  factory TransferredObject.forFuture(String future) =>
+      new TransferredObject()..future = future;
 
   Map<String, dynamic> toJson() => _$TransferredObjectToJson(this);
   static TransferredObject fromJson(Map<String, dynamic> json) =>
       _$TransferredObjectFromJson(json);
+}
+
+@JsonSerializable()
+class Resolution {
+  TransferredObject object;
+  TransferredException exception;
+
+  Resolution({this.object, this.exception});
+
+  bool get isException => exception != null;
+
+  Map<String, dynamic> toJson() => _$ResolutionToJson(this);
+  static Resolution fromJson(Map<String, dynamic> json) =>
+      _$ResolutionFromJson(json);
+}
+
+@JsonSerializable()
+class FutureResolution {
+  String uuid;
+  Resolution resolution;
+
+  Map<String, dynamic> toJson() => _$FutureResolutionToJson(this);
+  static FutureResolution fromJson(Map<String, dynamic> json) =>
+      _$FutureResolutionFromJson(json);
+}
+
+@JsonSerializable()
+class TransferredException {
+  String message;
+
+  TransferredException();
+  factory TransferredException.fromException(Exception exception) =>
+      new TransferredException()..message = exception.toString();
+
+  Map<String, dynamic> toJson() => _$TransferredExceptionToJson(this);
+  static TransferredException fromJson(Map<String, dynamic> json) =>
+      _$TransferredExceptionFromJson(json);
 }
 
 @JsonSerializable()
@@ -44,18 +92,9 @@ class Response {
   /// uuid of the query this responds to
   String query;
 
-  // `true` if the invocation returned null or an exception was raised
-  bool returnedNull;
-  TransferredObject returnValue;
-  String exception; // TODO might serialize exception
+  Resolution resolution;
 
-  Response([this.query, this.returnValue, this.returnedNull, this.exception]);
-
-  // reduce to exception != null
-  factory Response.returned(String query, TransferredObject returnValue) =>
-      new Response(query, returnValue, returnValue == null, null);
-  factory Response.exeception(String query, String exception) =>
-      new Response(query, null, false, exception);
+  Response(this.query);
 
   Map<String, dynamic> toJson() => _$ResponseToJson(this);
   static Response fromJson(Map<String, dynamic> json) =>

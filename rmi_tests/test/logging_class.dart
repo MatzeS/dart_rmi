@@ -126,6 +126,14 @@ class LoggingClass implements BasicClass, Invocable {
 
   @override
   int basicNoProxyMethod2() {}
+
+  Stream<num> someGenerator() {
+    _log(#someGenerator);
+  }
+
+  Stream<num> get someGetterGenerator {
+    _log(#someGetterGenerator);
+  }
 }
 
 class AsyncLoggingClass implements BasicAsyncClass, Invocable {
@@ -226,5 +234,14 @@ class AsyncLoggingClass implements BasicAsyncClass, Invocable {
     _log(#[]=);
     _arg(key);
     _arg(value);
+  }
+
+  Stream<num> someGenerator() async* {
+    print('some generator logged');
+    _log(#someGenerator);
+  }
+
+  Stream<num> get someGetterGenerator async* {
+    _log(#someGetterGenerator);
   }
 }

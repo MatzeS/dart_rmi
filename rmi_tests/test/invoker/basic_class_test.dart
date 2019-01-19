@@ -164,4 +164,19 @@ void main() {
       expect(testObject.arguments[1], significantString);
     });
   });
+
+  group('generator', () {
+    test('generator method', () {
+      testObject.invoke(Invocation.method(#someGenerator, []));
+
+      expect(testObject.triggered(#someGenerator), 1);
+      expect(testObject.arguments.length, 0);
+    });
+    test('generator getter', () {
+      testObject.invoke(Invocation.getter(#someGetterGenerator));
+
+      expect(testObject.triggered(#someGetterGenerator), 1);
+      expect(testObject.arguments.length, 0);
+    });
+  });
 }

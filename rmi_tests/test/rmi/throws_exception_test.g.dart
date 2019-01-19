@@ -66,7 +66,7 @@ class _$TargetClassInvoker {
 // **************************************************************************
 
 class _$TargetClassProxy implements TargetClass {
-  Future<void> someMethod() async {
+  Future<void> someMethod() {
     List<Object> arguments = [];
 
     Map<Symbol, Object> namedArguments = {};
@@ -75,8 +75,9 @@ class _$TargetClassProxy implements TargetClass {
         Invocation.method(#someMethod, arguments, namedArguments);
 
     InvocationMetadata metadata = new InvocationMetadata();
+    metadata.isStream = false;
 
-    return await _handle(_$invocation, metadata);
+    return _handle(_$invocation, metadata);
   }
 
   Object invoke(Invocation invocation) {
@@ -90,6 +91,7 @@ class _$TargetClassProxy implements TargetClass {
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
     metadata.elementMetadata.add(override);
+    metadata.isStream = false;
 
     return _handle(_$invocation, metadata);
   }
@@ -104,6 +106,7 @@ class _$TargetClassProxy implements TargetClass {
 
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
+    metadata.isStream = false;
 
     return _handle(_$invocation, metadata);
   }
@@ -117,6 +120,7 @@ class _$TargetClassProxy implements TargetClass {
 
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
+    metadata.isStream = false;
 
     return _handle(_$invocation, metadata);
   }
@@ -130,6 +134,7 @@ class _$TargetClassProxy implements TargetClass {
         Invocation.method(#toString, arguments, namedArguments);
 
     InvocationMetadata metadata = new InvocationMetadata();
+    metadata.isStream = false;
 
     return _handle(_$invocation, metadata);
   }
@@ -145,6 +150,7 @@ class _$TargetClassProxy implements TargetClass {
     InvocationMetadata metadata = new InvocationMetadata();
     metadata.positionalArgumentMetadata.add([]);
     metadata.elementMetadata.add(pragma('vm:entry-point'));
+    metadata.isStream = false;
 
     return _handle(_$invocation, metadata);
   }
@@ -156,6 +162,7 @@ class _$TargetClassProxy implements TargetClass {
     Invocation invocation = Invocation.getter(#hashCode);
 
     InvocationMetadata metadata = new InvocationMetadata();
+    metadata.isStream = false;
 
     return _handle(invocation, metadata);
   }
@@ -164,6 +171,7 @@ class _$TargetClassProxy implements TargetClass {
     Invocation invocation = Invocation.getter(#runtimeType);
 
     InvocationMetadata metadata = new InvocationMetadata();
+    metadata.isStream = false;
 
     return _handle(invocation, metadata);
   }

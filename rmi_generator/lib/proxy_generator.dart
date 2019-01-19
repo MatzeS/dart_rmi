@@ -41,6 +41,7 @@ class ProxyGenerator extends FilterGenerator {
       ClassElement c = e.enclosingElement as ClassElement;
       return !c.type.isBottom;
     }).toList();
+    member = member.where((e) => e.isPublic).toList();
 
     outputVisitor.visitClassElement(classElement);
     await visitElements(outputVisitor, member);
@@ -76,7 +77,6 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
 
   @override
   visitMethodElement(MethodElement element) async {
-    if (element.isGenerator) return null;
     if (element.isStatic) return null;
     if (_visitOnce(element)) return null;
 
@@ -113,6 +113,9 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
           .join('\n');
     }
 
+    String awaitText = '';
+    if (element.isAsynchronous && !element.isGenerator) awaitText = 'await';
+
     return '''
     {
       List<Object> arguments =  [];
@@ -125,20 +128,22 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
       ${_metadata(element)}
 
       ${!element.returnType.isVoid ? 'return' : ''} 
-      ${element.isAsynchronous ? 'await' : ''} 
+      ${awaitText} 
       _handle(_\$invocation, metadata);      
     }
     ''';
   }
 
   generateGetter(PropertyAccessorElement element) {
+    String awaitText = '';
+    if (element.isAsynchronous && !element.isGenerator) awaitText = 'await';
     return '''
     {
       Invocation invocation = Invocation.getter(#${element.name});
       
       ${_metadata(element)}
 
-      return ${element.isAsynchronous ? 'await' : ''} _handle(invocation, metadata); 
+      return ${awaitText} _handle(invocation, metadata); 
     }
     ''';
   }
@@ -189,6 +194,16 @@ class ProxyClassVisitor extends ClassVisitor<FutureOr<String>> {
     for (var m in element.metadata) {
       metadata += 'metadata.elementMetadata.add(${m.toSource().substring(1)});';
     }
+
+    bool isStream = false;
+    //TODO
+    if (!element.name.contains("noSuchMethod") &&
+        element.returnType != null &&
+        !element.returnType.isDynamic &&
+        !element.returnType.isVoid)
+      isStream = TypeChecker.fromRuntime(Stream)
+          .isAssignableFromType(element.returnType);
+    metadata += 'metadata.isStream = ${isStream};';
 
     return metadata;
   }

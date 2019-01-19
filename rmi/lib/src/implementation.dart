@@ -6,6 +6,7 @@ import 'packets.dart';
 import '../invoker.dart';
 import 'package:json_serialization/json_serialization.dart';
 import 'package:rmi/proxy.dart';
+import 'standard_object.dart';
 
 String generateUUID() => new Uuid().v1();
 
@@ -14,7 +15,7 @@ class RmiProxyHandler {
   String targetUuid;
   RmiProxyHandler(this.context, this.targetUuid);
 
-  Object handle(Invocation invocation, InvocationMetadata meta) async {
+  Object handle(Invocation invocation, InvocationMetadata meta) {
     Query query = Query();
     query.uuid = generateUUID();
     query.targetUuid = targetUuid;
@@ -25,24 +26,8 @@ class RmiProxyHandler {
     List<TransferredObject> positionalArguments = [];
     for (int i = 0; i < invocation.positionalArguments.length; i++) {
       Object arg = invocation.positionalArguments[i];
-      TransferredObject transfer;
-
-      bool serialize = !(arg is RmiTarget);
-      if (meta.positionalArgumentMetadata[i].any((e) => e is NotAsRmi))
-        serialize = true;
-
-      if (serialize) {
-        String serialized = context.serialization.serialize(arg);
-        transfer = TransferredObject.forSerialized(serialized);
-      } else {
-        //TODO unsafe
-        Provision argumentProvision =
-            (arg as RmiTarget).provideRemote(this.context);
-        RemoteStub stub = RemoteStub(argumentProvision.uuid,
-            argumentProvision.classAssetPath); //TODO type? suspicious
-        transfer = TransferredObject.forStub(stub);
-      }
-
+      TransferredObject transfer = _generateTransferable(
+          arg, meta.positionalArgumentMetadata[i], context);
       positionalArguments.add(transfer);
     }
     query.positionalArguments = positionalArguments;
@@ -50,31 +35,15 @@ class RmiProxyHandler {
     Map<String, TransferredObject> namedArguments = {};
     invocation.namedArguments.forEach((k, v) {
       Object arg = v;
-      TransferredObject transfer;
-
-      bool serialize = !(arg is RmiTarget);
-      if (meta.namedArgumentMetadata[k].any((e) => e is NotAsRmi))
-        serialize = true;
-
-      if (serialize) {
-        String serialized = context.serialization.serialize(arg);
-        transfer = TransferredObject.forSerialized(serialized);
-      } else {
-        //TODO unsafe
-        Provision argumentProvision =
-            (arg as RmiTarget).provideRemote(this.context);
-        RemoteStub stub = RemoteStub(argumentProvision.uuid,
-            argumentProvision.classAssetPath); //TODO type? suspicious
-        transfer = TransferredObject.forStub(stub);
-      }
-
+      TransferredObject transfer =
+          _generateTransferable(arg, meta.namedArgumentMetadata[k], context);
       namedArguments[SymbolConverter().toJson(k)] = transfer;
     });
     query.namedArguments = namedArguments;
 
     String serializedQuery = context.serialization.serialize(query);
 
-    Future answer = context.input
+    Future<Response> answer = context.input
         .map((data) => context.serialization.deserialize(data))
         .where((p) => p is Response)
         .map((p) => p as Response)
@@ -82,21 +51,42 @@ class RmiProxyHandler {
         .first;
     context.output.add(serializedQuery);
 
-    Response response = await answer;
-    if (response.exception != null) {
-      throw new Exception('REMOTE EXCEPTOIN RAISED' + response.exception);
-    } else if (response.returnedNull || response.returnValue != null) {
-      var returnValue = response.returnValue;
-
-      // return value serialization TODO
-      if (returnValue.isStub) {
-        return context.getRemote(returnValue.stub);
-      } else {
-        return context.serialization.deserialize(returnValue.serialized);
-      }
+    if (meta.isStream) {
+      var sc = new StreamController();
+      answer.then((response) {
+        //TODO more chekcs
+        if (response.resolution.object.isObject &&
+            _reconstructTransferredObject(
+                    response.resolution.object, context) ==
+                null) {
+          sc.close();
+        } else if (!response.resolution.object.isStream) {
+          throw new Exception(
+              'did not receive expected stream ${response.resolution.object.future}');
+        } else {
+          //TODO
+          (_reconstructTransferredObject(response.resolution.object, context)
+                  as Stream)
+              .pipe(sc.sink);
+        }
+      });
+      return sc.stream;
     } else {
-      throw new Exception(
-          'response contains no exception or return value'); //TODO
+      return answer.then((response) {
+        if (response.resolution.isException) {
+          print('>>>>>>>>>>>>>>>>.remote exceptoin raised');
+          throw new Exception('REMOTE EXCEPTOIN RAISED' +
+              response.resolution.exception.message);
+        } else if (response.resolution != null) {
+          //illegal
+          var x = _reconstructTransferredObject(
+              response.resolution.object, context);
+          return x;
+        } else {
+          throw new Exception(
+              'response contains no exception or return value'); //TODO
+        }
+      });
     }
   }
 }
@@ -116,36 +106,20 @@ Provision internalProvideRemote(
 
     List<Object> positionalArguments = [];
     for (int i = 0; i < query.positionalArguments.length; i++) {
-      TransferredObject arg = query.positionalArguments[i];
+      TransferredObject transferred = query.positionalArguments[i];
 
-      if (arg.isStub) {
-        // not very safe
-        RemoteStub stub = arg.stub;
-        Object proxy = context.getRemote(stub);
-        positionalArguments.add(proxy);
-      } else {
-        Object deserialized = context.serialization.deserialize(arg.serialized);
-        positionalArguments.add(deserialized);
-      }
+      positionalArguments
+          .add(_reconstructTransferredObject(transferred, context));
     }
     Map<Symbol, Object> namedArguments = {};
     query.namedArguments.forEach((k, v) {
-      TransferredObject arg = v;
+      TransferredObject transferred = v;
       Symbol symbol = SymbolConverter().fromJson(k);
-
-      if (arg.isStub) {
-        // not very safe
-        RemoteStub stub = arg.stub;
-        Object proxy = context.getRemote(stub);
-        namedArguments[symbol] = proxy;
-      } else {
-        Object deserialized = context.serialization.deserialize(arg.serialized);
-        namedArguments[symbol] = deserialized;
-      }
+      namedArguments[symbol] =
+          _reconstructTransferredObject(transferred, context);
     });
 
-    Response response = Response();
-    response.query = query.uuid;
+    Response response = Response(query.uuid);
 
     Invocation invocation;
     if (query.isGetter) {
@@ -159,30 +133,15 @@ Provision internalProvideRemote(
     }
 
     try {
-      var returnValue = target.invoke(invocation);
-
-      if (returnValue is Future) {
-        returnValue = await returnValue;
-      }
-
-      TransferredObject transfer;
-      if (returnValue is RmiTarget) {
-        Provision returnValueProvision = returnValue.provideRemote(context);
-        RemoteStub stub = new RemoteStub(
-            returnValueProvision.uuid, returnValueProvision.classAssetPath);
-
-        transfer = TransferredObject.forStub(stub);
-      } else {
-        String serialized = context.serialization.serialize(returnValue);
-        transfer = TransferredObject.forSerialized(serialized);
-      }
-
-      response.returnValue = transfer;
-      response.returnedNull = returnValue == null;
+      print('invoking ${invocation.memberName}');
+      var returnValue = await target.invoke(invocation);
+      response.resolution =
+          Resolution(object: _generateTransferable(returnValue, null, context));
     } catch (exception, stack) {
       // print(stack);
-      response.exception = exception.toString();
-      response.returnedNull = true;
+      //TODO test
+      response.resolution =
+          Resolution(exception: TransferredException.fromException(exception));
     }
     context.output.add(context.serialization.serialize(response));
   });
@@ -210,3 +169,163 @@ Object internalGetRemoteFromStub(RemoteStub stub, Context context) {
 //     return new Invocation.method(invocation.memberName, positionalArguments);
 //   }
 // }
+
+//TODO rename to transferobject
+TransferredObject _generateTransferable(
+    Object object, List<Object> metadata, Context context) {
+  if (object is Stream) {
+    var uuid = generateUUID();
+    object.listen((value) {
+      var resolution = new FutureResolution();
+      resolution.uuid = uuid;
+      resolution.resolution =
+          Resolution(object: _generateTransferable(value, null, context));
+      context.output.add(context.serialization.serialize(resolution));
+    });
+    return TransferredObject.forStream(uuid);
+  } else if (object is Future) {
+    // RemoteFuture remote = new RemoteFuture(object);
+    // var provision = remote.provideRemote(context);
+    var uuid = generateUUID();
+    object
+      ..then((value) {
+        var resolution = new FutureResolution();
+        resolution.uuid = uuid;
+        resolution.resolution =
+            Resolution(object: _generateTransferable(value, null, context));
+        context.output.add(context.serialization.serialize(resolution));
+      })
+      ..catchError((error) {
+        //TOOD check if necessary
+        print('>>>>>>>>>>>>>>>>>>>>>>>>>catched error $error');
+        var resolution = new FutureResolution();
+        resolution.uuid = uuid;
+        resolution.resolution =
+            Resolution(exception: TransferredException.fromException(error));
+        context.output.add(context.serialization.serialize(resolution));
+      });
+    return TransferredObject.forFuture(uuid);
+  } else if (object is RmiTarget &&
+      (metadata == null || !metadata.any((e) => e is NotAsRmi))) {
+    Provision provision = object.provideRemote(context);
+    RemoteStub stub = RemoteStub(provision.uuid, provision.classAssetPath);
+    return TransferredObject.forRemote(stub);
+  } else {
+    // assume its serializable
+    String serialized = context.serialization.serialize(object);
+    return TransferredObject.forObject(serialized);
+  }
+}
+
+Object _reconstructTransferredObject(
+    TransferredObject transferred, Context context) {
+  if (transferred.isFuture) {
+    var future = FutureImplementation();
+    future.context = context;
+    future.uuid = transferred.future;
+    print('well');
+    return future;
+    // return RemoteFuture.getRemote(context, transferred.future);
+  } else if (transferred.isStream) {
+    var stream = StreamImplementation();
+    stream.uuid = transferred.stream;
+    stream.context = context;
+    return stream;
+  } else if (transferred.isRemote) {
+    RemoteStub stub = transferred.remote;
+    Object proxy = context.getRemote(stub);
+    return proxy;
+  } else {
+    // assume its serializable
+    Object deserialized =
+        context.serialization.deserialize(transferred.serializedObject);
+    return deserialized;
+  }
+}
+
+class FutureImplementation implements Future<dynamic> {
+  Context context;
+  String uuid;
+
+  @override
+  Stream asStream() {
+    // TODO: implement asStream
+    print('as stream');
+    return null;
+  }
+
+  @override
+  Future timeout(Duration timeLimit, {FutureOr Function() onTimeout}) {
+    // TODO: implement timeout
+    print('timeout');
+
+    return null;
+  }
+
+  @override
+  Future<R> then<R>(FutureOr<R> onValue(dynamic value), {Function onError}) {
+    return context.input
+        .map((data) => context.serialization.deserialize(data))
+        .where((p) => p is FutureResolution)
+        .map((p) => p as FutureResolution)
+        .where((r) => r.uuid == uuid)
+        .first
+        .then((fr) {
+      if (fr.resolution.isException) {
+        onError(new Exception(fr.resolution.exception.message));
+      } else
+        return onValue(
+            _reconstructTransferredObject(fr.resolution.object, context));
+
+      return null;
+    });
+  }
+
+  @override
+  Future catchError(Function onError, {bool Function(Object error) test}) {
+    // TODO: implement catchError
+    print(
+        'asdfkljas;lfdjas;ldkjf;lasdkjfs;lakjfl;asjfl;aksdjf;laskjfl;ajs;lfkjasl;fkj; catchError');
+    // throw new Exception('asdf');
+    // return context.input
+    //     .map((data) => context.serialization.deserialize(data))
+    //     .where((p) => p is FutureResolution)
+    //     .map((p) => p as FutureResolution)
+    //     .where((r) => r.uuid == uuid)
+    //     .first
+    //     .then((fr) {
+    //   if (!fr.resolution.isException)
+    //     // onError();
+
+    //     ;
+    // }).then(onValue);
+  }
+
+  @override
+  Future whenComplete(FutureOr Function() action) {
+    // TODO: implement whenComplete
+    print('whenComplete');
+
+    return null;
+  }
+}
+
+class StreamImplementation extends Stream {
+  Context context;
+  String uuid;
+
+  @override
+  StreamSubscription listen(void Function(dynamic event) onData,
+      {Function onError, void Function() onDone, bool cancelOnError}) {
+    context.input
+        .map((data) => context.serialization.deserialize(data))
+        .where((p) => p is FutureResolution)
+        .map((p) => p as FutureResolution)
+        .where((r) => r.uuid == uuid)
+        .listen((fr) {
+      var object = _reconstructTransferredObject(fr.resolution.object, context);
+      onData(object);
+    });
+    return null; //TODO
+  }
+}

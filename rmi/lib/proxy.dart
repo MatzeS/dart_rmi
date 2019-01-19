@@ -22,6 +22,7 @@ typedef Object InvocationHandlerFunction(
 
 //TODO namedarguments
 class InvocationMetadata {
+  bool isStream = false;
   List<Object> elementMetadata = [];
   List<List<Object>> positionalArgumentMetadata = [];
   Map<Symbol, List<Object>> namedArgumentMetadata = {};
