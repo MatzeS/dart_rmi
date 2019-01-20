@@ -34,10 +34,9 @@ class _$TestClassInvoker {
       for (int i = invocation.positionalArguments.length; i < 1; i++)
         positionalArguments.add(null);
 
-      return target.streamMethod(positionalArguments[0] != null
-          ? ((positionalArguments[0] as Stream).cast())
-          : null);
-      return 3;
+      return target.streamMethod(
+        (positionalArguments[0] as Stream).cast(),
+      );
     }
     if (invocation.isGetter && #hashCode == invocation.memberName) {
       return target.hashCode;
