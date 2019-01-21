@@ -20,16 +20,12 @@ dependencies:
     path: ../rmi
   
 dev_dependencies:
-  json_serializable:
   rmi_generator:
     path: ../rmi_generator
   source_gen_helpers: ^0.0.1
   test: ^1.5.1
-
-dependency_overrides:
-  source_gen_helpers: 
-    path: ../../source_gen_helpers
   json_serializable:
-    path: ../../json_serializable/json_serializable
-  json_annotation:
-    path: ../../json_serializable/json_annotation
+    git:
+      url: https://github.com/MatzeS/json_serializable
+      ref: feature/blackbird
+      path: json_serializable

@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 import '../remote_method_invocation.dart';
 import 'package:uuid/uuid.dart';
 import 'packets.dart';
 import '../invoker.dart';
-import 'package:json_serialization/json_serialization.dart';
 import 'package:rmi/proxy.dart';
 
 String generateUUID() => new Uuid().v1();
@@ -134,7 +132,7 @@ Provision internalProvideRemote(
       var returnValue = await target.invoke(invocation);
       response.resolution =
           Resolution(object: _generateTransferable(returnValue, null, context));
-    } catch (exception, stack) {
+    } catch (exception) {
       // print(stack);
       response.resolution =
           Resolution(exception: TransferredException.fromException(exception));
@@ -145,26 +143,10 @@ Provision internalProvideRemote(
   return provision;
 }
 
-// void internalRegisterSerializers(Map<String, Deserializer> deserializer) {
-//   fromJsonFunctions.addAll(deserializer);
-// }
-
 Object internalGetRemoteFromStub(RemoteStub stub, Context context) {
   RemoteStubConstructor constructor = context.remoteStubConstructors[stub.type];
   return constructor(context, stub.uuid);
 }
-
-// Invocation _replaceInvocationArguments(
-//     Invocation invocation, List<Object> positionalArguments) {
-//   if (invocation.isGetter) {
-//     return new Invocation.getter(invocation.memberName);
-//   } else if (invocation.isSetter) {
-//     return new Invocation.setter(
-//         invocation.memberName, positionalArguments.first);
-//   } else {
-//     return new Invocation.method(invocation.memberName, positionalArguments);
-//   }
-// }
 
 //TODO rename to transferobject
 TransferredObject _generateTransferable(
@@ -212,7 +194,6 @@ Object _reconstructTransferredObject(
     return future;
     // return RemoteFuture.getRemote(context, transferred.future);
   } else if (transferred.isStream) {
-    print('stream reconstructed');
     var stream = StreamImplementation();
     stream.uuid = transferred.stream;
     stream.context = context;
@@ -287,6 +268,7 @@ class FutureImplementation implements Future<dynamic> {
 
     //     ;
     // }).then(onValue);
+    return null; //TODO
   }
 
   @override

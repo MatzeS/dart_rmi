@@ -1,5 +1,5 @@
 name: rmi_generator
-version: 0.0.3
+version: 0.0.4
 description: >
   Remote Method Invocation without reflection but basd on code generation.
   This is the dev dependency.
@@ -21,4 +21,3 @@ dev_dependencies:
 
 dependency_overrides:
   source_gen_helpers: 
-    path: ../../source_gen_helpers

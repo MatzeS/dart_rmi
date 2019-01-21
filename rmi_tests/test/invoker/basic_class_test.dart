@@ -1,6 +1,5 @@
 import 'package:test/test.dart';
 
-import '../basic_class.dart';
 import '../logging_class.dart';
 
 void main() {

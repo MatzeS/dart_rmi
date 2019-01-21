@@ -17,6 +17,16 @@ cd ..;
 cd rmi_generator;
 pub get
 pub upgrade
+dartfmt -w .
+dartanalyzer \
+  --fatal-warnings \
+  --fatal-infos \
+  .
+cd ..;
+
+cd rmi_tests;
+pub get
+pub upgrade
 pub run build_runner build \
   --delete-conflicting-outputs \
   --fail-on-severe

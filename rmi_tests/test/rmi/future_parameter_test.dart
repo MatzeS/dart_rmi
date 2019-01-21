@@ -1,5 +1,4 @@
 import 'package:test/test.dart';
-import '../logging_class.dart';
 import 'dart:async';
 import 'package:rmi/rmi.dart';
 import '../bound_context.dart';
@@ -23,11 +22,9 @@ class TestClass implements RmiTarget {
 
   Future<num> streamMethod(Stream<String> aParameter) async {
     Future<String> aFuture = aParameter.first;
-    print(aFuture);
     await aFuture;
     var txt = await aFuture;
     return num.parse(txt);
-    // return 5;
   }
 }
 

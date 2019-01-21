@@ -122,17 +122,19 @@ class LoggingClass implements BasicClass, Invocable {
   }
 
   @override
-  int basicNoProxyMethod() {}
+  int basicNoProxyMethod() => null;
 
   @override
-  int basicNoProxyMethod2() {}
+  int basicNoProxyMethod2() => null;
 
   Stream<num> someGenerator() {
     _log(#someGenerator);
+    return null;
   }
 
   Stream<num> get someGetterGenerator {
     _log(#someGetterGenerator);
+    return null;
   }
 }
 

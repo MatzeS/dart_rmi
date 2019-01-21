@@ -1,4 +1,3 @@
-import 'package:test/test.dart';
 import 'package:rmi/proxy.dart';
 
 class RecordingHandler {

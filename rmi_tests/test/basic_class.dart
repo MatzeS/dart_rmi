@@ -29,8 +29,8 @@ class BasicClass {
   @NoProxy()
   int basicNoProxyMethod2() => 42;
 
-  Stream<num> someGenerator() {}
-  Stream<num> get someGetterGenerator {}
+  Stream<num> someGenerator() => null;
+  Stream<num> get someGetterGenerator => null;
 }
 
 class BasicAsyncClass {

@@ -72,3 +72,4 @@ remoteObject.someMethod(); // prints 'some stuff' on the other machine
 - warn on rmi non future method
 - warn for contrast metadata
 - class hierarchy metadata
+- pass stream and future null arguments
