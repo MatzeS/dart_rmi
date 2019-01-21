@@ -12,5 +12,5 @@ dependencies:
   rmi: ^0.0.3
   
 dev_dependencies:
-  rmi_generator: ^0.0.3
+  rmi_generator: ^0.0.3 #TODO update
   build_runner: ^1.1.2

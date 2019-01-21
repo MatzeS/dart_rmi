@@ -49,6 +49,6 @@ main() {
       var res = testObject.streamMethod(sc.stream);
       sc.sink.add('3');
       expect(await res, 3);
-    }, tags: 'current');
+    });
   });
 }
