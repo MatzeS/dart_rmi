@@ -21,6 +21,7 @@ dartfmt -w .
 dartanalyzer \
   --fatal-warnings \
   --fatal-infos \
+  --no-hints \
   .
 cd ..;
 
@@ -34,6 +35,7 @@ dartfmt -w .
 dartanalyzer \
   --fatal-warnings \
   --fatal-infos \
+  --no-hints \
   .
 pub run test --platform vm;
 pub run test --platform chrome;
@@ -50,6 +52,7 @@ dartfmt -w .
 dartanalyzer \
   --fatal-warnings \
   --fatal-infos \
+  --no-hints \
   .
 dart lib/example.dart
 cd ..;
