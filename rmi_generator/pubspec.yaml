@@ -8,7 +8,7 @@ authors:
 homepage: https://github.com/MatzeS/dart_rmi
 
 environment:
-  sdk: '>=2.0.0-dev <3.0.0'
+  sdk: '>=2.1.0 <3.0.0'
 
 dependencies:
   analyzer: ^0.33.3
