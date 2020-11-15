@@ -24,6 +24,21 @@ class NotAsRmi {
 /// Acquires a remote object
 typedef Object RemoteStubConstructor(Context context, String uuid);
 
+class RemoteStubProvider {
+  Map<String, RemoteStubConstructor> _remoteStubConstructors = {};
+
+  Object proxify(Context context, RemoteStub stub) {
+    RemoteStubConstructor constructor = _remoteStubConstructors[stub.type];
+    if (constructor == null) throw new Exception("cannot proxify ${stub.type}");
+    return constructor(context, stub.uuid);
+  }
+
+  void registerRemoteStubConstructor(
+      String type, RemoteStubConstructor constructor) {
+    _remoteStubConstructors[type] = constructor;
+  }
+}
+
 typedef Object FromJson(Map<String, dynamic> json);
 Map<String, FromJson> _fromJsonFunctions = {
   'asset:rmi/lib/src/packets.dart#Query': Query.fromJson,
@@ -35,11 +50,18 @@ Map<String, FromJson> _fromJsonFunctions = {
 };
 
 class Context {
-  JsonSerialization serialization = new JsonSerialization();
-  Map<String, RemoteStubConstructor> remoteStubConstructors = {};
+  JsonSerialization serialization;
+  RemoteStubProvider remoteStubProvider;
 
-  Context(Stream<String> input, this.output) {
+  Context(Stream<String> input, this.output,
+      {this.serialization, this.remoteStubProvider}) {
     this.input = input.asBroadcastStream();
+
+    if (serialization == null) serialization = new JsonSerialization();
+    if (remoteStubProvider == null)
+      remoteStubProvider = new RemoteStubProvider();
+
+    //TODO cleanup
     _fromJsonFunctions
         .forEach((k, v) => serialization.registerDeserializer(k, (x) => v(x)));
   }
@@ -51,11 +73,15 @@ class Context {
 
   void registerRemoteStubConstructor(
       String type, RemoteStubConstructor constructor) {
-    remoteStubConstructors[type] = constructor;
+    remoteStubProvider.registerRemoteStubConstructor(type, constructor);
   }
 
   void registerDeserializer(String key, Deserializer deserializer) =>
       serialization.registerDeserializer(key, deserializer);
+
+  Object proxifyRemoteStub(RemoteStub stub) {
+    return remoteStubProvider.proxify(this, stub);
+  }
 }
 
 class Provision {

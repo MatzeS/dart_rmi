@@ -39,6 +39,7 @@ class InvokerGenerator extends Generator {
     InvocableClassVisitor visitor = new InvocableClassVisitor(classElement);
     // classElement.visitChildren(visitor);
     List<Element> member = allClassMember(classElement);
+    member = member.where((e) => !(e as dynamic).isStatic).toList();
     member = member.where((e) {
       if (e.enclosingElement is! ClassElement) return true;
       ClassElement c = e.enclosingElement as ClassElement;

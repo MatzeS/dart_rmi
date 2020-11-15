@@ -144,8 +144,7 @@ Provision internalProvideRemote(
 }
 
 Object internalGetRemoteFromStub(RemoteStub stub, Context context) {
-  RemoteStubConstructor constructor = context.remoteStubConstructors[stub.type];
-  return constructor(context, stub.uuid);
+  return context.proxifyRemoteStub(stub);
 }
 
 //TODO rename to transferobject
